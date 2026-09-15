@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@theme {
+  --color-canvas: #FAFAF7;
+  --color-pure-white: #FFFFFF;
+  --color-ink: #111111;
+  --color-graphite: #191919;
+  --color-soft-gray: #DADAD5;
+  --color-muted-gray: #77776F;
+  --color-acid: #EFFF00;
+
+  /* Use Switzer and editorial alternatives as requested */
+  --font-sans: "Switzer", "Neue Montreal", "Suisse International", "Neue Haas Grotesk Display", "Helvetica Now Display", sans-serif;
+  --font-mono: "IBM Plex Mono", "Space Mono", monospace;
+}
+
+@layer base {
+  html {
+    background-color: var(--color-ink);
+  }
+  
+  /* Lenis smooth scrolling styles */
+  html.lenis, html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+  .lenis.lenis-scrolling iframe {
+    pointer-events: none;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  .hide-cursor * {
+    cursor: none !important;
+  }
+
+  ::selection {
+    background-color: var(--color-acid);
+    color: var(--color-ink);
+  }
+}
+
+@layer utilities {
+  .bg-fixed-mask {
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+  
+  .text-mask {
+    color: black;
+    background-color: white;
+    mix-blend-mode: screen;
+  }
+}
