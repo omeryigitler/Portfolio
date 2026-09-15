@@ -22,8 +22,8 @@ export default function App() {
           <BackgroundLayer />
           <Navigation />
 
-          <div className="pointer-events-none relative z-10 flex min-h-screen w-full flex-col items-center py-4 md:py-7">
-            <main className="pointer-events-auto w-[calc(100vw-32px)] max-w-[1600px] overflow-visible rounded-[8px] bg-canvas md:w-[calc(100vw-56px)] md:rounded-[10px]">
+          <div className="pointer-events-none relative z-10 flex min-h-screen w-full flex-col items-center py-3 md:py-8">
+            <main className="pointer-events-auto w-[calc(100vw-24px)] overflow-visible rounded-[8px] bg-canvas shadow-[0_22px_80px_rgba(17,17,17,0.065)] md:w-[92vw] md:max-w-[1680px] md:rounded-[10px]">
               <Hero />
               <ProjectTheatre />
               <MaskTransition />
