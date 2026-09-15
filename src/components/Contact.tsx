@@ -38,10 +38,10 @@ const ProcessPanel: React.FC = () => (
       {PROCESS.map(([number, title, note]) => (
         <div
           key={number}
-          className="grid min-h-[94px] grid-cols-[38px_minmax(0,1fr)] items-center border-t border-ink/10 py-4 first:border-t-0 md:min-h-[108px] md:grid-cols-[50px_minmax(0,1fr)_170px]"
+          className="group grid min-h-[94px] grid-cols-[38px_minmax(0,1fr)] items-center border-t border-ink/10 py-4 first:border-t-0 md:min-h-[108px] md:grid-cols-[50px_minmax(0,1fr)_170px]"
         >
           <span className="font-mono text-[8px] uppercase tracking-[0.05em] text-muted-gray md:text-[9px]">{number}</span>
-          <span className="text-[clamp(30px,3.3vw,58px)] font-[500] leading-[0.9] tracking-[-0.045em] text-ink">{title}</span>
+          <span className="text-[clamp(30px,3.3vw,58px)] font-[500] leading-[0.9] tracking-[-0.045em] text-ink transition-transform duration-300 ease-[0.16,1,0.3,1] group-hover:translate-x-1.5">{title}</span>
           <span className="col-start-2 mt-2 text-left font-mono text-[8px] uppercase leading-[1.35] tracking-[0.04em] text-muted-gray md:col-start-auto md:mt-0 md:text-right md:text-[9px]">{note}</span>
         </div>
       ))}
@@ -165,7 +165,7 @@ export const Contact: React.FC = () => {
                       make it real<span className="text-acid">.</span>
                     </span>
                     <span
-                      className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-ink/15 text-[28px] text-acid transition-[transform,border-color] duration-300 ease-[0.16,1,0.3,1] group-hover:translate-x-2 group-hover:-translate-y-2 group-hover:border-ink/40 md:h-20 md:w-20 md:text-[34px]"
+                      className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-ink/20 text-[28px] text-ink transition-[transform,border-color] duration-300 ease-[0.16,1,0.3,1] group-hover:translate-x-2 group-hover:-translate-y-2 group-hover:border-ink/45 md:h-20 md:w-20 md:text-[34px]"
                       aria-hidden="true"
                     >
                       ↗
@@ -213,7 +213,7 @@ export const Contact: React.FC = () => {
                       <span className="text-[clamp(56px,15vw,94px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
                         make it real<span className="text-acid">.</span>
                       </span>
-                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-ink/15 text-[22px] text-acid transition-transform duration-300 group-hover:translate-x-1.5 group-hover:-translate-y-1.5">↗</span>
+                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-ink/20 text-[22px] text-ink transition-transform duration-300 group-hover:translate-x-1.5 group-hover:-translate-y-1.5">↗</span>
                     </div>
                   </motion.button>
                 )}
