@@ -1,6 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { DEFAULT_BG } from '../data';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export const Hero: React.FC = () => {
   const heroRef = useRef<HTMLElement>(null);
@@ -11,31 +14,58 @@ export const Hero: React.FC = () => {
   const line1Ref = useRef<HTMLSpanElement>(null);
   const line2Ref = useRef<HTMLSpanElement>(null);
   const underlineRef = useRef<HTMLSpanElement>(null);
-  const metaLeftRef = useRef<HTMLDivElement>(null);
   const metaRightRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!heroRef.current || !backdropRef.current || !frameRef.current || !labelRef.current || !kickerRef.current || !line1Ref.current || !line2Ref.current || !underlineRef.current) return;
+    if (
+      !heroRef.current ||
+      !backdropRef.current ||
+      !frameRef.current ||
+      !labelRef.current ||
+      !kickerRef.current ||
+      !line1Ref.current ||
+      !line2Ref.current ||
+      !underlineRef.current
+    ) return;
 
     const ctx = gsap.context(() => {
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reducedMotion) return;
+      if (reducedMotion) {
+        gsap.set(underlineRef.current, { scaleX: 1, opacity: 1, transformOrigin: '0% 50%' });
+        return;
+      }
 
       gsap.set(backdropRef.current, { scale: 1.07 });
       gsap.set(frameRef.current, { autoAlpha: 0, y: 18, scale: 0.965, transformOrigin: '50% 50%' });
       gsap.set([labelRef.current, kickerRef.current, line1Ref.current, line2Ref.current], { autoAlpha: 0, yPercent: 105 });
-      gsap.set([metaLeftRef.current, metaRightRef.current], { autoAlpha: 0, y: 10 });
-      gsap.set(underlineRef.current, { scaleX: 0, transformOrigin: '0% 50%' });
+      gsap.set(metaRightRef.current, { autoAlpha: 0, y: 10 });
+      gsap.set(underlineRef.current, { scaleX: 0.16, opacity: 0, transformOrigin: '0% 50%' });
 
-      const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
-      tl.to(frameRef.current, { autoAlpha: 1, y: 0, scale: 1, duration: 0.72 }, 0.12);
-      tl.to(backdropRef.current, { scale: 1, duration: 1.45, ease: 'power3.out' }, 0);
-      tl.to(labelRef.current, { autoAlpha: 1, yPercent: 0, duration: 0.5 }, 0.32);
-      tl.to(kickerRef.current, { autoAlpha: 1, yPercent: 0, duration: 0.52 }, 0.38);
-      tl.to(line1Ref.current, { autoAlpha: 1, yPercent: 0, duration: 0.72 }, 0.5);
-      tl.to(line2Ref.current, { autoAlpha: 1, yPercent: 0, duration: 0.72 }, 0.62);
-      tl.to(underlineRef.current, { scaleX: 1, duration: 0.58, ease: 'power3.inOut' }, 0.96);
-      tl.to([metaLeftRef.current, metaRightRef.current], { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.06 }, 1.08);
+      const intro = gsap.timeline({ defaults: { ease: 'power4.out' } });
+      intro.to(frameRef.current, { autoAlpha: 1, y: 0, scale: 1, duration: 0.72 }, 0.12);
+      intro.to(backdropRef.current, { scale: 1, duration: 1.45, ease: 'power3.out' }, 0);
+      intro.to(labelRef.current, { autoAlpha: 1, yPercent: 0, duration: 0.5 }, 0.32);
+      intro.to(kickerRef.current, { autoAlpha: 1, yPercent: 0, duration: 0.52 }, 0.38);
+      intro.to(line1Ref.current, { autoAlpha: 1, yPercent: 0, duration: 0.72 }, 0.5);
+      intro.to(line2Ref.current, { autoAlpha: 1, yPercent: 0, duration: 0.72 }, 0.62);
+      intro.to(underlineRef.current, { opacity: 1, duration: 0.34, ease: 'power2.out' }, 0.94);
+      intro.to(metaRightRef.current, { autoAlpha: 1, y: 0, duration: 0.5 }, 1.04);
+
+      gsap.fromTo(
+        underlineRef.current,
+        { scaleX: 0.16 },
+        {
+          scaleX: 1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: heroRef.current,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        },
+      );
     }, heroRef);
 
     return () => ctx.revert();
@@ -77,15 +107,15 @@ export const Hero: React.FC = () => {
                   WORTH <br className="md:hidden" /> REMEMBERING.
                 </span>
               </span>
-              <span ref={underlineRef} className="absolute -bottom-3 left-0 h-[3px] w-[34%] max-w-[360px] bg-acid md:-bottom-4 md:h-[4px]" />
+              <span
+                ref={underlineRef}
+                className="absolute -bottom-3 left-0 h-[3px] w-[48%] max-w-[620px] bg-acid will-change-transform md:-bottom-4 md:h-[4px]"
+              />
             </span>
           </h1>
         </div>
 
-        <div className="flex w-full items-end justify-between gap-8">
-          <div ref={metaLeftRef} className="font-mono text-[9px] uppercase tracking-[0.05em] text-muted-gray md:text-[10px]">
-            SELECTED WORK 2022—2026
-          </div>
+        <div className="flex w-full items-end justify-end">
           <div ref={metaRightRef} className="hidden text-right font-mono text-[9px] uppercase tracking-[0.05em] text-muted-gray lg:block md:text-[10px]">
             <p className="mb-1 text-ink">INDEPENDENT DESIGNER / DEVELOPER</p>
             <p>DESIGN · CODE · INTERACTION</p>
