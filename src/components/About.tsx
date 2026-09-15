@@ -23,45 +23,49 @@ export const About: React.FC = () => {
         defaults: { ease: 'none' },
         scrollTrigger: {
           trigger: containerRef.current,
-          start: 'top 82%',
-          end: 'center 52%',
-          scrub: 0.45,
+          start: 'top 84%',
+          end: 'center 56%',
+          scrub: 0.32,
           invalidateOnRefresh: true,
         },
       });
 
-      tl.from(line1.current, { x: -64, opacity: 0, duration: 0.8 }, 0);
-      tl.from(line2.current, { x: 64, opacity: 0, duration: 0.8 }, 0.14);
-      tl.from(line3.current, { y: 32, opacity: 0, duration: 0.8 }, 0.28);
-      tl.from(line4.current, { x: -36, opacity: 0, duration: 0.8 }, 0.42);
-      tl.from(line5.current, { y: 32, opacity: 0, duration: 0.8 }, 0.56);
+      tl.from(line1.current, { x: -28, opacity: 0, duration: 0.8 }, 0);
+      tl.from(line2.current, { x: 28, opacity: 0, duration: 0.8 }, 0.12);
+      tl.from(line3.current, { y: 20, opacity: 0, duration: 0.8 }, 0.24);
+      tl.from(line4.current, { x: -22, opacity: 0, duration: 0.8 }, 0.36);
+      tl.from(line5.current, { y: 20, opacity: 0, duration: 0.8 }, 0.48);
     }, containerRef);
 
     return () => ctx.revert();
   }, []);
 
   return (
-    <section id="about" ref={containerRef} className="py-32 md:py-64 px-4 md:px-12 bg-canvas pointer-events-auto">
-      <div className="text-[clamp(32px,5vw,76px)] leading-[0.94] tracking-[-0.05em] font-medium text-ink w-full md:max-w-[75%] overflow-hidden">
-        <div ref={line1}>I DESIGN AND BUILD</div>
-        <div ref={line2}>DIGITAL EXPERIENCES</div>
-        <div ref={line3}>WITH A FOCUS ON</div>
-        <div ref={line4}>DETAIL, SYSTEMS</div>
-        <div ref={line5}>AND INTERACTION.</div>
+    <section id="about" ref={containerRef} className="pointer-events-auto bg-canvas px-5 py-32 md:px-12 md:py-56">
+      <div className="mb-16 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:mb-20 md:text-[10px]">
+        ABOUT / 04
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-12 md:gap-8 mt-24 md:mt-32 font-mono text-[10px] md:text-[11px] uppercase tracking-[0.04em] text-ink">
+      <div className="w-full overflow-hidden text-[clamp(32px,5vw,76px)] font-medium leading-[0.94] tracking-[-0.05em] text-ink md:max-w-[78%]">
+        <div ref={line1}>I WORK BETWEEN</div>
+        <div ref={line2}>DESIGN, CODE</div>
+        <div ref={line3}>AND INTERACTION —</div>
+        <div ref={line4}>BUILDING DIGITAL</div>
+        <div ref={line5}>SYSTEMS WITH INTENT.</div>
+      </div>
+
+      <div className="mt-24 grid grid-cols-2 gap-12 font-mono text-[10px] uppercase tracking-[0.04em] text-ink md:mt-32 md:grid-cols-4 md:gap-8 md:text-[11px]">
         <div>
-          <p className="text-muted-gray mb-6">DESIGN</p>
+          <p className="mb-6 text-muted-gray">DESIGN</p>
           <p className="leading-[1.6]">ART DIRECTION<br/>UI / UX<br/>DIGITAL IDENTITY</p>
         </div>
         <div>
-          <p className="text-muted-gray mb-6">BUILD</p>
+          <p className="mb-6 text-muted-gray">BUILD</p>
           <p className="leading-[1.6]">FRONTEND<br/>CREATIVE DEV<br/>MOTION</p>
         </div>
         <div>
-          <p className="text-muted-gray mb-6">LOCATION</p>
-          <p className="leading-[1.6]">INDEPENDENT<br/>WORLDWIDE</p>
+          <p className="mb-6 text-muted-gray">APPROACH</p>
+          <p className="leading-[1.6]">SYSTEMS<br/>INTERACTION<br/>DETAIL</p>
         </div>
       </div>
     </section>
