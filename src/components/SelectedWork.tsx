@@ -159,7 +159,7 @@ export const SelectedWork: React.FC = () => {
     setProjectOpen(true);
   };
 
-  const theatreHeight = `${Math.max(320, PROJECTS.length * 82)}svh`;
+  const theatreHeight = `${Math.max(360, PROJECTS.length * 72)}svh`;
 
   return (
     <>
@@ -288,9 +288,23 @@ export const SelectedWork: React.FC = () => {
                 />
               </motion.div>
 
-              <div className="mt-5 flex items-end justify-between font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray">
-                <span className="text-ink">{selectedProject.category}</span>
-                <span>{selectedProject.year}</span>
+              <div className="mt-5 flex items-end justify-between gap-6">
+                <div className="font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray">
+                  <span className="text-ink">{selectedProject.category}</span>
+                  <span className="ml-3">{selectedProject.year}</span>
+                </div>
+                <a
+                  href={selectedProject.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group inline-flex items-center gap-2 font-sans text-[12px] font-[500] uppercase tracking-[-0.015em] text-ink focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4"
+                >
+                  <span className="relative pb-1">
+                    VISIT LIVE
+                    <span className="absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 bg-acid transition-transform duration-300 ease-[0.16,1,0.3,1] group-hover:scale-x-100" />
+                  </span>
+                  <ArrowUpRight size={15} className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </a>
               </div>
             </motion.div>
           </motion.div>
