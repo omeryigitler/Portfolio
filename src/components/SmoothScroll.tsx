@@ -8,7 +8,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 export const SmoothScroll: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const lenisRef = useRef<Lenis | null>(null);
-  const { isProjectOpen } = useUI();
+  const { isProjectOpen, isContactFormOpen } = useUI();
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -60,13 +60,13 @@ export const SmoothScroll: React.FC<{ children: React.ReactNode }> = ({ children
     const lenis = lenisRef.current;
     if (!lenis) return;
 
-    if (isProjectOpen) {
+    if (isProjectOpen || isContactFormOpen) {
       lenis.stop();
     } else {
       lenis.start();
       requestAnimationFrame(() => ScrollTrigger.refresh());
     }
-  }, [isProjectOpen]);
+  }, [isProjectOpen, isContactFormOpen]);
 
   return <>{children}</>;
 };
