@@ -9,11 +9,53 @@ import { DEFAULT_BG, PROJECTS, type ProjectData } from '../data';
 
 gsap.registerPlugin(ScrollTrigger);
 
+type ProjectViewportProps = {
+  project: ProjectData;
+  mount: boolean;
+};
+
+const ProjectViewport: React.FC<ProjectViewportProps> = ({ project, mount }) => {
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    setLoaded(false);
+  }, [project.url, mount]);
+
+  return (
+    <div className="absolute inset-0 overflow-hidden bg-[#ecebe6]">
+      <div
+        className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${loaded ? 'opacity-0' : 'opacity-100'}`}
+        aria-hidden="true"
+      >
+        <div className="flex items-center gap-3 font-mono text-[9px] uppercase tracking-[0.08em] text-muted-gray md:text-[10px]">
+          <span className="h-[5px] w-[5px] rounded-full bg-acid" />
+          <span>LOADING LIVE PROJECT</span>
+        </div>
+      </div>
+
+      {mount && (
+        <iframe
+          src={project.url}
+          title={`${project.title} live project preview`}
+          loading="eager"
+          tabIndex={-1}
+          aria-hidden="true"
+          onLoad={() => setLoaded(true)}
+          className={`pointer-events-none absolute inset-0 h-full w-full border-0 bg-white transition-opacity duration-700 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+        />
+      )}
+
+      <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-ink/[0.05]" />
+    </div>
+  );
+};
+
 export const SelectedWork: React.FC = () => {
   const containerRef = useRef<HTMLElement>(null);
   const projectRefs = useRef<(HTMLDivElement | null)[]>([]);
   const mediaInnerRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
+  const [activeProjectIndex, setActiveProjectIndex] = useState(0);
   const { setActiveImage, setCursorState, setCursorText } = useTheme();
   const { setProjectOpen } = useUI();
 
@@ -30,8 +72,14 @@ export const SelectedWork: React.FC = () => {
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (prefersReducedMotion) {
         panels.forEach((panel, index) => {
-          gsap.set(panel, { autoAlpha: index === 0 ? 1 : 0, y: 0, scale: 1, pointerEvents: index === 0 ? 'auto' : 'none' });
+          gsap.set(panel, {
+            autoAlpha: index === 0 ? 1 : 0,
+            y: 0,
+            scale: 1,
+            pointerEvents: index === 0 ? 'auto' : 'none',
+          });
         });
+        setActiveProjectIndex(0);
         setActiveImage(PROJECTS[0].bgImage);
         return;
       }
@@ -78,6 +126,7 @@ export const SelectedWork: React.FC = () => {
 
           if (nextIndex !== activeIndex) {
             activeIndex = nextIndex;
+            setActiveProjectIndex(activeIndex);
             setActiveImage(PROJECTS[activeIndex].bgImage);
           }
 
@@ -85,8 +134,15 @@ export const SelectedWork: React.FC = () => {
             panel.style.pointerEvents = index === activeIndex ? 'auto' : 'none';
           });
         },
-        onEnter: () => setActiveImage(PROJECTS[0].bgImage),
-        onEnterBack: () => setActiveImage(PROJECTS[totalProjects - 1].bgImage),
+        onEnter: () => {
+          setActiveProjectIndex(0);
+          setActiveImage(PROJECTS[0].bgImage);
+        },
+        onEnterBack: () => {
+          const lastIndex = totalProjects - 1;
+          setActiveProjectIndex(lastIndex);
+          setActiveImage(PROJECTS[lastIndex].bgImage);
+        },
         onLeave: () => setActiveImage(DEFAULT_BG),
         onLeaveBack: () => setActiveImage(DEFAULT_BG),
       });
@@ -170,70 +226,75 @@ export const SelectedWork: React.FC = () => {
         style={{ height: theatreHeight }}
       >
         <div className="sticky top-0 h-[100svh] min-h-[720px] w-full overflow-hidden rounded-[10px] bg-canvas">
-          {PROJECTS.map((project, index) => (
-            <div
-              key={project.id}
-              ref={(el) => { projectRefs.current[index] = el; }}
-              className="absolute inset-0 flex items-center justify-center px-6 pb-12 pt-24 md:px-12 md:pb-14 md:pt-28"
-            >
-              <div className="grid h-[78svh] max-h-[860px] min-h-[560px] w-full max-w-[1360px] grid-rows-[auto_minmax(0,1fr)_auto] gap-5 md:gap-7">
-                <header>
-                  <div className="mb-4 flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.05em] text-muted-gray md:text-[10px]">
-                    <span>02 / SELECTED WORK</span>
-                    <span>{project.number} / {String(PROJECTS.length).padStart(2, '0')}</span>
-                  </div>
+          {PROJECTS.map((project, index) => {
+            const shouldMountPreview = Math.abs(index - activeProjectIndex) <= 1;
 
-                  <div className="flex items-end justify-between gap-6">
-                    <h2 className="min-w-0 font-sans text-[clamp(34px,5vw,74px)] font-[500] leading-[0.9] tracking-[-0.055em] text-ink">
-                      {project.title}
-                    </h2>
+            return (
+              <div
+                key={project.id}
+                ref={(el) => { projectRefs.current[index] = el; }}
+                className="absolute inset-0 flex items-center justify-center px-6 pb-12 pt-24 md:px-12 md:pb-14 md:pt-28"
+              >
+                <div className="grid h-[78svh] max-h-[860px] min-h-[560px] w-full max-w-[1360px] grid-rows-[auto_minmax(0,1fr)_auto] gap-5 md:gap-7">
+                  <header>
+                    <div className="mb-4 flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.05em] text-muted-gray md:text-[10px]">
+                      <span>02 / SELECTED WORK</span>
+                      <span>{project.number} / {String(PROJECTS.length).padStart(2, '0')}</span>
+                    </div>
 
-                    <div className="hidden shrink-0 text-right font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray md:block">
+                    <div className="flex items-end justify-between gap-6">
+                      <h2 className="min-w-0 font-sans text-[clamp(34px,5vw,74px)] font-[500] leading-[0.9] tracking-[-0.055em] text-ink">
+                        {project.title}
+                      </h2>
+
+                      <div className="hidden shrink-0 text-right font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray md:block">
+                        <p className="text-ink">{project.category}</p>
+                        <p className="mt-1">{project.year}</p>
+                      </div>
+                    </div>
+                  </header>
+
+                  <motion.button
+                    type="button"
+                    layoutId={`project-media-${project.id}`}
+                    className="group relative min-h-0 w-full overflow-hidden bg-soft-gray text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4"
+                    onMouseEnter={() => handleMouseEnter(project.number)}
+                    onMouseMove={(event) => handleMouseMove(index, event)}
+                    onMouseLeave={() => handleMouseLeave(index)}
+                    onClick={() => openProject(project)}
+                    aria-label={`Open ${project.title} project preview`}
+                  >
+                    <div
+                      ref={(el) => { mediaInnerRefs.current[index] = el; }}
+                      className="absolute -left-[3%] -top-[3%] h-[106%] w-[106%] will-change-transform"
+                    >
+                      <ProjectViewport project={project} mount={shouldMountPreview} />
+                    </div>
+                    <div className="absolute inset-0 bg-ink/0 transition-colors duration-300 group-hover:bg-ink/[0.03]" />
+                  </motion.button>
+
+                  <footer className="flex items-start justify-between gap-6">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray md:hidden">
                       <p className="text-ink">{project.category}</p>
                       <p className="mt-1">{project.year}</p>
                     </div>
-                  </div>
-                </header>
-
-                <motion.button
-                  type="button"
-                  layoutId={`project-media-${project.id}`}
-                  className="group relative min-h-0 w-full overflow-hidden bg-soft-gray text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4"
-                  onMouseEnter={() => handleMouseEnter(project.number)}
-                  onMouseMove={(event) => handleMouseMove(index, event)}
-                  onMouseLeave={() => handleMouseLeave(index)}
-                  onClick={() => openProject(project)}
-                  aria-label={`Open ${project.title} project preview`}
-                >
-                  <div
-                    ref={(el) => { mediaInnerRefs.current[index] = el; }}
-                    className="absolute -left-[3%] -top-[3%] h-[106%] w-[106%] bg-cover bg-center will-change-transform"
-                    style={{ backgroundImage: `url(${project.image})` }}
-                  />
-                  <div className="absolute inset-0 bg-ink/0 transition-colors duration-300 group-hover:bg-ink/[0.03]" />
-                </motion.button>
-
-                <footer className="flex items-start justify-between gap-6">
-                  <div className="font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray md:hidden">
-                    <p className="text-ink">{project.category}</p>
-                    <p className="mt-1">{project.year}</p>
-                  </div>
-                  <span className="hidden font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray md:block">WEBSITE / DESIGN / DEVELOPMENT</span>
-                  <button
-                    type="button"
-                    onClick={() => openProject(project)}
-                    className="group ml-auto inline-flex items-center gap-2 font-sans text-[12px] font-[500] uppercase tracking-[-0.015em] text-ink focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4"
-                  >
-                    <span className="relative pb-1">
-                      VIEW PROJECT
-                      <span className="absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 bg-acid transition-transform duration-300 ease-[0.16,1,0.3,1] group-hover:scale-x-100" />
-                    </span>
-                    <ArrowUpRight size={15} className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                  </button>
-                </footer>
+                    <span className="hidden font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray md:block">WEBSITE / DESIGN / DEVELOPMENT</span>
+                    <button
+                      type="button"
+                      onClick={() => openProject(project)}
+                      className="group ml-auto inline-flex items-center gap-2 font-sans text-[12px] font-[500] uppercase tracking-[-0.015em] text-ink focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4"
+                    >
+                      <span className="relative pb-1">
+                        VIEW PROJECT
+                        <span className="absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 bg-acid transition-transform duration-300 ease-[0.16,1,0.3,1] group-hover:scale-x-100" />
+                      </span>
+                      <ArrowUpRight size={15} className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </button>
+                  </footer>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
@@ -282,10 +343,7 @@ export const SelectedWork: React.FC = () => {
                 className="relative min-h-0 flex-1 overflow-hidden bg-soft-gray"
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               >
-                <div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${selectedProject.image})` }}
-                />
+                <ProjectViewport project={selectedProject} mount />
               </motion.div>
 
               <div className="mt-5 flex items-end justify-between gap-6">
