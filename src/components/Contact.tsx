@@ -3,9 +3,29 @@ import { AnimatePresence, motion } from 'motion/react';
 import { X } from 'lucide-react';
 import { useUI } from '../context/UIContext';
 
+const PROCESS = [
+  ['01', 'DISCOVER', 'WHAT SHOULD EXIST?'],
+  ['02', 'DESIGN', 'HOW SHOULD IT FEEL?'],
+  ['03', 'BUILD', 'HOW SHOULD IT BEHAVE?'],
+  ['04', 'SHIP', 'MAKE IT REAL.'],
+] as const;
+
+const PROJECT_TYPES = [
+  'Website',
+  'Digital product',
+  'Brand / web system',
+  'Creative development',
+  'Something else',
+] as const;
+
+const TIMING_OPTIONS = ['ASAP', '1–2 months', '3–6 months', 'Flexible'] as const;
+
 export const Contact: React.FC = () => {
   const { isContactFormOpen, setContactFormOpen } = useUI();
   const [submitted, setSubmitted] = useState(false);
+  const [ctaActive, setCtaActive] = useState(false);
+  const [projectType, setProjectType] = useState<string>('');
+  const [timing, setTiming] = useState<string>('');
 
   useEffect(() => {
     if (!isContactFormOpen) return;
@@ -32,46 +52,114 @@ export const Contact: React.FC = () => {
     <>
       <section
         id="contact"
-        className="pointer-events-auto relative flex min-h-[100svh] w-full flex-col rounded-[10px] bg-canvas px-5 py-24 shadow-[0_22px_80px_rgba(17,17,17,0.055)] md:px-12 md:py-28"
+        className="pointer-events-auto relative min-h-[100svh] w-full overflow-hidden rounded-[10px] bg-canvas px-5 py-7 shadow-[0_22px_80px_rgba(17,17,17,0.055)] md:px-12 md:py-10 lg:px-14"
       >
-        <div className="font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
-          06 / CONTACT
-        </div>
+        <div className="mx-auto grid min-h-[calc(100svh-56px)] w-full max-w-[1580px] grid-rows-[auto_1fr_auto] md:min-h-[calc(100svh-80px)]">
+          <div className="flex items-center justify-between gap-8 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
+            <span>06 / CONTACT</span>
+            <span className="hidden md:block">FROM IDEA TO LIVE EXPERIENCE</span>
+          </div>
 
-        <div className="flex flex-1 items-center justify-center">
-          <div className="mx-auto w-full max-w-[1180px] text-center">
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true, amount: 0.8 }}
-              className="mb-7 font-mono text-[10px] uppercase tracking-[0.05em] text-muted-gray md:text-[11px]"
-            >
-              HAVE AN IDEA?
-            </motion.p>
-
+          <div className="relative grid items-center gap-12 py-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20 lg:py-8">
             <motion.button
               type="button"
               onClick={openForm}
-              initial={{ y: 16, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              viewport={{ once: true, amount: 0.7 }}
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="group inline-flex flex-col items-center justify-center focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
+              onMouseEnter={() => setCtaActive(true)}
+              onMouseLeave={() => setCtaActive(false)}
+              onFocus={() => setCtaActive(true)}
+              onBlur={() => setCtaActive(false)}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.45 }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="group relative z-20 flex min-h-[420px] w-full flex-col justify-between text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6 lg:min-h-[560px]"
               aria-label="Open project request form"
             >
-              <span className="text-[clamp(46px,6.6vw,100px)] font-medium uppercase leading-[0.9] tracking-[-0.055em] text-ink">
-                MAKE IT REAL<span className="text-acid">.</span>
-              </span>
+              <div>
+                <p className="mb-6 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
+                  HAVE AN IDEA?
+                </p>
+                <motion.h2
+                  animate={{ opacity: ctaActive ? 0.14 : 1, x: ctaActive ? -14 : 0 }}
+                  transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
+                  className="max-w-[760px] text-[clamp(62px,7vw,126px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink"
+                >
+                  have an
+                  <br />
+                  idea<span className="text-acid">?</span>
+                </motion.h2>
+              </div>
 
-              <span
-                className="relative mt-7 flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-soft-gray transition-[border-color,transform] duration-300 ease-[0.16,1,0.3,1] group-hover:translate-x-1.5 group-hover:border-ink md:mt-9 md:h-16 md:w-16"
-                aria-hidden="true"
-              >
-                <svg className="h-5 w-5 -rotate-45 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="square" strokeLinejoin="miter" strokeWidth="1.5" d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </span>
+              <div className="grid gap-5 border-t border-ink/10 pt-5 md:grid-cols-[minmax(0,430px)_auto] md:items-end md:justify-between">
+                <p className="max-w-[430px] text-[14px] leading-[1.55] tracking-[-0.02em] text-ink/65 md:text-[16px]">
+                  Bring the idea, the problem or even the rough sketch. I can take it from direction to a working digital experience.
+                </p>
+                <span className="font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">
+                  HOVER / TAP TO START ↗
+                </span>
+              </div>
             </motion.button>
+
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              animate={{ opacity: ctaActive ? 0.12 : 1, x: ctaActive ? 24 : 0, scale: ctaActive ? 0.985 : 1 }}
+              transition={{ duration: 0.48, ease: [0.16, 1, 0.3, 1] }}
+              className="relative z-10 lg:pl-5"
+              aria-hidden={ctaActive}
+            >
+              <div className="mb-5 flex items-end justify-between gap-6 border-b border-ink/10 pb-5">
+                <div>
+                  <p className="mb-3 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
+                    FROM IDEA TO LIVE EXPERIENCE
+                  </p>
+                  <p className="max-w-[520px] text-[18px] leading-[1.35] tracking-[-0.025em] text-ink md:text-[20px]">
+                    One continuous process, not separate handoffs.
+                  </p>
+                </div>
+                <span className="mb-1 h-2 w-2 shrink-0 bg-acid" />
+              </div>
+
+              <div className="relative border-l-2 border-acid pl-8 md:pl-10">
+                {PROCESS.map(([number, title, note]) => (
+                  <div
+                    key={number}
+                    className="grid min-h-[94px] grid-cols-[38px_minmax(0,1fr)] items-center border-t border-ink/10 py-4 first:border-t-0 md:min-h-[108px] md:grid-cols-[50px_minmax(0,1fr)_170px]"
+                  >
+                    <span className="font-mono text-[8px] uppercase tracking-[0.05em] text-muted-gray md:text-[9px]">{number}</span>
+                    <span className="text-[clamp(30px,3.3vw,58px)] font-[500] leading-[0.9] tracking-[-0.045em] text-ink">{title}</span>
+                    <span className="col-start-2 mt-2 text-left font-mono text-[8px] uppercase leading-[1.35] tracking-[0.04em] text-muted-gray md:col-start-auto md:mt-0 md:text-right md:text-[9px]">{note}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-5 flex items-center justify-between font-mono text-[8px] uppercase tracking-[0.05em] text-muted-gray md:text-[9px]">
+                <span>STRATEGY → INTERFACE → CODE</span>
+                <span>END TO END</span>
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="pointer-events-none absolute inset-x-0 top-1/2 z-30 -translate-y-1/2"
+              initial={false}
+              animate={{
+                opacity: ctaActive ? 1 : 0,
+                y: ctaActive ? '-50%' : '-42%',
+                scale: ctaActive ? 1 : 0.965,
+              }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              aria-hidden="true"
+            >
+              <div className="whitespace-nowrap text-center text-[clamp(70px,10.4vw,192px)] font-[500] lowercase leading-[0.82] tracking-[-0.065em] text-ink">
+                make it real<span className="text-acid">.</span>
+              </div>
+            </motion.div>
+          </div>
+
+          <div className="flex items-end justify-between gap-8 border-t border-ink/8 pt-5 font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray md:text-[9px]">
+            <span>DESIGN / DEVELOPMENT / INTERACTION</span>
+            <span className="hidden md:block">CLICK TO START A PROJECT ↗</span>
           </div>
         </div>
       </section>
@@ -113,7 +201,7 @@ export const Contact: React.FC = () => {
                 </button>
               </div>
 
-              <div className="grid flex-1 gap-12 py-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20 lg:py-14">
+              <div className="grid flex-1 gap-12 py-10 lg:grid-cols-[0.86fr_1.14fr] lg:gap-20 lg:py-14">
                 <div className="flex flex-col justify-between">
                   <div>
                     <p className="mb-4 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">START A PROJECT</p>
@@ -129,7 +217,7 @@ export const Contact: React.FC = () => {
                 </div>
 
                 <form
-                  className="grid content-start gap-7 md:grid-cols-2 md:gap-x-8 md:gap-y-8"
+                  className="grid content-start gap-8 md:grid-cols-2 md:gap-x-8 md:gap-y-9"
                   onSubmit={(event) => {
                     event.preventDefault();
                     setSubmitted(true);
@@ -142,7 +230,7 @@ export const Contact: React.FC = () => {
                       required
                       autoComplete="name"
                       placeholder="Your name"
-                      className="w-full bg-transparent text-[18px] text-ink outline-none placeholder:text-ink/25 md:text-[20px]"
+                      className="w-full appearance-none rounded-none bg-transparent text-[18px] text-ink outline-none placeholder:text-ink/25 md:text-[20px]"
                     />
                   </label>
 
@@ -154,34 +242,51 @@ export const Contact: React.FC = () => {
                       type="email"
                       autoComplete="email"
                       placeholder="you@company.com"
-                      className="w-full bg-transparent text-[18px] text-ink outline-none placeholder:text-ink/25 md:text-[20px]"
+                      className="w-full appearance-none rounded-none bg-transparent text-[18px] text-ink outline-none placeholder:text-ink/25 md:text-[20px]"
                     />
                   </label>
 
-                  <label className="border-b border-soft-gray pb-3">
-                    <span className="mb-3 block font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">03 / PROJECT</span>
-                    <select
-                      name="projectType"
-                      defaultValue=""
-                      className="w-full appearance-none bg-transparent text-[18px] text-ink outline-none md:text-[20px]"
-                    >
-                      <option value="" disabled>Choose a type</option>
-                      <option>Website</option>
-                      <option>Digital product</option>
-                      <option>Brand / web system</option>
-                      <option>Creative development</option>
-                      <option>Something else</option>
-                    </select>
-                  </label>
+                  <fieldset className="md:col-span-2">
+                    <legend className="mb-3 block font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">03 / PROJECT TYPE</legend>
+                    <input type="hidden" name="projectType" value={projectType} />
+                    <div className="flex flex-wrap gap-2">
+                      {PROJECT_TYPES.map((option) => {
+                        const selected = projectType === option;
+                        return (
+                          <button
+                            key={option}
+                            type="button"
+                            onClick={() => setProjectType(option)}
+                            aria-pressed={selected}
+                            className={`rounded-full border px-4 py-2.5 text-[12px] tracking-[-0.01em] transition-[background-color,border-color,color,transform] duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-acid ${selected ? 'border-ink bg-ink text-canvas' : 'border-ink/15 bg-transparent text-ink hover:border-ink/45'}`}
+                          >
+                            {option}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </fieldset>
 
-                  <label className="border-b border-soft-gray pb-3">
-                    <span className="mb-3 block font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">04 / TIMING</span>
-                    <input
-                      name="timing"
-                      placeholder="When should it go live?"
-                      className="w-full bg-transparent text-[18px] text-ink outline-none placeholder:text-ink/25 md:text-[20px]"
-                    />
-                  </label>
+                  <fieldset className="md:col-span-2">
+                    <legend className="mb-3 block font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">04 / TIMING</legend>
+                    <input type="hidden" name="timing" value={timing} />
+                    <div className="flex flex-wrap gap-2">
+                      {TIMING_OPTIONS.map((option) => {
+                        const selected = timing === option;
+                        return (
+                          <button
+                            key={option}
+                            type="button"
+                            onClick={() => setTiming(option)}
+                            aria-pressed={selected}
+                            className={`rounded-full border px-4 py-2.5 text-[12px] tracking-[-0.01em] transition-[background-color,border-color,color,transform] duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-acid ${selected ? 'border-ink bg-ink text-canvas' : 'border-ink/15 bg-transparent text-ink hover:border-ink/45'}`}
+                          >
+                            {option}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </fieldset>
 
                   <label className="border-b border-soft-gray pb-3 md:col-span-2">
                     <span className="mb-3 block font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">05 / ABOUT THE PROJECT</span>
@@ -190,13 +295,13 @@ export const Contact: React.FC = () => {
                       required
                       rows={4}
                       placeholder="What are you building, and what should it feel like?"
-                      className="w-full resize-none bg-transparent text-[18px] leading-[1.4] text-ink outline-none placeholder:text-ink/25 md:text-[20px]"
+                      className="w-full resize-none appearance-none rounded-none bg-transparent text-[18px] leading-[1.4] text-ink outline-none placeholder:text-ink/25 md:text-[20px]"
                     />
                   </label>
 
                   <div className="flex items-center justify-between gap-6 pt-1 md:col-span-2">
                     <p className={`font-mono text-[9px] uppercase tracking-[0.05em] ${submitted ? 'text-ink' : 'text-muted-gray'}`}>
-                      {submitted ? 'FORM UI READY — DELIVERY EMAIL STILL NEEDS TO BE CONNECTED.' : 'ALL FIELDS STAY INSIDE THIS PAGE.'}
+                      {submitted ? 'FORM UI READY — DELIVERY EMAIL STILL NEEDS TO BE CONNECTED.' : 'A SHORT BRIEF IS ENOUGH TO START.'}
                     </p>
 
                     <button
@@ -204,7 +309,7 @@ export const Contact: React.FC = () => {
                       className="group inline-flex shrink-0 items-center gap-3 text-[13px] font-[500] uppercase tracking-[-0.015em] text-ink focus-visible:outline-2 focus-visible:outline-acid"
                     >
                       <span>Send request</span>
-                      <span className="transition-transform duration-300 group-hover:translate-x-1.5">↗</span>
+                      <span className="transition-transform duration-300 group-hover:translate-x-1.5 group-hover:-translate-y-1.5">↗</span>
                     </button>
                   </div>
                 </form>
