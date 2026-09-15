@@ -58,7 +58,7 @@ export const About: React.FC = () => {
         <div ref={line5}>SYSTEMS WITH INTENT.</div>
       </div>
 
-      <div className="mt-24 grid grid-cols-2 gap-12 font-mono text-[10px] uppercase tracking-[0.04em] text-ink md:mt-32 md:grid-cols-4 md:gap-8 md:text-[11px]">
+      <div className="mt-24 grid grid-cols-2 gap-12 font-mono text-[10px] uppercase tracking-[0.04em] text-ink md:mt-32 md:grid-cols-3 md:gap-8 md:text-[11px]">
         <div>
           <p className="mb-6 text-muted-gray">DESIGN</p>
           <p className="leading-[1.6]">ART DIRECTION<br/>UI / UX<br/>DIGITAL IDENTITY</p>
