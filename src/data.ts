@@ -1,16 +1,6 @@
-export const DEFAULT_BG = "https://images.unsplash.com/photo-1607499699365-d053229b48f9?q=80&w=2564&auto=format&fit=crop"; // neutral paper / material
-export const PROJECT_1_BG = "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=2564&auto=format&fit=crop"; // white architectural lines
-export const PROJECT_2_BG = "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=2564&auto=format&fit=crop"; // soft material field
-export const PROJECT_3_BG = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop"; // glass / dark material
-export const PROJECT_4_BG = "https://images.unsplash.com/photo-1518640467707-6811f4a6ab73?q=80&w=2564&auto=format&fit=crop"; // macro material
+export const DEFAULT_BG = "https://images.unsplash.com/photo-1607499699365-d053229b48f9?q=80&w=2564&auto=format&fit=crop";
 
-export const ALL_BACKGROUNDS = [
-  DEFAULT_BG,
-  PROJECT_1_BG,
-  PROJECT_2_BG,
-  PROJECT_3_BG,
-  PROJECT_4_BG,
-];
+export const ALL_BACKGROUNDS = [DEFAULT_BG];
 
 export interface ProjectData {
   id: string;
@@ -20,45 +10,82 @@ export interface ProjectData {
   year: string;
   image: string;
   bgImage: string;
+  url: string;
 }
 
-// Temporary project records. These are intentionally isolated here so the
-// real portfolio screenshots/videos can replace them without changing scene logic.
+const screenshot = (domain: string) => `https://screenshotof.com/${domain}?s=2048`;
+
+// The portfolio UI stays neutral; project colour lives only inside the media frame.
+// Screenshots are generated from the live deployments so the work stays visually current.
 export const PROJECTS: ProjectData[] = [
   {
-    id: "proj-1",
+    id: "japanese-bakery",
     number: "01",
-    title: "DIGITAL OBJECT",
-    category: "INDUSTRIAL / ART",
+    title: "JAPANESE BAKERY",
+    category: "COMMERCE / EDITORIAL",
     year: "2026",
-    image: PROJECT_1_BG,
-    bgImage: PROJECT_1_BG,
+    image: screenshot("japanese-bakery.vercel.app"),
+    bgImage: DEFAULT_BG,
+    url: "https://japanese-bakery.vercel.app",
   },
   {
-    id: "proj-2",
+    id: "architecture-3d",
     number: "02",
-    title: "EDITORIAL SYSTEM",
-    category: "IDENTITY / PRINT",
+    title: "ARCHITECTURE 3D",
+    category: "3D / E-COMMERCE",
     year: "2026",
-    image: PROJECT_2_BG,
-    bgImage: PROJECT_2_BG,
+    image: screenshot("architecture-e-commerce-3d.vercel.app"),
+    bgImage: DEFAULT_BG,
+    url: "https://architecture-e-commerce-3d.vercel.app",
   },
   {
-    id: "proj-3",
+    id: "berfin-akbas",
     number: "03",
-    title: "CINEMATIC INTERFACE",
-    category: "INTERACTION",
-    year: "2025",
-    image: PROJECT_3_BG,
-    bgImage: PROJECT_3_BG,
+    title: "BERFIN AKBAŞ",
+    category: "PORTFOLIO / IDENTITY",
+    year: "2026",
+    image: screenshot("berfinakbas-com.vercel.app"),
+    bgImage: DEFAULT_BG,
+    url: "https://berfinakbas-com.vercel.app",
   },
   {
-    id: "proj-4",
+    id: "reformer",
     number: "04",
-    title: "MOTION LAB",
-    category: "EXPERIMENT",
-    year: "2025",
-    image: PROJECT_4_BG,
-    bgImage: PROJECT_4_BG,
+    title: "REFORMER",
+    category: "WELLNESS / BOOKING",
+    year: "2026",
+    image: screenshot("reformer-beta.vercel.app"),
+    bgImage: DEFAULT_BG,
+    url: "https://reformer-beta.vercel.app",
+  },
+  {
+    id: "parfum",
+    number: "05",
+    title: "PARFUM",
+    category: "BEAUTY / COMMERCE",
+    year: "2026",
+    image: screenshot("parfum-eta.vercel.app"),
+    bgImage: DEFAULT_BG,
+    url: "https://parfum-eta.vercel.app",
+  },
+  {
+    id: "nail-studio",
+    number: "06",
+    title: "NAIL STUDIO",
+    category: "BEAUTY / BRAND",
+    year: "2026",
+    image: screenshot("nailstudio-gamma.vercel.app"),
+    bgImage: DEFAULT_BG,
+    url: "https://nailstudio-gamma.vercel.app",
+  },
+  {
+    id: "xxl-cafe",
+    number: "07",
+    title: "XXL CAFE & CO.",
+    category: "HOSPITALITY / COMMERCE",
+    year: "2026",
+    image: screenshot("xxl-cafe-o-co.vercel.app"),
+    bgImage: DEFAULT_BG,
+    url: "https://xxl-cafe-o-co.vercel.app",
   },
 ];
