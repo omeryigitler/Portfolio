@@ -8,15 +8,12 @@ export interface ProjectData {
   title: string;
   category: string;
   year: string;
-  image: string;
   bgImage: string;
   url: string;
 }
 
-const screenshot = (domain: string) => `https://screenshotof.com/${domain}?s=2048`;
-
-// The portfolio UI stays neutral; project colour lives only inside the media frame.
-// Screenshots are generated from the live deployments so the work stays visually current.
+// Real portfolio projects. The portfolio shell stays neutral; each project's
+// own colour and art direction appears inside its live preview frame.
 export const PROJECTS: ProjectData[] = [
   {
     id: "japanese-bakery",
@@ -24,7 +21,6 @@ export const PROJECTS: ProjectData[] = [
     title: "JAPANESE BAKERY",
     category: "COMMERCE / EDITORIAL",
     year: "2026",
-    image: screenshot("japanese-bakery.vercel.app"),
     bgImage: DEFAULT_BG,
     url: "https://japanese-bakery.vercel.app",
   },
@@ -34,7 +30,6 @@ export const PROJECTS: ProjectData[] = [
     title: "ARCHITECTURE 3D",
     category: "3D / E-COMMERCE",
     year: "2026",
-    image: screenshot("architecture-e-commerce-3d.vercel.app"),
     bgImage: DEFAULT_BG,
     url: "https://architecture-e-commerce-3d.vercel.app",
   },
@@ -44,7 +39,6 @@ export const PROJECTS: ProjectData[] = [
     title: "BERFIN AKBAŞ",
     category: "PORTFOLIO / IDENTITY",
     year: "2026",
-    image: screenshot("berfinakbas-com.vercel.app"),
     bgImage: DEFAULT_BG,
     url: "https://berfinakbas-com.vercel.app",
   },
@@ -54,7 +48,6 @@ export const PROJECTS: ProjectData[] = [
     title: "REFORMER",
     category: "WELLNESS / BOOKING",
     year: "2026",
-    image: screenshot("reformer-beta.vercel.app"),
     bgImage: DEFAULT_BG,
     url: "https://reformer-beta.vercel.app",
   },
@@ -64,7 +57,6 @@ export const PROJECTS: ProjectData[] = [
     title: "PARFUM",
     category: "BEAUTY / COMMERCE",
     year: "2026",
-    image: screenshot("parfum-eta.vercel.app"),
     bgImage: DEFAULT_BG,
     url: "https://parfum-eta.vercel.app",
   },
@@ -74,7 +66,6 @@ export const PROJECTS: ProjectData[] = [
     title: "NAIL STUDIO",
     category: "BEAUTY / BRAND",
     year: "2026",
-    image: screenshot("nailstudio-gamma.vercel.app"),
     bgImage: DEFAULT_BG,
     url: "https://nailstudio-gamma.vercel.app",
   },
@@ -84,7 +75,6 @@ export const PROJECTS: ProjectData[] = [
     title: "XXL CAFE & CO.",
     category: "HOSPITALITY / COMMERCE",
     year: "2026",
-    image: screenshot("xxl-cafe-o-co.vercel.app"),
     bgImage: DEFAULT_BG,
     url: "https://xxl-cafe-o-co.vercel.app",
   },
