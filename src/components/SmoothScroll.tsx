@@ -11,33 +11,42 @@ export const SmoothScroll: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    ScrollTrigger.config({
+      limitCallbacks: true,
+      ignoreMobileResize: true,
+    });
+
     if (prefersReducedMotion) {
       ScrollTrigger.refresh();
       return;
     }
 
     const lenis = new Lenis({
-      lerp: 0.1,
+      lerp: 0.13,
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 0.9,
+      wheelMultiplier: 1,
       touchMultiplier: 1,
-      anchors: { offset: -28 },
+      anchors: { offset: -72 },
     });
 
     lenisRef.current = lenis;
 
     const handleLenisScroll = () => ScrollTrigger.update();
     const tick = (time: number) => lenis.raf(time * 1000);
+    const refresh = () => ScrollTrigger.refresh();
 
     lenis.on('scroll', handleLenisScroll);
     gsap.ticker.add(tick);
     gsap.ticker.lagSmoothing(0);
 
-    ScrollTrigger.refresh();
+    window.addEventListener('load', refresh, { once: true });
+    document.fonts?.ready.then(refresh).catch(() => undefined);
+    requestAnimationFrame(() => requestAnimationFrame(refresh));
 
     return () => {
+      window.removeEventListener('load', refresh);
       gsap.ticker.remove(tick);
       lenis.off('scroll', handleLenisScroll);
       lenis.destroy();

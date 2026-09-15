@@ -2,9 +2,9 @@ import React from 'react';
 
 export const FooterWordmark: React.FC = () => {
   return (
-    <footer className="pt-32 pb-4 md:pb-8 px-4 md:px-12 flex flex-col items-center bg-canvas pointer-events-auto">
-      <div className="w-full flex justify-center">
-        <h1 className="text-[clamp(64px,14.5vw,280px)] leading-[0.75] tracking-[-0.07em] font-medium text-ink w-full text-center whitespace-nowrap pb-2">
+    <footer className="flex flex-col items-center overflow-hidden rounded-b-[8px] bg-canvas px-4 pb-5 pt-32 pointer-events-auto md:rounded-b-[10px] md:px-12 md:pb-8">
+      <div className="flex w-full justify-center">
+        <h1 className="w-full whitespace-nowrap pb-3 text-center text-[clamp(64px,14.5vw,280px)] font-medium leading-[0.78] tracking-[-0.07em] text-ink">
           omeryigitler<span className="text-acid">.</span>
         </h1>
       </div>

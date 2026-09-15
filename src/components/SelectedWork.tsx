@@ -10,24 +10,26 @@ gsap.registerPlugin(ScrollTrigger);
 
 export const SelectedWork: React.FC = () => {
   const containerRef = useRef<HTMLElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
   const projectRefs = useRef<(HTMLDivElement | null)[]>([]);
   const mediaInnerRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
   const { setActiveImage, setCursorState, setCursorText } = useTheme();
 
   useEffect(() => {
-    if (!containerRef.current || !stageRef.current) return;
+    if (!containerRef.current) return;
 
     const panels = projectRefs.current.filter(Boolean) as HTMLDivElement[];
     if (!panels.length) return;
 
     const ctx = gsap.context(() => {
-      gsap.set(panels, { autoAlpha: 0, y: 72, scale: 1.025, pointerEvents: 'none' });
+      gsap.set(panels, { autoAlpha: 0, y: 64, scale: 1.02, pointerEvents: 'none' });
       gsap.set(panels[0], { autoAlpha: 1, y: 0, scale: 1, pointerEvents: 'auto' });
 
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (prefersReducedMotion) {
+        panels.forEach((panel, index) => {
+          gsap.set(panel, { autoAlpha: index === 0 ? 1 : 0, y: 0, scale: 1, pointerEvents: index === 0 ? 'auto' : 'none' });
+        });
         setActiveImage(PROJECTS[0].bgImage);
         return;
       }
@@ -35,60 +37,57 @@ export const SelectedWork: React.FC = () => {
       const totalProjects = PROJECTS.length;
       let activeIndex = 0;
 
-      const tl = gsap.timeline({
-        defaults: { ease: 'none' },
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top top',
-          end: () => `+=${Math.round(window.innerHeight * 2.8)}`,
-          scrub: 0.25,
-          pin: stageRef.current,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            const nextIndex = Math.min(
-              Math.max(Math.round(self.progress * (totalProjects - 1)), 0),
-              totalProjects - 1,
-            );
-
-            if (nextIndex !== activeIndex) {
-              activeIndex = nextIndex;
-              setActiveImage(PROJECTS[activeIndex].bgImage);
-            }
-
-            panels.forEach((panel, index) => {
-              panel.style.pointerEvents = index === activeIndex ? 'auto' : 'none';
-            });
-          },
-          onEnter: () => setActiveImage(PROJECTS[0].bgImage),
-          onEnterBack: () => setActiveImage(PROJECTS[totalProjects - 1].bgImage),
-          onLeave: () => setActiveImage(DEFAULT_BG),
-          onLeaveBack: () => setActiveImage(DEFAULT_BG),
-        },
-      });
-
-      tl.to({}, { duration: 0.5 });
+      const tl = gsap.timeline({ defaults: { ease: 'none' } });
+      tl.to({}, { duration: 0.8 });
 
       for (let i = 1; i < totalProjects; i += 1) {
         const previous = panels[i - 1];
         const current = panels[i];
 
         tl.to(previous, {
-          y: -48,
-          scale: 0.97,
+          y: -42,
+          scale: 0.975,
           autoAlpha: 0,
-          duration: 0.26,
+          duration: 0.22,
         });
 
         tl.fromTo(
           current,
-          { y: 72, scale: 1.025, autoAlpha: 0 },
-          { y: 0, scale: 1, autoAlpha: 1, duration: 0.26 },
+          { y: 64, scale: 1.02, autoAlpha: 0 },
+          { y: 0, scale: 1, autoAlpha: 1, duration: 0.22 },
           '<',
         );
 
-        tl.to({}, { duration: 0.5 });
+        tl.to({}, { duration: 0.8 });
       }
+
+      ScrollTrigger.create({
+        trigger: containerRef.current,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: true,
+        animation: tl,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          const nextIndex = Math.min(
+            Math.max(Math.round(self.progress * (totalProjects - 1)), 0),
+            totalProjects - 1,
+          );
+
+          if (nextIndex !== activeIndex) {
+            activeIndex = nextIndex;
+            setActiveImage(PROJECTS[activeIndex].bgImage);
+          }
+
+          panels.forEach((panel, index) => {
+            panel.style.pointerEvents = index === activeIndex ? 'auto' : 'none';
+          });
+        },
+        onEnter: () => setActiveImage(PROJECTS[0].bgImage),
+        onEnterBack: () => setActiveImage(PROJECTS[totalProjects - 1].bgImage),
+        onLeave: () => setActiveImage(DEFAULT_BG),
+        onLeaveBack: () => setActiveImage(DEFAULT_BG),
+      });
     }, containerRef);
 
     return () => {
@@ -126,7 +125,7 @@ export const SelectedWork: React.FC = () => {
     gsap.to(inner, {
       x: normalizedX * -14,
       y: normalizedY * -10,
-      duration: 0.28,
+      duration: 0.25,
       ease: 'power3.out',
       overwrite: true,
     });
@@ -135,7 +134,7 @@ export const SelectedWork: React.FC = () => {
   const handleMouseLeave = (index: number) => {
     const inner = mediaInnerRefs.current[index];
     if (inner) {
-      gsap.to(inner, { x: 0, y: 0, duration: 0.35, ease: 'power3.out', overwrite: true });
+      gsap.to(inner, { x: 0, y: 0, duration: 0.32, ease: 'power3.out', overwrite: true });
     }
 
     setCursorState('default');
@@ -150,15 +149,22 @@ export const SelectedWork: React.FC = () => {
     setSelectedProject(project);
   };
 
+  const theatreHeight = `${Math.max(320, PROJECTS.length * 82)}svh`;
+
   return (
     <>
-      <section id="work" ref={containerRef} className="relative w-full bg-canvas pointer-events-auto">
-        <div ref={stageRef} className="relative h-[100svh] min-h-[720px] w-full overflow-hidden bg-canvas">
+      <section
+        id="work"
+        ref={containerRef}
+        className="relative w-full bg-canvas pointer-events-auto"
+        style={{ height: theatreHeight }}
+      >
+        <div className="sticky top-0 h-[100svh] min-h-[720px] w-full overflow-hidden bg-canvas">
           {PROJECTS.map((project, index) => (
             <div
               key={project.id}
               ref={(el) => { projectRefs.current[index] = el; }}
-              className="absolute inset-0 flex items-center justify-center px-6 py-24 md:px-12 md:py-28"
+              className="absolute inset-0 flex items-center justify-center px-6 pb-12 pt-28 md:px-12 md:pb-14 md:pt-32"
             >
               <div className="grid h-[78svh] max-h-[860px] min-h-[560px] w-full max-w-[1360px] grid-rows-[auto_minmax(0,1fr)_auto] gap-5 md:gap-7">
                 <header className="flex items-end justify-between gap-6">
@@ -204,9 +210,12 @@ export const SelectedWork: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => openProject(project)}
-                    className="group ml-auto inline-flex items-center gap-2 font-sans text-[12px] font-[500] uppercase tracking-[-0.015em] text-ink hover:text-acid focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4"
+                    className="group ml-auto inline-flex items-center gap-2 font-sans text-[12px] font-[500] uppercase tracking-[-0.015em] text-ink focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4"
                   >
-                    VIEW PROJECT
+                    <span className="relative pb-1">
+                      VIEW PROJECT
+                      <span className="absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 bg-acid transition-transform duration-300 ease-[0.16,1,0.3,1] group-hover:scale-x-100" />
+                    </span>
                     <ArrowUpRight size={15} className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </button>
                 </footer>
@@ -249,7 +258,7 @@ export const SelectedWork: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setSelectedProject(null)}
-                  className="p-2 text-ink transition-colors hover:text-acid focus-visible:outline-2 focus-visible:outline-acid"
+                  className="p-2 text-ink transition-opacity hover:opacity-55 focus-visible:outline-2 focus-visible:outline-acid"
                   aria-label="Close project preview"
                 >
                   <X size={28} strokeWidth={1.4} />
