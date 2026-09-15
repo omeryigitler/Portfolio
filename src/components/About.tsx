@@ -5,7 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 export const About: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
   const line1 = useRef<HTMLDivElement>(null);
   const line2 = useRef<HTMLDivElement>(null);
   const line3 = useRef<HTMLDivElement>(null);
@@ -14,22 +14,30 @@ export const About: React.FC = () => {
 
   useEffect(() => {
     if (!containerRef.current) return;
-    
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top 80%",
-        end: "center center",
-        scrub: 1
-      }
-    });
 
-    tl.from(line1.current, { x: -100, opacity: 0, duration: 1 }, 0);
-    tl.from(line2.current, { x: 100, opacity: 0, duration: 1 }, 0.2);
-    tl.from(line3.current, { y: 50, opacity: 0, duration: 1 }, 0.4);
-    tl.from(line4.current, { x: -50, opacity: 0, duration: 1 }, 0.6);
-    tl.from(line5.current, { y: 50, opacity: 0, duration: 1 }, 0.8);
-    
+    const ctx = gsap.context(() => {
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReducedMotion) return;
+
+      const tl = gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top 82%',
+          end: 'center 52%',
+          scrub: 0.45,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      tl.from(line1.current, { x: -64, opacity: 0, duration: 0.8 }, 0);
+      tl.from(line2.current, { x: 64, opacity: 0, duration: 0.8 }, 0.14);
+      tl.from(line3.current, { y: 32, opacity: 0, duration: 0.8 }, 0.28);
+      tl.from(line4.current, { x: -36, opacity: 0, duration: 0.8 }, 0.42);
+      tl.from(line5.current, { y: 32, opacity: 0, duration: 0.8 }, 0.56);
+    }, containerRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (
@@ -41,7 +49,7 @@ export const About: React.FC = () => {
         <div ref={line4}>DETAIL, SYSTEMS</div>
         <div ref={line5}>AND INTERACTION.</div>
       </div>
-      
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-12 md:gap-8 mt-24 md:mt-32 font-mono text-[10px] md:text-[11px] uppercase tracking-[0.04em] text-ink">
         <div>
           <p className="text-muted-gray mb-6">DESIGN</p>

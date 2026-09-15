@@ -1,84 +1,63 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { motion, useSpring, useMotionValue } from 'motion/react';
+import React, { useEffect, useState } from 'react';
+import { motion, useMotionValue, useSpring, useTransform, useVelocity } from 'motion/react';
 import { useTheme } from '../context/ThemeContext';
 
 export const CustomCursor: React.FC = () => {
   const { cursorState, cursorText } = useTheme();
-  
   const mouseX = useMotionValue(-100);
   const mouseY = useMotionValue(-100);
-  
-  // Spring physics for smooth pointer following
-  const springConfig = { damping: 25, stiffness: 400, mass: 0.5 };
+  const velocityX = useVelocity(mouseX);
+  const skewX = useTransform(velocityX, [-1800, 0, 1800], [-4, 0, 4], { clamp: true });
+
+  const springConfig = { damping: 28, stiffness: 460, mass: 0.42 };
   const cursorX = useSpring(mouseX, springConfig);
   const cursorY = useSpring(mouseY, springConfig);
-  
-  // Skew effect based on velocity
-  const [skew, setSkew] = useState(0);
-  const lastX = useRef(0);
-  
-  useEffect(() => {
-    const moveCursor = (e: MouseEvent) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
-      
-      const dx = e.clientX - lastX.current;
-      lastX.current = e.clientX;
-      
-      // Calculate skew
-      const newSkew = Math.max(-8, Math.min(8, dx * 0.15));
-      setSkew(newSkew);
-      
-      // Decay skew rapidly
-      setTimeout(() => setSkew(0), 100);
-    };
 
-    window.addEventListener('mousemove', moveCursor);
-    return () => {
-      window.removeEventListener('mousemove', moveCursor);
-    };
-  }, [mouseX, mouseY]);
+  const [isCoarsePointer, setIsCoarsePointer] = useState(false);
 
-  // Hide cursor context on mobile completely
-  const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
-    setIsMobile(window.matchMedia("(pointer: coarse)").matches);
+    const media = window.matchMedia('(pointer: coarse)');
+    setIsCoarsePointer(media.matches);
+
+    const handleChange = (event: MediaQueryListEvent) => setIsCoarsePointer(event.matches);
+    media.addEventListener('change', handleChange);
+
+    return () => media.removeEventListener('change', handleChange);
   }, []);
 
-  if (isMobile) return null;
+  useEffect(() => {
+    if (isCoarsePointer) return;
+
+    const moveCursor = (event: MouseEvent) => {
+      mouseX.set(event.clientX);
+      mouseY.set(event.clientY);
+    };
+
+    window.addEventListener('mousemove', moveCursor, { passive: true });
+    return () => window.removeEventListener('mousemove', moveCursor);
+  }, [isCoarsePointer, mouseX, mouseY]);
+
+  if (isCoarsePointer || cursorState === 'default') return null;
 
   return (
-    <>
-      <motion.div
-        className={`fixed top-0 left-0 pointer-events-none z-[100] flex items-center justify-center font-mono uppercase tracking-[0.04em] text-[10px] whitespace-nowrap transition-opacity duration-300 ${
-          cursorState === 'project' ? 'opacity-100' : 'opacity-0'
-        }`}
-        style={{
-          x: cursorX,
-          y: cursorY,
-          translateX: '-50%',
-          translateY: '-50%',
-          skewX: skew
-        }}
-      >
-        <div className="bg-ink text-canvas px-4 py-2 flex items-center gap-2 shadow-2xl">
-          <span>{cursorText}</span>
-          <span className="w-1.5 h-1.5 bg-acid rounded-full"></span>
-        </div>
-      </motion.div>
-      
-      {/* Tiny acid dot for default if needed, or native */}
-      {cursorState === 'default' && (
-        <motion.div
-          className="fixed top-0 left-0 pointer-events-none z-[100] w-1.5 h-1.5 bg-acid rounded-full mix-blend-difference hidden md:block"
-          style={{
-            x: cursorX,
-            y: cursorY,
-            translateX: '-50%',
-            translateY: '-50%',
-          }}
-        />
-      )}
-    </>
+    <motion.div
+      className="fixed top-0 left-0 pointer-events-none z-[100] flex items-center justify-center font-mono uppercase tracking-[0.04em] text-[10px] whitespace-nowrap"
+      style={{
+        x: cursorX,
+        y: cursorY,
+        translateX: '-50%',
+        translateY: '-50%',
+        skewX,
+      }}
+      initial={{ opacity: 0, scale: 0.94 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.94 }}
+      transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+    >
+      <div className="bg-ink text-canvas px-4 py-2 flex items-center gap-2 shadow-[0_8px_24px_rgba(0,0,0,0.12)]">
+        <span>{cursorText}</span>
+        <span className="w-1.5 h-1.5 bg-acid rounded-full" />
+      </div>
+    </motion.div>
   );
 };

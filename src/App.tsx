@@ -18,14 +18,11 @@ export default function App() {
     <ThemeProvider>
       <SmoothScroll>
         <CustomCursor />
-        
-        {/* Layer A: Full screen outer background */}
+
         <BackgroundLayer />
-        
-        {/* Layer B: Floating white canvas progression */}
+
         <div className="relative z-10 w-full min-h-screen py-4 md:py-7 flex flex-col items-center pointer-events-none">
-          
-          <main className="w-[calc(100vw-32px)] md:w-[calc(100vw-56px)] max-w-[1600px] bg-canvas rounded-[14px] md:rounded-[18px] shadow-[0_8px_40px_rgba(0,0,0,0.035)] pointer-events-auto overflow-hidden">
+          <main className="w-[calc(100vw-32px)] md:w-[calc(100vw-56px)] max-w-[1600px] rounded-[14px] md:rounded-[18px] shadow-[0_8px_40px_rgba(0,0,0,0.035)] pointer-events-auto overflow-hidden bg-transparent">
             <Hero />
             <SignalScene />
             <ProjectTheatre />
@@ -36,7 +33,6 @@ export default function App() {
             <Contact />
             <FooterWordmark />
           </main>
-          
         </div>
       </SmoothScroll>
     </ThemeProvider>

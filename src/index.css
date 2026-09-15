@@ -9,7 +9,6 @@
   --color-muted-gray: #77776F;
   --color-acid: #EFFF00;
 
-  /* Use Switzer and editorial alternatives as requested */
   --font-sans: "Switzer", "Neue Montreal", "Suisse International", "Neue Haas Grotesk Display", "Helvetica Now Display", sans-serif;
   --font-mono: "IBM Plex Mono", "Space Mono", monospace;
 }
@@ -18,24 +17,28 @@
   html {
     background-color: var(--color-ink);
   }
-  
-  /* Lenis smooth scrolling styles */
-  html.lenis, html.lenis body {
+
+  html.lenis,
+  html.lenis body {
     height: auto;
   }
+
   .lenis.lenis-smooth {
     scroll-behavior: auto !important;
   }
+
   .lenis.lenis-smooth [data-lenis-prevent] {
     overscroll-behavior: contain;
   }
+
   .lenis.lenis-stopped {
     overflow: hidden;
   }
+
   .lenis.lenis-scrolling iframe {
     pointer-events: none;
   }
-  
+
   body {
     margin: 0;
     padding: 0;
@@ -44,7 +47,8 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  
+
+  .hide-cursor,
   .hide-cursor * {
     cursor: none !important;
   }
@@ -52,6 +56,21 @@
   ::selection {
     background-color: var(--color-acid);
     color: var(--color-ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html:focus-within {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
@@ -63,11 +82,5 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
-  }
-  
-  .text-mask {
-    color: black;
-    background-color: white;
-    mix-blend-mode: screen;
   }
 }
