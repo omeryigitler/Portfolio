@@ -1,25 +1,21 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowUpRight, X } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useUI } from '../context/UIContext';
-import { DEFAULT_AMBIENT, DEFAULT_BG, PROJECTS, type ProjectData } from '../data';
-
-gsap.registerPlugin(ScrollTrigger);
+import { DEFAULT_AMBIENT, PROJECTS, type ProjectData } from '../data';
 
 type ProjectViewportProps = {
   project: ProjectData;
-  mount: boolean;
+  interactive?: boolean;
 };
 
-const ProjectViewport: React.FC<ProjectViewportProps> = ({ project, mount }) => {
+const ProjectViewport: React.FC<ProjectViewportProps> = ({ project, interactive = false }) => {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     setLoaded(false);
-  }, [project.url, mount]);
+  }, [project.url]);
 
   return (
     <div className="absolute inset-0 overflow-hidden bg-[#ecebe6]">
@@ -27,148 +23,80 @@ const ProjectViewport: React.FC<ProjectViewportProps> = ({ project, mount }) => 
         className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${loaded ? 'opacity-0' : 'opacity-100'}`}
         aria-hidden="true"
       >
-        <div className="flex items-center gap-3 font-mono text-[9px] uppercase tracking-[0.08em] text-muted-gray md:text-[10px]">
+        <div className="flex items-center gap-3 font-mono text-[8px] uppercase tracking-[0.08em] text-muted-gray md:text-[9px]">
           <span className="h-[5px] w-[5px] rounded-full bg-acid" />
-          <span>LOADING LIVE PROJECT</span>
+          <span>LOADING PROJECT</span>
         </div>
       </div>
 
-      {mount && (
-        <iframe
-          src={project.url}
-          title={`${project.title} live project preview`}
-          loading="eager"
-          tabIndex={-1}
-          aria-hidden="true"
-          onLoad={() => setLoaded(true)}
-          className={`pointer-events-none absolute inset-0 h-full w-full border-0 bg-white transition-opacity duration-700 ${loaded ? 'opacity-100' : 'opacity-0'}`}
-        />
-      )}
+      <iframe
+        src={project.url}
+        title={`${project.title} ${interactive ? 'interactive project' : 'project cover'}`}
+        loading={interactive ? 'eager' : 'lazy'}
+        tabIndex={interactive ? 0 : -1}
+        aria-hidden={interactive ? undefined : true}
+        onLoad={() => setLoaded(true)}
+        className={
+          interactive
+            ? `absolute inset-0 h-full w-full border-0 bg-white transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'}`
+            : `pointer-events-none absolute left-0 top-0 h-[250%] w-[250%] origin-top-left scale-[0.4] border-0 bg-white transition-opacity duration-700 ${loaded ? 'opacity-100' : 'opacity-0'}`
+        }
+      />
 
-      <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-ink/[0.05]" />
+      {!interactive && (
+        <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-ink/[0.06]" />
+      )}
     </div>
   );
 };
 
+const desktopLayouts = [
+  'lg:col-start-1 lg:col-span-5 lg:row-start-1 lg:row-span-3',
+  'lg:col-start-6 lg:col-span-3 lg:row-start-1 lg:row-span-2',
+  'lg:col-start-9 lg:col-span-4 lg:row-start-1 lg:row-span-3',
+  'lg:col-start-6 lg:col-span-3 lg:row-start-3 lg:row-span-2',
+  'lg:col-start-10 lg:col-span-3 lg:row-start-4 lg:row-span-3',
+  'lg:col-start-1 lg:col-span-3 lg:row-start-4 lg:row-span-3',
+  'lg:col-start-4 lg:col-span-6 lg:row-start-5 lg:row-span-2',
+];
+
+const cardRotations = [-0.35, 0.45, -0.22, 0.3, -0.4, 0.22, -0.12];
+
 export const SelectedWork: React.FC = () => {
-  const containerRef = useRef<HTMLElement>(null);
-  const projectRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const mediaInnerRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
-  const [activeProjectIndex, setActiveProjectIndex] = useState(0);
-  const { setActiveImage, setActiveAmbient, setCursorState, setCursorText } = useTheme();
+  const { setActiveAmbient, setCursorState, setCursorText } = useTheme();
   const { setProjectOpen } = useUI();
 
-  useEffect(() => {
-    if (!containerRef.current) return;
+  const resetCursor = () => {
+    setCursorState('default');
+    setCursorText('');
+    document.body.classList.remove('hide-cursor');
+  };
 
-    const panels = projectRefs.current.filter(Boolean) as HTMLDivElement[];
-    if (!panels.length) return;
+  const handleEnter = (project: ProjectData) => {
+    setActiveAmbient(project.ambientColor);
+    setCursorState('project');
+    setCursorText(`OPEN ${project.number} ↗`);
+    document.body.classList.add('hide-cursor');
+  };
 
-    const ctx = gsap.context(() => {
-      gsap.set(panels, { autoAlpha: 0, y: 54, scale: 1.015, pointerEvents: 'none' });
-      gsap.set(panels[0], { autoAlpha: 1, y: 0, scale: 1, pointerEvents: 'auto' });
+  const handleLeave = () => {
+    setActiveAmbient(DEFAULT_AMBIENT);
+    resetCursor();
+  };
 
-      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (prefersReducedMotion) {
-        panels.forEach((panel, index) => {
-          gsap.set(panel, {
-            autoAlpha: index === 0 ? 1 : 0,
-            y: 0,
-            scale: 1,
-            pointerEvents: index === 0 ? 'auto' : 'none',
-          });
-        });
-        setActiveProjectIndex(0);
-        setActiveImage(PROJECTS[0].bgImage);
-        setActiveAmbient(PROJECTS[0].ambientColor);
-        return;
-      }
-
-      const totalProjects = PROJECTS.length;
-      let activeIndex = 0;
-      const tl = gsap.timeline({ defaults: { ease: 'none' } });
-
-      tl.to({}, { duration: 0.72 });
-
-      for (let i = 1; i < totalProjects; i += 1) {
-        const previous = panels[i - 1];
-        const current = panels[i];
-
-        tl.to(previous, {
-          y: -34,
-          scale: 0.982,
-          autoAlpha: 0,
-          duration: 0.22,
-        });
-
-        tl.fromTo(
-          current,
-          { y: 54, scale: 1.015, autoAlpha: 0 },
-          { y: 0, scale: 1, autoAlpha: 1, duration: 0.22 },
-          '<',
-        );
-
-        tl.to({}, { duration: 0.72 });
-      }
-
-      ScrollTrigger.create({
-        trigger: containerRef.current,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: true,
-        animation: tl,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          const nextIndex = Math.min(
-            Math.max(Math.round(self.progress * (totalProjects - 1)), 0),
-            totalProjects - 1,
-          );
-
-          if (nextIndex !== activeIndex) {
-            activeIndex = nextIndex;
-            setActiveProjectIndex(activeIndex);
-            setActiveImage(PROJECTS[activeIndex].bgImage);
-            setActiveAmbient(PROJECTS[activeIndex].ambientColor);
-          }
-
-          panels.forEach((panel, index) => {
-            panel.style.pointerEvents = index === activeIndex ? 'auto' : 'none';
-          });
-        },
-        onEnter: () => {
-          setActiveProjectIndex(0);
-          setActiveImage(PROJECTS[0].bgImage);
-          setActiveAmbient(PROJECTS[0].ambientColor);
-        },
-        onEnterBack: () => {
-          const lastIndex = totalProjects - 1;
-          setActiveProjectIndex(lastIndex);
-          setActiveImage(PROJECTS[lastIndex].bgImage);
-          setActiveAmbient(PROJECTS[lastIndex].ambientColor);
-        },
-        onLeave: () => {
-          setActiveImage(DEFAULT_BG);
-          setActiveAmbient(DEFAULT_AMBIENT);
-        },
-        onLeaveBack: () => {
-          setActiveImage(DEFAULT_BG);
-          setActiveAmbient(DEFAULT_AMBIENT);
-        },
-      });
-    }, containerRef);
-
-    return () => {
-      ctx.revert();
-      setActiveImage(DEFAULT_BG);
-      setActiveAmbient(DEFAULT_AMBIENT);
-      document.body.classList.remove('hide-cursor');
-    };
-  }, [setActiveAmbient, setActiveImage]);
+  const openProject = (project: ProjectData) => {
+    setSelectedProject(project);
+    setProjectOpen(true);
+    setActiveAmbient(project.ambientColor);
+    resetCursor();
+  };
 
   const closeProject = () => {
     setSelectedProject(null);
     setProjectOpen(false);
+    setActiveAmbient(DEFAULT_AMBIENT);
+    resetCursor();
   };
 
   useEffect(() => {
@@ -182,200 +110,154 @@ export const SelectedWork: React.FC = () => {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [selectedProject]);
 
-  useEffect(() => () => setProjectOpen(false), [setProjectOpen]);
-
-  const handleMouseEnter = (projectNumber: string) => {
-    setCursorState('project');
-    setCursorText(`VIEW PROJECT ${projectNumber} ↗`);
-    document.body.classList.add('hide-cursor');
-  };
-
-  const handleMouseMove = (index: number, event: React.MouseEvent<HTMLButtonElement>) => {
-    const inner = mediaInnerRefs.current[index];
-    if (!inner) return;
-
-    const bounds = event.currentTarget.getBoundingClientRect();
-    const normalizedX = (event.clientX - bounds.left) / bounds.width - 0.5;
-    const normalizedY = (event.clientY - bounds.top) / bounds.height - 0.5;
-
-    gsap.to(inner, {
-      x: normalizedX * -12,
-      y: normalizedY * -8,
-      duration: 0.22,
-      ease: 'power3.out',
-      overwrite: true,
-    });
-  };
-
-  const handleMouseLeave = (index: number) => {
-    const inner = mediaInnerRefs.current[index];
-    if (inner) {
-      gsap.to(inner, { x: 0, y: 0, duration: 0.28, ease: 'power3.out', overwrite: true });
-    }
-
-    setCursorState('default');
-    setCursorText('');
-    document.body.classList.remove('hide-cursor');
-  };
-
-  const openProject = (project: ProjectData) => {
-    setCursorState('default');
-    setCursorText('');
-    document.body.classList.remove('hide-cursor');
-    setSelectedProject(project);
-    setProjectOpen(true);
-  };
-
-  const theatreHeight = `${Math.max(360, PROJECTS.length * 72)}svh`;
+  useEffect(() => {
+    return () => {
+      setProjectOpen(false);
+      setActiveAmbient(DEFAULT_AMBIENT);
+      document.body.classList.remove('hide-cursor');
+    };
+  }, [setActiveAmbient, setProjectOpen]);
 
   return (
     <>
       <section
         id="work"
-        ref={containerRef}
-        className="pointer-events-auto relative w-full scroll-mt-3 rounded-[10px] bg-canvas shadow-[0_20px_70px_rgba(17,17,17,0.07)] md:scroll-mt-6"
-        style={{ height: theatreHeight }}
+        className="pointer-events-auto relative flex min-h-[calc(100svh-24px)] w-full scroll-mt-3 flex-col rounded-[10px] bg-canvas px-5 py-7 shadow-[0_20px_70px_rgba(17,17,17,0.07)] md:min-h-[calc(100svh-48px)] md:scroll-mt-6 md:px-10 md:py-9 lg:px-12"
       >
-        <div className="sticky top-0 h-[100svh] min-h-[720px] w-full overflow-hidden rounded-[10px] bg-canvas">
-          {PROJECTS.map((project, index) => {
-            const shouldMountPreview = Math.abs(index - activeProjectIndex) <= 1;
-
-            return (
-              <div
-                key={project.id}
-                ref={(el) => { projectRefs.current[index] = el; }}
-                className="absolute inset-0 flex items-center justify-center px-6 pb-12 pt-24 md:px-12 md:pb-14 md:pt-28"
-              >
-                <div className="grid h-[78svh] max-h-[860px] min-h-[560px] w-full max-w-[1360px] grid-rows-[auto_minmax(0,1fr)_auto] gap-5 md:gap-7">
-                  <header>
-                    <div className="mb-4 flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.05em] text-muted-gray md:text-[10px]">
-                      <span>02 / SELECTED WORK</span>
-                      <span>{project.number} / {String(PROJECTS.length).padStart(2, '0')}</span>
-                    </div>
-
-                    <div className="flex items-end justify-between gap-6">
-                      <h2 className="min-w-0 font-sans text-[clamp(34px,5vw,74px)] font-[500] leading-[0.9] tracking-[-0.055em] text-ink">
-                        {project.title}
-                      </h2>
-
-                      <div className="hidden shrink-0 text-right font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray md:block">
-                        <p className="text-ink">{project.category}</p>
-                        <p className="mt-1">{project.year}</p>
-                      </div>
-                    </div>
-                  </header>
-
-                  <motion.button
-                    type="button"
-                    layoutId={`project-media-${project.id}`}
-                    className="group relative min-h-0 w-full overflow-hidden bg-soft-gray text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4"
-                    onMouseEnter={() => handleMouseEnter(project.number)}
-                    onMouseMove={(event) => handleMouseMove(index, event)}
-                    onMouseLeave={() => handleMouseLeave(index)}
-                    onClick={() => openProject(project)}
-                    aria-label={`Open ${project.title} project preview`}
-                  >
-                    <div
-                      ref={(el) => { mediaInnerRefs.current[index] = el; }}
-                      className="absolute -left-[3%] -top-[3%] h-[106%] w-[106%] will-change-transform"
-                    >
-                      <ProjectViewport project={project} mount={shouldMountPreview} />
-                    </div>
-                    <div className="absolute inset-0 bg-ink/0 transition-colors duration-300 group-hover:bg-ink/[0.03]" />
-                  </motion.button>
-
-                  <footer className="flex items-start justify-between gap-6">
-                    <div className="font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray md:hidden">
-                      <p className="text-ink">{project.category}</p>
-                      <p className="mt-1">{project.year}</p>
-                    </div>
-                    <span className="hidden font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray md:block">WEBSITE / DESIGN / DEVELOPMENT</span>
-                    <button
-                      type="button"
-                      onClick={() => openProject(project)}
-                      className="group ml-auto inline-flex items-center gap-2 font-sans text-[12px] font-[500] uppercase tracking-[-0.015em] text-ink focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4"
-                    >
-                      <span className="relative pb-1">
-                        VIEW PROJECT
-                        <span className="absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 bg-acid transition-transform duration-300 ease-[0.16,1,0.3,1] group-hover:scale-x-100" />
-                      </span>
-                      <ArrowUpRight size={15} className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                    </button>
-                  </footer>
-                </div>
+        <div className="mx-auto flex min-h-0 w-full max-w-[1540px] flex-1 flex-col">
+          <header className="mb-5 flex items-end justify-between gap-8 md:mb-7">
+            <div>
+              <div className="font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
+                02 / SELECTED WORK
               </div>
-            );
-          })}
+              <h2 className="mt-2 text-[clamp(30px,3vw,52px)] font-[500] leading-[0.95] tracking-[-0.045em] text-ink">
+                Work index.
+              </h2>
+            </div>
+
+            <div className="hidden max-w-[330px] text-right md:block">
+              <p className="text-[13px] leading-[1.45] tracking-[-0.015em] text-ink/70">
+                Seven projects, one visual index. Pick a cover to open the full live experience.
+              </p>
+              <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">
+                07 PROJECTS / FULLSCREEN PREVIEW
+              </p>
+            </div>
+          </header>
+
+          <div className="grid flex-1 grid-cols-1 gap-3 md:grid-cols-2 lg:min-h-[640px] lg:grid-cols-12 lg:grid-rows-6 lg:gap-3">
+            {PROJECTS.map((project, index) => (
+              <motion.button
+                key={project.id}
+                type="button"
+                layoutId={`project-media-${project.id}`}
+                className={`group relative min-h-[260px] overflow-hidden rounded-[6px] bg-[#ecebe6] text-left shadow-[0_8px_24px_rgba(17,17,17,0.06)] focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4 md:min-h-[300px] lg:min-h-0 ${desktopLayouts[index] ?? ''}`}
+                animate={{ rotate: cardRotations[index] ?? 0 }}
+                whileHover={{ y: -6, rotate: 0, transition: { duration: 0.25, ease: [0.16, 1, 0.3, 1] } }}
+                whileFocus={{ y: -4, rotate: 0 }}
+                onMouseEnter={() => handleEnter(project)}
+                onMouseLeave={handleLeave}
+                onFocus={() => setActiveAmbient(project.ambientColor)}
+                onBlur={() => setActiveAmbient(DEFAULT_AMBIENT)}
+                onClick={() => openProject(project)}
+                aria-label={`Open ${project.title} fullscreen project`}
+              >
+                <ProjectViewport project={project} />
+
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/18 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+                <div className="pointer-events-none absolute left-3 top-3 flex items-center gap-2 rounded-[3px] border border-white/40 bg-canvas/88 px-2 py-1 font-mono text-[8px] uppercase tracking-[0.06em] text-ink backdrop-blur-md md:text-[9px]">
+                  <span>{project.number}</span>
+                  <span className="h-[4px] w-[4px] rounded-full bg-acid" />
+                </div>
+
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 border-t border-ink/8 bg-canvas/94 px-3 py-3 backdrop-blur-md md:px-4">
+                  <div className="min-w-0">
+                    <p className={`${index === 0 || index === 2 || index === 6 ? 'text-[18px] md:text-[20px]' : 'text-[14px] md:text-[15px]'} truncate font-[600] tracking-[-0.03em] text-ink`}>
+                      {project.title}
+                    </p>
+                    <p className="mt-1 truncate font-mono text-[7px] uppercase tracking-[0.05em] text-muted-gray md:text-[8px]">
+                      {project.category}
+                    </p>
+                  </div>
+
+                  <ArrowUpRight
+                    size={16}
+                    strokeWidth={1.5}
+                    className="shrink-0 text-ink transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
+                  />
+                </div>
+              </motion.button>
+            ))}
+          </div>
+
+          <div className="mt-5 flex items-center justify-between border-t border-ink/8 pt-4 font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray md:text-[9px]">
+            <span>ALBUM VIEW / CLICK A COVER</span>
+            <span>DESIGN · DEVELOPMENT · INTERACTION</span>
+          </div>
         </div>
       </section>
 
       <AnimatePresence>
         {selectedProject && (
           <motion.div
-            className="fixed inset-0 z-[200] bg-ink/25 p-3 md:p-7"
+            className="fixed inset-0 z-[200] bg-white"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onMouseDown={(event) => {
-              if (event.target === event.currentTarget) closeProject();
-            }}
+            transition={{ duration: 0.22 }}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${selectedProject.title} fullscreen project`}
           >
             <motion.div
-              className="relative flex h-full w-full flex-col overflow-hidden rounded-[8px] bg-canvas p-5 md:p-10"
-              initial={{ y: 18, scale: 0.99 }}
-              animate={{ y: 0, scale: 1 }}
-              exit={{ y: 18, scale: 0.99 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              role="dialog"
-              aria-modal="true"
-              aria-label={`${selectedProject.title} project preview`}
+              layoutId={`project-media-${selectedProject.id}`}
+              className="absolute inset-0 overflow-hidden bg-white"
+              transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
             >
-              <div className="mb-6 flex items-start justify-between gap-6">
-                <div>
-                  <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray">
-                    {selectedProject.number} / PROJECT PREVIEW
-                  </div>
-                  <h2 className="font-sans text-[clamp(34px,5vw,76px)] font-[500] leading-[0.9] tracking-[-0.055em] text-ink">
-                    {selectedProject.title}
-                  </h2>
-                </div>
-                <button
-                  type="button"
-                  onClick={closeProject}
-                  className="p-2 text-ink transition-opacity hover:opacity-55 focus-visible:outline-2 focus-visible:outline-acid"
-                  aria-label="Close project preview"
-                >
-                  <X size={28} strokeWidth={1.4} />
-                </button>
+              <ProjectViewport project={selectedProject} interactive />
+            </motion.div>
+
+            <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-between gap-3 p-3 md:p-4">
+              <div className="pointer-events-auto flex max-w-[70vw] items-center gap-3 rounded-[5px] border border-ink/10 bg-canvas/94 px-3 py-2 shadow-[0_8px_28px_rgba(17,17,17,0.08)] backdrop-blur-xl md:px-4 md:py-3">
+                <span className="font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray md:text-[9px]">
+                  {selectedProject.number} / {String(PROJECTS.length).padStart(2, '0')}
+                </span>
+                <span className="h-4 w-px bg-ink/12" />
+                <span className="truncate text-[13px] font-[600] tracking-[-0.02em] text-ink md:text-[15px]">
+                  {selectedProject.title}
+                </span>
               </div>
 
-              <motion.div
-                layoutId={`project-media-${selectedProject.id}`}
-                className="relative min-h-0 flex-1 overflow-hidden bg-soft-gray"
-                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <ProjectViewport project={selectedProject} mount />
-              </motion.div>
-
-              <div className="mt-5 flex items-end justify-between gap-6">
-                <div className="font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray">
-                  <span className="text-ink">{selectedProject.category}</span>
-                  <span className="ml-3">{selectedProject.year}</span>
-                </div>
+              <div className="pointer-events-auto flex items-center gap-2">
                 <a
                   href={selectedProject.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="group inline-flex items-center gap-2 font-sans text-[12px] font-[500] uppercase tracking-[-0.015em] text-ink focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4"
+                  className="group hidden items-center gap-2 rounded-[5px] border border-ink/10 bg-canvas/94 px-3 py-2 text-[10px] font-[600] uppercase tracking-[0.01em] text-ink shadow-[0_8px_28px_rgba(17,17,17,0.08)] backdrop-blur-xl transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-acid sm:inline-flex md:px-4 md:py-3"
                 >
-                  <span className="relative pb-1">
-                    VISIT LIVE
-                    <span className="absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 bg-acid transition-transform duration-300 ease-[0.16,1,0.3,1] group-hover:scale-x-100" />
-                  </span>
-                  <ArrowUpRight size={15} className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  OPEN LIVE
+                  <ArrowUpRight size={14} className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </a>
+
+                <button
+                  type="button"
+                  onClick={closeProject}
+                  className="grid h-10 w-10 place-items-center rounded-[5px] border border-ink/10 bg-canvas/94 text-ink shadow-[0_8px_28px_rgba(17,17,17,0.08)] backdrop-blur-xl transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-acid md:h-11 md:w-11"
+                  aria-label="Close fullscreen project"
+                >
+                  <X size={20} strokeWidth={1.4} />
+                </button>
               </div>
-            </motion.div>
+            </div>
+
+            <div className="pointer-events-none absolute bottom-3 left-3 z-20 hidden rounded-[4px] border border-ink/10 bg-canvas/92 px-3 py-2 font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray shadow-[0_8px_24px_rgba(17,17,17,0.06)] backdrop-blur-xl md:block">
+              <span className="text-ink">{selectedProject.category}</span>
+              <span className="mx-2">/</span>
+              <span>{selectedProject.year}</span>
+              <span className="mx-2">/</span>
+              <span>SCROLL & INTERACT INSIDE PROJECT</span>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
