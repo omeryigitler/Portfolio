@@ -10,12 +10,15 @@ export interface ProjectData {
   category: string;
   year: string;
   bgImage: string;
+  coverImage: string;
+  coverFit?: "cover" | "contain";
   ambientColor: string;
   url: string;
 }
 
 // Real portfolio projects. The white editorial sheet stays consistent, while
 // the outer layer picks up a restrained tint from each project's visual world.
+// Index covers are static project media; the live site only loads after a project is opened.
 export const PROJECTS: ProjectData[] = [
   {
     id: "japanese-bakery",
@@ -24,6 +27,7 @@ export const PROJECTS: ProjectData[] = [
     category: "COMMERCE / EDITORIAL",
     year: "2026",
     bgImage: DEFAULT_BG,
+    coverImage: "https://raw.githubusercontent.com/omeryigitler/Japanese-Bakery/main/public/hero.png",
     ambientColor: "#D6E6EA",
     url: "https://japanese-bakery.vercel.app",
   },
@@ -34,6 +38,7 @@ export const PROJECTS: ProjectData[] = [
     category: "3D / E-COMMERCE",
     year: "2026",
     bgImage: DEFAULT_BG,
+    coverImage: "https://raw.githubusercontent.com/omeryigitler/Architecture-eCommerce-3D/main/public/new-gunduz-day%20%281%29.png",
     ambientColor: "#DED8CB",
     url: "https://architecture-e-commerce-3d.vercel.app",
   },
@@ -44,6 +49,7 @@ export const PROJECTS: ProjectData[] = [
     category: "PORTFOLIO / IDENTITY",
     year: "2026",
     bgImage: DEFAULT_BG,
+    coverImage: "https://raw.githubusercontent.com/omeryigitler/berfinakbas.com/main/public/berfin-hero-full-1%20%281%29.png",
     ambientColor: "#E2D5D3",
     url: "https://berfinakbas-com.vercel.app",
   },
@@ -54,6 +60,7 @@ export const PROJECTS: ProjectData[] = [
     category: "WELLNESS / BOOKING",
     year: "2026",
     bgImage: DEFAULT_BG,
+    coverImage: "https://raw.githubusercontent.com/omeryigitler/reformer/main/public/premium/studio_reveal_1788398858603.jpg",
     ambientColor: "#D8E1D4",
     url: "https://reformer-beta.vercel.app",
   },
@@ -64,6 +71,8 @@ export const PROJECTS: ProjectData[] = [
     category: "BEAUTY / COMMERCE",
     year: "2026",
     bgImage: DEFAULT_BG,
+    coverImage: "https://raw.githubusercontent.com/omeryigitler/parfum/main/public/bottle-optimized.png",
+    coverFit: "contain",
     ambientColor: "#E4D6DC",
     url: "https://parfum-eta.vercel.app",
   },
@@ -74,6 +83,7 @@ export const PROJECTS: ProjectData[] = [
     category: "BEAUTY / BRAND",
     year: "2026",
     bgImage: DEFAULT_BG,
+    coverImage: "https://raw.githubusercontent.com/omeryigitler/nailstudio/main/src/assets/images/vertical_salon_1782782037818.jpg",
     ambientColor: "#E1D5E4",
     url: "https://nailstudio-gamma.vercel.app",
   },
@@ -84,6 +94,7 @@ export const PROJECTS: ProjectData[] = [
     category: "HOSPITALITY / COMMERCE",
     year: "2026",
     bgImage: DEFAULT_BG,
+    coverImage: "https://raw.githubusercontent.com/omeryigitler/xxl-cafe-o-co./main/src/assets/images/omerly_iced_coffee_1784775254141.jpg",
     ambientColor: "#E2D5C5",
     url: "https://xxl-cafe-o-co.vercel.app",
   },
