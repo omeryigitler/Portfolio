@@ -112,13 +112,13 @@ export const SystemMap: React.FC = () => {
   };
 
   return (
-    <section id="system" className="relative h-[100svh] min-h-[720px] w-full bg-canvas px-4 md:px-12 py-24 border-t border-soft-gray/30 overflow-hidden pointer-events-auto">
-      <div className="absolute top-24 left-4 md:left-12 z-20 flex items-center gap-4">
-        <h2 className="font-mono text-[10px] md:text-[11px] uppercase tracking-[0.04em] text-ink">CAPABILITIES / 05</h2>
-        <span className="font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray hidden md:block opacity-50">HOVER / TAP TO EXPLORE</span>
+    <section id="capabilities" className="pointer-events-auto relative h-[calc(100svh-24px)] min-h-[720px] w-full scroll-mt-3 overflow-hidden rounded-[10px] bg-canvas px-4 py-24 shadow-[0_20px_70px_rgba(17,17,17,0.07)] md:h-[calc(100svh-48px)] md:scroll-mt-6 md:px-12">
+      <div className="absolute left-4 top-24 z-20 flex items-center gap-4 md:left-12">
+        <h2 className="font-mono text-[10px] uppercase tracking-[0.04em] text-ink md:text-[11px]">05 / CAPABILITIES</h2>
+        <span className="hidden font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray opacity-50 md:block">HOVER / TAP TO EXPLORE</span>
       </div>
 
-      <div className="w-full h-full relative mt-12">
+      <div className="relative mt-12 h-full w-full">
         {SYSTEMS.map((sys) => {
           const isActive = activeNode === sys.id;
           const isDimmed = activeNode !== null && !isActive;
@@ -135,24 +135,24 @@ export const SystemMap: React.FC = () => {
               onFocus={() => setActiveNode(sys.id)}
               onBlur={() => setActiveNode(null)}
             >
-              <span className="relative flex items-center gap-2 group">
-                <span className="font-sans text-[32px] md:text-[56px] font-[500] tracking-[-0.04em] leading-none text-ink">
+              <span className="group relative flex items-center gap-2">
+                <span className="font-sans text-[32px] font-[500] leading-none tracking-[-0.04em] text-ink md:text-[56px]">
                   {sys.label}
                 </span>
                 <ArrowUpRight size={28} strokeWidth={1.5} className={`transition-transform duration-300 ${isActive ? 'translate-x-1 -translate-y-1' : ''}`} />
                 <span className={`absolute -bottom-2 left-0 h-[3px] bg-acid transition-all duration-300 ${isActive ? 'w-full' : 'w-0'}`} />
               </span>
 
-              <span className="absolute top-full left-4 mt-6 flex flex-col gap-3">
+              <span className="absolute left-4 top-full mt-6 flex flex-col gap-3">
                 {sys.sub.map((subItem, index) => (
                   <motion.span
                     key={subItem}
                     initial={false}
                     animate={{ opacity: isActive ? 1 : 0, x: isActive ? 0 : -10 }}
                     transition={{ duration: 0.25, delay: index * 0.04, ease: 'easeOut' }}
-                    className="relative flex items-center whitespace-nowrap font-mono text-[10px] md:text-[11px] tracking-[0.04em] text-ink"
+                    className="relative flex items-center whitespace-nowrap font-mono text-[10px] tracking-[0.04em] text-ink md:text-[11px]"
                   >
-                    <span className="w-4 h-px bg-ink/30 mr-3 inline-block" />
+                    <span className="mr-3 inline-block h-px w-4 bg-ink/30" />
                     {subItem}
                   </motion.span>
                 ))}
@@ -160,7 +160,7 @@ export const SystemMap: React.FC = () => {
                   initial={false}
                   animate={{ scaleY: isActive ? 1 : 0 }}
                   transition={{ duration: 0.25 }}
-                  className="absolute left-0 top-0 w-px h-[calc(100%-8px)] bg-ink/30 origin-top -z-10"
+                  className="absolute left-0 top-0 -z-10 h-[calc(100%-8px)] w-px origin-top bg-ink/30"
                 />
               </span>
             </MagneticNode>
