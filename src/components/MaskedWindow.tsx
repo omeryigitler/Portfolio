@@ -63,8 +63,8 @@ export const MaskedWindow: React.FC = () => {
   }, []);
 
   return (
-    <section ref={containerRef} className="pointer-events-auto relative h-[190svh] w-full bg-transparent">
-      <div className="sticky top-0 h-[100svh] min-h-[720px] w-full overflow-hidden bg-[#bcbdb8]">
+    <section id="transition" ref={containerRef} className="pointer-events-auto relative h-[190svh] w-full scroll-mt-3 md:scroll-mt-6">
+      <div className="sticky top-0 h-[100svh] min-h-[720px] w-full overflow-hidden rounded-[10px] bg-[#bcbdb8] shadow-[0_20px_70px_rgba(17,17,17,0.07)]">
         <div
           ref={backdropRef}
           className="absolute inset-0 bg-cover bg-center grayscale-[0.7] saturate-[0.5] will-change-transform"
@@ -77,7 +77,7 @@ export const MaskedWindow: React.FC = () => {
           className="absolute inset-x-[4%] top-[7%] flex h-[80%] flex-col overflow-hidden rounded-[8px] border border-ink/10 bg-canvas px-6 py-7 md:inset-x-[5%] md:h-[82%] md:px-10 md:py-9"
         >
           <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
-            <span>TRANSITION / 03</span>
+            <span>03 / TRANSITION</span>
             <span>KEEP SCROLLING</span>
           </div>
 
