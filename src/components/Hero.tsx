@@ -125,13 +125,18 @@ export const Hero: React.FC = () => {
           </h1>
 
           <div
-            className="mt-2 flex min-h-5 items-center gap-2 font-mono text-[9px] tracking-[0.045em] md:mt-3 md:min-h-6 md:text-[11px]"
+            className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1 border-l-2 border-acid pl-4 md:mt-2 md:gap-x-4 md:pl-5"
             aria-label="Websites should feel memorable."
           >
-            <span className="uppercase text-muted-gray" aria-hidden="true">websites should feel</span>
-            <span className="min-w-[8.5em] text-ink" aria-hidden="true">
+            <span className="font-mono text-[10px] uppercase tracking-[0.07em] text-muted-gray md:text-[11px]" aria-hidden="true">
+              websites should feel
+            </span>
+            <span
+              className="min-w-[7.8em] text-[clamp(24px,2.1vw,36px)] font-[600] leading-[0.95] tracking-[-0.04em] text-ink"
+              aria-hidden="true"
+            >
               {typedWord}
-              <span className="ml-1 inline-block h-[1em] w-[2px] animate-pulse bg-acid align-[-0.12em]" />
+              <span className="ml-1 inline-block h-[0.8em] w-[3px] animate-pulse bg-acid align-[-0.06em]" />
             </span>
           </div>
 

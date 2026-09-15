@@ -5,23 +5,53 @@ import { useTheme } from '../context/ThemeContext';
 import { useUI } from '../context/UIContext';
 import { DEFAULT_AMBIENT, PROJECTS, type ProjectData } from '../data';
 
-const ProjectCover: React.FC<{ project: ProjectData; priority?: boolean }> = ({ project, priority = false }) => (
-  <div
-    className="absolute inset-0 overflow-hidden"
-    style={{ backgroundColor: project.ambientColor }}
-  >
-    <img
-      src={project.coverImage}
-      alt=""
-      loading={priority ? 'eager' : 'lazy'}
-      decoding="async"
-      className={`h-full w-full transition-transform duration-700 ease-[0.16,1,0.3,1] group-hover:scale-[1.018] ${
-        project.coverFit === 'contain' ? 'object-contain p-[10%]' : 'object-cover'
-      }`}
-    />
-    <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-ink/[0.055]" />
-  </div>
-);
+const ProjectCover: React.FC<{ project: ProjectData; priority?: boolean }> = ({ project, priority = false }) => {
+  const [coverSrc, setCoverSrc] = useState(project.coverImage);
+  const [coverFailed, setCoverFailed] = useState(false);
+
+  useEffect(() => {
+    setCoverSrc(project.coverImage);
+    setCoverFailed(false);
+  }, [project.coverImage]);
+
+  const handleCoverError = () => {
+    if (project.coverFallback && coverSrc !== project.coverFallback) {
+      setCoverSrc(project.coverFallback);
+      return;
+    }
+    setCoverFailed(true);
+  };
+
+  return (
+    <div
+      className="absolute inset-0 overflow-hidden"
+      style={{ backgroundColor: project.ambientColor }}
+    >
+      {!coverFailed && (
+        <img
+          src={coverSrc}
+          alt=""
+          loading={priority ? 'eager' : 'lazy'}
+          decoding="async"
+          onError={handleCoverError}
+          className={`h-full w-full transition-transform duration-700 ease-[0.16,1,0.3,1] group-hover:scale-[1.018] ${
+            project.coverFit === 'contain' ? 'object-contain p-[8%]' : 'object-cover'
+          }`}
+        />
+      )}
+
+      {coverFailed && (
+        <div className="absolute inset-0 flex items-center justify-center px-6 text-center" aria-hidden="true">
+          <span className="max-w-[14ch] text-[clamp(20px,2.2vw,38px)] font-[600] leading-[0.9] tracking-[-0.045em] text-ink/20">
+            {project.title}
+          </span>
+        </div>
+      )}
+
+      <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-ink/[0.055]" />
+    </div>
+  );
+};
 
 const ProjectLiveViewport: React.FC<{ project: ProjectData }> = ({ project }) => {
   const [loaded, setLoaded] = useState(false);
@@ -36,7 +66,7 @@ const ProjectLiveViewport: React.FC<{ project: ProjectData }> = ({ project }) =>
         className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${loaded ? 'opacity-0' : 'opacity-100'}`}
         aria-hidden="true"
       >
-        <div className="flex items-center gap-3 font-mono text-[8px] uppercase tracking-[0.08em] text-muted-gray md:text-[9px]">
+        <div className="flex items-center gap-3 font-mono text-[9px] uppercase tracking-[0.08em] text-muted-gray md:text-[10px]">
           <span className="h-[5px] w-[5px] rounded-full bg-acid" />
           <span>LOADING PROJECT</span>
         </div>
@@ -79,10 +109,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 }) => {
   const titleSize =
     size === 'featured'
-      ? 'text-[20px] md:text-[25px]'
+      ? 'text-[21px] md:text-[26px]'
       : size === 'medium'
-        ? 'text-[15px] md:text-[18px]'
-        : 'text-[14px] md:text-[16px]';
+        ? 'text-[17px] md:text-[19px]'
+        : 'text-[15px] md:text-[17px]';
 
   return (
     <motion.button
@@ -102,17 +132,17 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/14 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-      <div className="pointer-events-none absolute left-3 top-3 flex items-center gap-2 rounded-[3px] border border-white/45 bg-canvas/90 px-2 py-1 font-mono text-[8px] uppercase tracking-[0.06em] text-ink backdrop-blur-md md:text-[9px]">
+      <div className="pointer-events-none absolute left-3 top-3 flex items-center gap-2 rounded-[3px] border border-white/45 bg-canvas/90 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.06em] text-ink backdrop-blur-md md:text-[10px]">
         <span>{project.number}</span>
         <span className="h-[4px] w-[4px] rounded-full bg-acid" />
       </div>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 border-t border-ink/8 bg-canvas/95 px-3 py-3 backdrop-blur-md md:px-4 md:py-4">
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 border-t border-ink/8 bg-canvas/95 px-3 py-3 backdrop-blur-md md:px-4 md:py-3.5">
         <div className="min-w-0">
           <p className={`${titleSize} truncate font-[600] leading-none tracking-[-0.035em] text-ink`}>
             {project.title}
           </p>
-          <p className="mt-1.5 truncate font-mono text-[7px] uppercase tracking-[0.05em] text-muted-gray md:text-[8px]">
+          <p className="mt-1.5 truncate font-mono text-[8px] uppercase tracking-[0.05em] text-muted-gray md:text-[9px]">
             {project.category} / {project.year}
           </p>
         </div>
@@ -195,10 +225,10 @@ export const SelectedWork: React.FC = () => {
     <>
       <section
         id="work"
-        className="pointer-events-auto relative flex min-h-[calc(100svh-24px)] w-full scroll-mt-3 flex-col rounded-[10px] bg-canvas px-5 py-7 shadow-[0_20px_70px_rgba(17,17,17,0.07)] md:min-h-[calc(100svh-48px)] md:scroll-mt-6 md:px-10 md:py-9 lg:px-12"
+        className="pointer-events-auto relative w-full scroll-mt-3 rounded-[10px] bg-canvas px-5 py-7 shadow-[0_20px_70px_rgba(17,17,17,0.07)] md:scroll-mt-6 md:px-10 md:py-8 lg:px-12"
       >
-        <div className="mx-auto flex min-h-0 w-full max-w-[1540px] flex-1 flex-col">
-          <header className="mb-5 flex items-end justify-between gap-8 md:mb-6">
+        <div className="mx-auto w-full max-w-[1540px]">
+          <header className="mb-4 flex items-end justify-between gap-8 md:mb-5">
             <div>
               <div className="font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
                 02 / SELECTED WORK
@@ -218,12 +248,12 @@ export const SelectedWork: React.FC = () => {
             </div>
           </header>
 
-          <div className="grid gap-3 lg:h-[52vh] lg:min-h-[430px] lg:max-h-[590px] lg:grid-cols-12">
+          <div className="grid gap-3 lg:h-[360px] lg:grid-cols-12 xl:h-[390px]">
             <ProjectCard
               project={PROJECTS[0]}
               size="featured"
               priority
-              className="min-h-[390px] lg:col-span-7 lg:h-full lg:min-h-0"
+              className="min-h-[330px] lg:col-span-7 lg:h-full lg:min-h-0"
               {...cardHandlers}
             />
 
@@ -233,25 +263,25 @@ export const SelectedWork: React.FC = () => {
                   key={project.id}
                   project={project}
                   size="medium"
-                  className="min-h-[300px] lg:h-full lg:min-h-0"
+                  className="min-h-[240px] lg:h-full lg:min-h-0"
                   {...cardHandlers}
                 />
               ))}
             </div>
           </div>
 
-          <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:h-[25vh] lg:min-h-[210px] lg:max-h-[300px] lg:grid-cols-4">
+          <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:h-[170px] lg:grid-cols-4 xl:h-[190px]">
             {PROJECTS.slice(3).map((project) => (
               <ProjectCard
                 key={project.id}
                 project={project}
-                className="min-h-[280px] lg:h-full lg:min-h-0"
+                className="min-h-[240px] lg:h-full lg:min-h-0"
                 {...cardHandlers}
               />
             ))}
           </div>
 
-          <div className="mt-5 flex items-center justify-between border-t border-ink/8 pt-4 font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray md:text-[9px]">
+          <div className="mt-4 flex items-center justify-between border-t border-ink/8 pt-4 font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray md:text-[9px]">
             <span>STATIC INDEX / LIVE AFTER CLICK</span>
             <span>DESIGN · DEVELOPMENT · INTERACTION</span>
           </div>
@@ -280,7 +310,7 @@ export const SelectedWork: React.FC = () => {
 
             <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-between gap-3 p-3 md:p-4">
               <div className="pointer-events-auto flex max-w-[70vw] items-center gap-3 rounded-[5px] border border-ink/10 bg-canvas/94 px-3 py-2 shadow-[0_8px_28px_rgba(17,17,17,0.08)] backdrop-blur-xl md:px-4 md:py-3">
-                <span className="font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray md:text-[9px]">
+                <span className="font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
                   {selectedProject.number} / {String(PROJECTS.length).padStart(2, '0')}
                 </span>
                 <span className="h-4 w-px bg-ink/12" />
@@ -311,7 +341,7 @@ export const SelectedWork: React.FC = () => {
               </div>
             </div>
 
-            <div className="pointer-events-none absolute bottom-3 left-3 z-20 hidden rounded-[4px] border border-ink/10 bg-canvas/92 px-3 py-2 font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray shadow-[0_8px_24px_rgba(17,17,17,0.06)] backdrop-blur-xl md:block">
+            <div className="pointer-events-none absolute bottom-3 left-3 z-20 hidden rounded-[4px] border border-ink/10 bg-canvas/92 px-3 py-2 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray shadow-[0_8px_24px_rgba(17,17,17,0.06)] backdrop-blur-xl md:block">
               <span className="text-ink">{selectedProject.category}</span>
               <span className="mx-2">/</span>
               <span>{selectedProject.year}</span>

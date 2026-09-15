@@ -11,6 +11,7 @@ export interface ProjectData {
   year: string;
   bgImage: string;
   coverImage: string;
+  coverFallback?: string;
   coverFit?: "cover" | "contain";
   ambientColor: string;
   url: string;
@@ -71,7 +72,8 @@ export const PROJECTS: ProjectData[] = [
     category: "BEAUTY / COMMERCE",
     year: "2026",
     bgImage: DEFAULT_BG,
-    coverImage: "https://raw.githubusercontent.com/omeryigitler/parfum/main/public/bottle-optimized.png",
+    coverImage: "https://parfum-eta.vercel.app/bottle-tiny.webp",
+    coverFallback: "https://raw.githubusercontent.com/omeryigitler/parfum/main/public/bottle-tiny.webp",
     coverFit: "contain",
     ambientColor: "#E4D6DC",
     url: "https://parfum-eta.vercel.app",
@@ -83,7 +85,8 @@ export const PROJECTS: ProjectData[] = [
     category: "BEAUTY / BRAND",
     year: "2026",
     bgImage: DEFAULT_BG,
-    coverImage: "https://raw.githubusercontent.com/omeryigitler/nailstudio/main/src/assets/images/vertical_salon_1782782037818.jpg",
+    coverImage: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=1200&q=82&auto=format&fit=crop",
+    coverFallback: "https://raw.githubusercontent.com/omeryigitler/nailstudio/main/src/assets/images/vertical_salon_1782782037818.jpg",
     ambientColor: "#E1D5E4",
     url: "https://nailstudio-gamma.vercel.app",
   },
