@@ -12,8 +12,9 @@ const CHAPTERS = [
 ] as const;
 
 export const ChapterNav: React.FC = () => {
-  const { isProjectOpen } = useUI();
+  const { isProjectOpen, isContactFormOpen } = useUI();
   const [isOpen, setIsOpen] = useState(false);
+  const [footerVisible, setFooterVisible] = useState(false);
   const [activeId, setActiveId] = useState<(typeof CHAPTERS)[number]['id']>('home');
 
   const activeIndex = useMemo(
@@ -53,6 +54,22 @@ export const ChapterNav: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    const footer = document.querySelector('[data-final-footer]');
+    if (!footer) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setFooterVisible(entry.isIntersecting);
+        if (entry.isIntersecting) setIsOpen(false);
+      },
+      { threshold: 0.08 },
+    );
+
+    observer.observe(footer);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setIsOpen(false);
     };
@@ -60,7 +77,7 @@ export const ChapterNav: React.FC = () => {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
-  if (isProjectOpen) return null;
+  if (isProjectOpen || isContactFormOpen || footerVisible) return null;
 
   return (
     <aside
