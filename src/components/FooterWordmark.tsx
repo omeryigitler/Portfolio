@@ -19,9 +19,9 @@ export const FooterWordmark: React.FC = () => {
   return (
     <footer
       data-final-footer
-      className="pointer-events-auto relative flex min-h-[72svh] w-full flex-col justify-between rounded-[10px] bg-canvas px-5 pb-7 pt-7 shadow-[0_22px_80px_rgba(17,17,17,0.055)] md:px-12 md:pb-10 md:pt-9"
+      className="pointer-events-auto relative flex min-h-[42svh] w-full flex-col rounded-[10px] bg-canvas px-5 pb-6 pt-6 shadow-[0_22px_80px_rgba(17,17,17,0.055)] md:min-h-[44svh] md:px-12 md:pb-8 md:pt-7"
     >
-      <div className="flex w-full items-center justify-between border-b border-soft-gray/55 pb-5 font-mono text-[9px] uppercase tracking-[0.05em] text-muted-gray md:text-[10px]">
+      <div className="flex w-full items-center justify-between border-b border-soft-gray/55 pb-4 font-mono text-[9px] uppercase tracking-[0.05em] text-muted-gray md:text-[10px]">
         <span>© 2026 OMER YIGITLER</span>
         <div className="flex items-center gap-6 md:gap-9">
           <button
@@ -37,8 +37,8 @@ export const FooterWordmark: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex flex-1 items-end justify-center overflow-visible pt-10">
-        <h1 className="w-full whitespace-nowrap pb-2 text-center text-[clamp(60px,11.2vw,216px)] font-medium leading-[0.82] tracking-[-0.065em] text-ink md:pb-4">
+      <div className="flex flex-1 items-end justify-center overflow-visible pt-8 md:pt-10">
+        <h1 className="w-full whitespace-nowrap pb-1 text-center text-[clamp(58px,9.4vw,180px)] font-medium leading-[0.82] tracking-[-0.065em] text-ink md:pb-2">
           omeryigitler<span className="text-acid">.</span>
         </h1>
       </div>
