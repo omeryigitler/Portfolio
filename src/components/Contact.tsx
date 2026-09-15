@@ -18,11 +18,11 @@ export const Contact: React.FC = () => {
     <section
       id="contact"
       data-site-footer
-      className="pointer-events-auto relative flex min-h-[100svh] flex-col rounded-b-[8px] bg-canvas px-5 pb-6 pt-24 md:rounded-b-[10px] md:px-12 md:pb-8 md:pt-28"
+      className="pointer-events-auto relative flex min-h-[calc(100svh-24px)] scroll-mt-3 flex-col rounded-[10px] bg-canvas px-5 pb-6 pt-20 shadow-[0_20px_70px_rgba(17,17,17,0.07)] md:min-h-[calc(100svh-48px)] md:scroll-mt-6 md:px-12 md:pb-8 md:pt-24"
     >
       <div className="flex min-h-0 flex-1 flex-col justify-center pb-[4svh]">
         <div className="mb-10 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:mb-14 md:text-[10px]">
-          CONTACT / 06
+          06 / CONTACT
         </div>
 
         <div className="mx-auto w-full max-w-[1180px] text-center">
