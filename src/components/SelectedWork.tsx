@@ -5,7 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowUpRight, X } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useUI } from '../context/UIContext';
-import { DEFAULT_BG, PROJECTS, type ProjectData } from '../data';
+import { DEFAULT_AMBIENT, DEFAULT_BG, PROJECTS, type ProjectData } from '../data';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -56,7 +56,7 @@ export const SelectedWork: React.FC = () => {
   const mediaInnerRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
   const [activeProjectIndex, setActiveProjectIndex] = useState(0);
-  const { setActiveImage, setCursorState, setCursorText } = useTheme();
+  const { setActiveImage, setActiveAmbient, setCursorState, setCursorText } = useTheme();
   const { setProjectOpen } = useUI();
 
   useEffect(() => {
@@ -81,6 +81,7 @@ export const SelectedWork: React.FC = () => {
         });
         setActiveProjectIndex(0);
         setActiveImage(PROJECTS[0].bgImage);
+        setActiveAmbient(PROJECTS[0].ambientColor);
         return;
       }
 
@@ -128,6 +129,7 @@ export const SelectedWork: React.FC = () => {
             activeIndex = nextIndex;
             setActiveProjectIndex(activeIndex);
             setActiveImage(PROJECTS[activeIndex].bgImage);
+            setActiveAmbient(PROJECTS[activeIndex].ambientColor);
           }
 
           panels.forEach((panel, index) => {
@@ -137,23 +139,32 @@ export const SelectedWork: React.FC = () => {
         onEnter: () => {
           setActiveProjectIndex(0);
           setActiveImage(PROJECTS[0].bgImage);
+          setActiveAmbient(PROJECTS[0].ambientColor);
         },
         onEnterBack: () => {
           const lastIndex = totalProjects - 1;
           setActiveProjectIndex(lastIndex);
           setActiveImage(PROJECTS[lastIndex].bgImage);
+          setActiveAmbient(PROJECTS[lastIndex].ambientColor);
         },
-        onLeave: () => setActiveImage(DEFAULT_BG),
-        onLeaveBack: () => setActiveImage(DEFAULT_BG),
+        onLeave: () => {
+          setActiveImage(DEFAULT_BG);
+          setActiveAmbient(DEFAULT_AMBIENT);
+        },
+        onLeaveBack: () => {
+          setActiveImage(DEFAULT_BG);
+          setActiveAmbient(DEFAULT_AMBIENT);
+        },
       });
     }, containerRef);
 
     return () => {
       ctx.revert();
       setActiveImage(DEFAULT_BG);
+      setActiveAmbient(DEFAULT_AMBIENT);
       document.body.classList.remove('hide-cursor');
     };
-  }, [setActiveImage]);
+  }, [setActiveAmbient, setActiveImage]);
 
   const closeProject = () => {
     setSelectedProject(null);
