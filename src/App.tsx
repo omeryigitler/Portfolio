@@ -4,7 +4,7 @@ import { UIProvider } from './context/UIContext';
 import { SmoothScroll } from './components/SmoothScroll';
 import { CustomCursor } from './components/CustomCursor';
 import { BackgroundLayer } from './components/BackgroundLayer';
-import { Navigation } from './components/Navigation';
+import { ChapterNav } from './components/ChapterNav';
 import { Hero } from './components/Hero';
 import { SelectedWork as ProjectTheatre } from './components/SelectedWork';
 import { MaskedWindow as MaskTransition } from './components/MaskedWindow';
@@ -19,10 +19,10 @@ export default function App() {
         <SmoothScroll>
           <CustomCursor />
           <BackgroundLayer />
-          <Navigation />
+          <ChapterNav />
 
-          <div className="pointer-events-none relative z-10 flex min-h-screen w-full flex-col items-center py-3 md:py-8">
-            <main className="pointer-events-auto w-[calc(100vw-24px)] overflow-visible rounded-[8px] bg-canvas shadow-[0_22px_80px_rgba(17,17,17,0.065)] md:w-[92vw] md:max-w-[1680px] md:rounded-[10px]">
+          <div className="pointer-events-none relative z-10 flex min-h-screen w-full flex-col items-center py-3 md:py-6">
+            <main className="pointer-events-auto flex w-[calc(100vw-24px)] flex-col gap-4 bg-transparent md:w-[92vw] md:max-w-[1680px] md:gap-6">
               <Hero />
               <ProjectTheatre />
               <MaskTransition />
