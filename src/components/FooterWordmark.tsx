@@ -14,17 +14,20 @@ const SocialLink: React.FC<{ href: string; children: React.ReactNode }> = ({ hre
 
 export const FooterWordmark: React.FC = () => {
   return (
-    <footer className="flex flex-col items-center overflow-hidden rounded-b-[8px] bg-canvas px-5 pb-6 pt-24 pointer-events-auto md:rounded-b-[10px] md:px-12 md:pb-9 md:pt-28">
-      <div className="mb-16 flex w-full items-center justify-between border-t border-soft-gray/50 pt-5 font-mono text-[9px] uppercase tracking-[0.05em] text-muted-gray md:mb-20 md:text-[10px]">
-        <span>SOCIAL</span>
+    <footer
+      data-site-footer
+      className="relative flex min-h-[62svh] flex-col justify-between rounded-b-[8px] bg-canvas px-5 pb-8 pt-7 pointer-events-auto md:min-h-[68svh] md:rounded-b-[10px] md:px-12 md:pb-10 md:pt-8"
+    >
+      <div className="flex w-full items-center justify-between border-t border-soft-gray/50 pt-5 font-mono text-[9px] uppercase tracking-[0.05em] text-muted-gray md:text-[10px]">
+        <span>© 2026 OMER YIGITLER</span>
         <div className="flex items-center gap-6 md:gap-9">
           <SocialLink href="https://www.instagram.com/omeryigitler.web/">INSTAGRAM ↗</SocialLink>
           <SocialLink href="https://github.com/omeryigitler">GITHUB ↗</SocialLink>
         </div>
       </div>
 
-      <div className="flex w-full justify-center">
-        <h1 className="w-full whitespace-nowrap pb-5 text-center text-[clamp(64px,14vw,270px)] font-medium leading-[0.8] tracking-[-0.07em] text-ink md:pb-7">
+      <div className="flex w-full items-end justify-center overflow-visible">
+        <h1 className="w-full whitespace-nowrap pb-2 text-center text-[clamp(62px,13.2vw,250px)] font-medium leading-[0.86] tracking-[-0.065em] text-ink md:pb-3">
           omeryigitler<span className="text-acid">.</span>
         </h1>
       </div>

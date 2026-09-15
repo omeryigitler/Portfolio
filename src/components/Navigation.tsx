@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const LogoMark: React.FC = () => (
   <svg viewBox="0 0 34 24" className="h-[18px] w-[28px]" aria-hidden="true">
@@ -16,9 +16,26 @@ const NavLink: React.FC<{ href: string; children: React.ReactNode }> = ({ href, 
 );
 
 export const Navigation: React.FC = () => {
+  const [footerVisible, setFooterVisible] = useState(false);
+
+  useEffect(() => {
+    const footer = document.querySelector<HTMLElement>('[data-site-footer]');
+    if (!footer) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setFooterVisible(entry.isIntersecting),
+      { threshold: 0.16 },
+    );
+
+    observer.observe(footer);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <nav
-      className="fixed left-1/2 top-7 z-[120] flex w-[calc(100vw-56px)] max-w-[1544px] -translate-x-1/2 items-center justify-between px-5 text-ink md:top-12 md:w-[calc(100vw-96px)] md:px-8 lg:px-10"
+      className={`fixed left-1/2 top-7 z-[120] flex w-[calc(100vw-56px)] max-w-[1544px] -translate-x-1/2 items-center justify-between px-5 text-ink transition-[opacity,transform] duration-300 ease-[0.16,1,0.3,1] md:top-12 md:w-[calc(100vw-96px)] md:px-8 lg:px-10 ${
+        footerVisible ? '-translate-y-4 opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'
+      }`}
       aria-label="Primary"
     >
       <a href="#home" aria-label="Home" className="pointer-events-auto text-ink transition-opacity duration-200 hover:opacity-60 focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4">

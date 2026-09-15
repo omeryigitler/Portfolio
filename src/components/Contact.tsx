@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 
 export const Contact: React.FC = () => {
   return (
-    <section id="contact" className="bg-canvas px-6 py-40 text-center pointer-events-auto md:px-12 md:py-64">
+    <section id="contact" className="bg-canvas px-6 py-28 text-center pointer-events-auto md:px-12 md:py-44">
       <motion.p
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -22,10 +22,6 @@ export const Contact: React.FC = () => {
       >
         MAKE IT REAL<span className="text-acid">.</span>
       </motion.h2>
-
-      <div className="mt-36 flex w-full items-end justify-start font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray md:mt-40 md:text-[11px]">
-        <p>© 2026 OMER YIGITLER</p>
-      </div>
     </section>
   );
 };
