@@ -1,5 +1,6 @@
 import React from 'react';
 import { ThemeProvider } from './context/ThemeContext';
+import { UIProvider } from './context/UIContext';
 import { SmoothScroll } from './components/SmoothScroll';
 import { CustomCursor } from './components/CustomCursor';
 import { BackgroundLayer } from './components/BackgroundLayer';
@@ -15,23 +16,25 @@ import { FooterWordmark } from './components/FooterWordmark';
 export default function App() {
   return (
     <ThemeProvider>
-      <SmoothScroll>
-        <CustomCursor />
-        <BackgroundLayer />
-        <Navigation />
+      <UIProvider>
+        <SmoothScroll>
+          <CustomCursor />
+          <BackgroundLayer />
+          <Navigation />
 
-        <div className="relative z-10 flex min-h-screen w-full flex-col items-center py-4 pointer-events-none md:py-7">
-          <main className="w-[calc(100vw-32px)] max-w-[1600px] rounded-[8px] bg-canvas pointer-events-auto overflow-visible md:w-[calc(100vw-56px)] md:rounded-[10px]">
-            <Hero />
-            <ProjectTheatre />
-            <MaskTransition />
-            <AboutFormation />
-            <SystemMap />
-            <Contact />
-            <FooterWordmark />
-          </main>
-        </div>
-      </SmoothScroll>
+          <div className="pointer-events-none relative z-10 flex min-h-screen w-full flex-col items-center py-4 md:py-7">
+            <main className="pointer-events-auto w-[calc(100vw-32px)] max-w-[1600px] overflow-visible rounded-[8px] bg-canvas md:w-[calc(100vw-56px)] md:rounded-[10px]">
+              <Hero />
+              <ProjectTheatre />
+              <MaskTransition />
+              <AboutFormation />
+              <SystemMap />
+              <Contact />
+              <FooterWordmark />
+            </main>
+          </div>
+        </SmoothScroll>
+      </UIProvider>
     </ThemeProvider>
   );
 }
