@@ -8,7 +8,8 @@ Locked direction for the current portfolio iteration.
 - Hero: automatic intro, two-line desktop headline, no scroll pin, no second nested white frame.
 - Work: sticky theatre, real project media, custom project cursor, shared-media preview.
 - Transition: one SCREEN word, black to aperture, then the white sheet lifts away.
-- About and Contact stay calm.
+- About stays calm.
 - Capabilities keeps the editorial section label + interactive nodes.
-- Footer keeps socials + oversized omeryigitler wordmark.
+- Contact and footer are one unified final 100svh composition. Never render them as separate stacked sections that can leave an orphaned CTA, utility row, or wordmark in the viewport.
+- The final scene contains Contact / 06, HAVE AN IDEA?, MAKE IT REAL + arrow, copyright, Instagram, GitHub, and the oversized omeryigitler wordmark in one composition.
 - No fake Lab, no filler slogans, no unsolicited navigation redesigns.
