@@ -1,8 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
 
 export const Hero: React.FC = () => {
   const heroRef = useRef<HTMLElement>(null);
@@ -10,7 +7,6 @@ export const Hero: React.FC = () => {
   const kickerRef = useRef<HTMLSpanElement>(null);
   const line1Ref = useRef<HTMLSpanElement>(null);
   const line2Ref = useRef<HTMLSpanElement>(null);
-  const markerRef = useRef<HTMLSpanElement>(null);
   const metaRightRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -20,51 +16,25 @@ export const Hero: React.FC = () => {
       !kickerRef.current ||
       !line1Ref.current ||
       !line2Ref.current ||
-      !markerRef.current ||
       !metaRightRef.current
     ) return;
 
     const ctx = gsap.context(() => {
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reducedMotion) {
-        gsap.set(markerRef.current, { scaleX: 1, autoAlpha: 1 });
-        return;
-      }
+      if (reducedMotion) return;
 
       gsap.set([labelRef.current, kickerRef.current, line1Ref.current, line2Ref.current], {
         autoAlpha: 0,
         yPercent: 105,
       });
       gsap.set(metaRightRef.current, { autoAlpha: 0, y: 10 });
-      gsap.set(markerRef.current, {
-        autoAlpha: 0,
-        scaleX: 0.12,
-        transformOrigin: '0% 50%',
-      });
 
       const intro = gsap.timeline({ defaults: { ease: 'power4.out' } });
-      intro.to(labelRef.current, { autoAlpha: 1, yPercent: 0, duration: 0.46 }, 0.12);
-      intro.to(kickerRef.current, { autoAlpha: 1, yPercent: 0, duration: 0.48 }, 0.18);
-      intro.to(line1Ref.current, { autoAlpha: 1, yPercent: 0, duration: 0.68 }, 0.34);
-      intro.to(line2Ref.current, { autoAlpha: 1, yPercent: 0, duration: 0.68 }, 0.46);
-      intro.to(markerRef.current, { autoAlpha: 1, duration: 0.28, ease: 'power2.out' }, 0.92);
-      intro.to(metaRightRef.current, { autoAlpha: 1, y: 0, duration: 0.44 }, 1.02);
-
-      gsap.fromTo(
-        markerRef.current,
-        { scaleX: 0.12 },
-        {
-          scaleX: 1,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: heroRef.current,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: true,
-            invalidateOnRefresh: true,
-          },
-        },
-      );
+      intro.to(labelRef.current, { autoAlpha: 1, yPercent: 0, duration: 0.42 }, 0.1);
+      intro.to(kickerRef.current, { autoAlpha: 1, yPercent: 0, duration: 0.44 }, 0.16);
+      intro.to(line1Ref.current, { autoAlpha: 1, yPercent: 0, duration: 0.66 }, 0.3);
+      intro.to(line2Ref.current, { autoAlpha: 1, yPercent: 0, duration: 0.66 }, 0.42);
+      intro.to(metaRightRef.current, { autoAlpha: 1, y: 0, duration: 0.42 }, 0.96);
     }, heroRef);
 
     return () => ctx.revert();
@@ -83,26 +53,16 @@ export const Hero: React.FC = () => {
           <span ref={kickerRef} className="text-ink">I DESIGN + BUILD</span>
         </div>
 
-        <h1 className="w-full text-[clamp(40px,7.1vw,132px)] font-[500] uppercase leading-[0.87] tracking-[-0.062em] text-ink [font-feature-settings:'kern'_1,'liga'_1] [font-kerning:normal]">
+        <h1 className="w-full text-[clamp(42px,6.7vw,124px)] font-[500] leading-[0.9] tracking-[-0.045em] text-ink [font-feature-settings:'kern'_1,'liga'_1] [font-kerning:normal]">
           <span className="block overflow-hidden">
             <span ref={line1Ref} className="block md:whitespace-nowrap">
-              DIGITAL <br className="md:hidden" /> EXPERIENCES
+              digital <br className="md:hidden" /> experiences
             </span>
           </span>
 
-          <span className="mt-1 block overflow-visible md:mt-2">
-            <span className="block overflow-hidden">
-              <span ref={line2Ref} className="block md:whitespace-nowrap">
-                <span className="relative inline-block">
-                  <span
-                    ref={markerRef}
-                    aria-hidden="true"
-                    className="absolute left-[-1%] top-[58%] z-0 h-[0.105em] w-[102%] -rotate-[0.6deg] bg-acid"
-                  />
-                  <span className="relative z-10">WORTH</span>
-                </span>{' '}
-                <br className="md:hidden" /> REMEMBERING.
-              </span>
+          <span className="mt-1 block overflow-hidden md:mt-2">
+            <span ref={line2Ref} className="block md:whitespace-nowrap">
+              worth <br className="md:hidden" /> remembering<span className="text-acid">.</span>
             </span>
           </span>
         </h1>
