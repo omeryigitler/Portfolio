@@ -6,13 +6,13 @@ export const BackgroundLayer: React.FC = () => {
   const { activeImage } = useTheme();
 
   return (
-    <div className="fixed inset-0 z-0 bg-ink overflow-hidden pointer-events-none">
-      <div className="absolute inset-0 z-20 bg-ink/30 mix-blend-multiply" />
+    <div className="fixed inset-0 z-0 overflow-hidden bg-[#D9D9D2] pointer-events-none">
+      <div className="absolute inset-0 z-20 bg-[#F3F1E9]/20" />
 
       {ALL_BACKGROUNDS.map((img) => (
         <div
           key={img}
-          className={`absolute inset-0 bg-cover bg-center transition-opacity duration-[800ms] ease-out grayscale-[0.85] contrast-[1.1] sepia-[0.1] will-change-opacity ${
+          className={`absolute inset-0 bg-cover bg-center transition-opacity duration-[700ms] ease-out grayscale-[0.92] saturate-[0.18] contrast-[0.96] brightness-[0.88] will-change-opacity ${
             activeImage === img ? 'opacity-100 z-10' : 'opacity-0 z-0'
           }`}
           style={{ backgroundImage: `url(${img})` }}

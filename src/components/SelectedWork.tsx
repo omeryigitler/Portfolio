@@ -1,9 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ArrowUpRight, X } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import { PROJECTS, DEFAULT_BG } from '../data';
-import { ArrowRight } from 'lucide-react';
+import { DEFAULT_BG, PROJECTS, type ProjectData } from '../data';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -12,6 +13,7 @@ export const SelectedWork: React.FC = () => {
   const stageRef = useRef<HTMLDivElement>(null);
   const projectRefs = useRef<(HTMLDivElement | null)[]>([]);
   const mediaInnerRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
   const { setActiveImage, setCursorState, setCursorText } = useTheme();
 
   useEffect(() => {
@@ -21,7 +23,7 @@ export const SelectedWork: React.FC = () => {
     if (!panels.length) return;
 
     const ctx = gsap.context(() => {
-      gsap.set(panels, { autoAlpha: 0, y: 90, scale: 1.04, pointerEvents: 'none' });
+      gsap.set(panels, { autoAlpha: 0, y: 72, scale: 1.025, pointerEvents: 'none' });
       gsap.set(panels[0], { autoAlpha: 1, y: 0, scale: 1, pointerEvents: 'auto' });
 
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -38,8 +40,8 @@ export const SelectedWork: React.FC = () => {
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: () => `+=${Math.round(window.innerHeight * 3)}`,
-          scrub: 0.6,
+          end: () => `+=${Math.round(window.innerHeight * 2.8)}`,
+          scrub: 0.25,
           pin: stageRef.current,
           anticipatePin: 1,
           invalidateOnRefresh: true,
@@ -65,36 +67,27 @@ export const SelectedWork: React.FC = () => {
         },
       });
 
-      tl.to({}, { duration: 0.55 });
+      tl.to({}, { duration: 0.5 });
 
       for (let i = 1; i < totalProjects; i += 1) {
         const previous = panels[i - 1];
         const current = panels[i];
 
         tl.to(previous, {
-          y: -64,
-          scale: 0.94,
+          y: -48,
+          scale: 0.97,
           autoAlpha: 0,
-          duration: 0.32,
+          duration: 0.26,
         });
 
         tl.fromTo(
           current,
-          {
-            y: 90,
-            scale: 1.04,
-            autoAlpha: 0,
-          },
-          {
-            y: 0,
-            scale: 1,
-            autoAlpha: 1,
-            duration: 0.32,
-          },
+          { y: 72, scale: 1.025, autoAlpha: 0 },
+          { y: 0, scale: 1, autoAlpha: 1, duration: 0.26 },
           '<',
         );
 
-        tl.to({}, { duration: 0.55 });
+        tl.to({}, { duration: 0.5 });
       }
     }, containerRef);
 
@@ -105,13 +98,24 @@ export const SelectedWork: React.FC = () => {
     };
   }, [setActiveImage]);
 
+  useEffect(() => {
+    if (!selectedProject) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setSelectedProject(null);
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [selectedProject]);
+
   const handleMouseEnter = (projectNumber: string) => {
     setCursorState('project');
-    setCursorText(`VIEW PROJECT ${projectNumber}`);
+    setCursorText(`VIEW PROJECT ${projectNumber} ↗`);
     document.body.classList.add('hide-cursor');
   };
 
-  const handleMouseMove = (index: number, event: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = (index: number, event: React.MouseEvent<HTMLButtonElement>) => {
     const inner = mediaInnerRefs.current[index];
     if (!inner) return;
 
@@ -120,9 +124,9 @@ export const SelectedWork: React.FC = () => {
     const normalizedY = (event.clientY - bounds.top) / bounds.height - 0.5;
 
     gsap.to(inner, {
-      x: normalizedX * -16,
-      y: normalizedY * -12,
-      duration: 0.35,
+      x: normalizedX * -14,
+      y: normalizedY * -10,
+      duration: 0.28,
       ease: 'power3.out',
       overwrite: true,
     });
@@ -131,13 +135,7 @@ export const SelectedWork: React.FC = () => {
   const handleMouseLeave = (index: number) => {
     const inner = mediaInnerRefs.current[index];
     if (inner) {
-      gsap.to(inner, {
-        x: 0,
-        y: 0,
-        duration: 0.45,
-        ease: 'power3.out',
-        overwrite: true,
-      });
+      gsap.to(inner, { x: 0, y: 0, duration: 0.35, ease: 'power3.out', overwrite: true });
     }
 
     setCursorState('default');
@@ -145,51 +143,138 @@ export const SelectedWork: React.FC = () => {
     document.body.classList.remove('hide-cursor');
   };
 
+  const openProject = (project: ProjectData) => {
+    setCursorState('default');
+    setCursorText('');
+    document.body.classList.remove('hide-cursor');
+    setSelectedProject(project);
+  };
+
   return (
-    <section id="work" ref={containerRef} className="relative w-full bg-canvas pointer-events-auto">
-      <div ref={stageRef} className="h-screen w-full flex items-center justify-center relative overflow-hidden">
-        {PROJECTS.map((project, index) => (
-          <div
-            key={project.id}
-            ref={(el) => { projectRefs.current[index] = el; }}
-            className="absolute inset-0 flex flex-col items-center justify-center p-4 md:p-12"
-          >
-            <div className="w-full max-w-[1200px] h-[70vh] flex flex-col justify-between">
-              <div className="flex justify-between items-start font-mono text-[10px] md:text-[11px] uppercase tracking-[0.04em] text-ink z-10">
-                <div className="overflow-hidden">
-                  <div className="flex gap-4 items-baseline">
-                    <span>{project.number} / 04</span>
-                    <h2 className="font-sans text-[24px] md:text-[42px] tracking-[-0.04em] font-medium leading-none">{project.title}</h2>
+    <>
+      <section id="work" ref={containerRef} className="relative w-full bg-canvas pointer-events-auto">
+        <div ref={stageRef} className="relative h-[100svh] min-h-[720px] w-full overflow-hidden bg-canvas">
+          {PROJECTS.map((project, index) => (
+            <div
+              key={project.id}
+              ref={(el) => { projectRefs.current[index] = el; }}
+              className="absolute inset-0 flex items-center justify-center px-6 py-24 md:px-12 md:py-28"
+            >
+              <div className="grid h-[78svh] max-h-[860px] min-h-[560px] w-full max-w-[1360px] grid-rows-[auto_minmax(0,1fr)_auto] gap-5 md:gap-7">
+                <header className="flex items-end justify-between gap-6">
+                  <div className="min-w-0">
+                    <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray">
+                      {project.number} / {String(PROJECTS.length).padStart(2, '0')}
+                    </div>
+                    <h2 className="font-sans text-[clamp(34px,5vw,74px)] font-[500] leading-[0.9] tracking-[-0.055em] text-ink">
+                      {project.title}
+                    </h2>
                   </div>
-                </div>
-              </div>
 
-              <div
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] md:w-[65%] aspect-[16/9] overflow-hidden cursor-none z-0"
-                onMouseEnter={() => handleMouseEnter(project.number)}
-                onMouseMove={(event) => handleMouseMove(index, event)}
-                onMouseLeave={() => handleMouseLeave(index)}
-              >
-                <div
-                  ref={(el) => { mediaInnerRefs.current[index] = el; }}
-                  className="w-[110%] h-[110%] -top-[5%] -left-[5%] absolute bg-cover bg-center grayscale-[0.2] will-change-transform"
-                  style={{ backgroundImage: `url(${project.image})` }}
-                />
-              </div>
+                  <div className="hidden shrink-0 text-right font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray md:block">
+                    <p className="text-ink">{project.category}</p>
+                    <p className="mt-1">{project.year}</p>
+                  </div>
+                </header>
 
-              <div className="flex justify-between items-end font-mono text-[10px] md:text-[11px] uppercase tracking-[0.04em] text-ink z-10">
-                <p>{project.category}</p>
-                <div className="text-right flex flex-col gap-2">
-                  <p>{project.year}</p>
-                  <p className="font-sans text-[12px] font-medium tracking-[-0.015em] flex items-center gap-1">
-                    VIEW PROJECT <ArrowRight size={14} />
-                  </p>
-                </div>
+                <motion.button
+                  type="button"
+                  layoutId={`project-media-${project.id}`}
+                  className="group relative min-h-0 w-full overflow-hidden bg-soft-gray text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4"
+                  onMouseEnter={() => handleMouseEnter(project.number)}
+                  onMouseMove={(event) => handleMouseMove(index, event)}
+                  onMouseLeave={() => handleMouseLeave(index)}
+                  onClick={() => openProject(project)}
+                  aria-label={`Open ${project.title} project preview`}
+                >
+                  <div
+                    ref={(el) => { mediaInnerRefs.current[index] = el; }}
+                    className="absolute -left-[3%] -top-[3%] h-[106%] w-[106%] bg-cover bg-center will-change-transform"
+                    style={{ backgroundImage: `url(${project.image})` }}
+                  />
+                  <div className="absolute inset-0 bg-ink/0 transition-colors duration-300 group-hover:bg-ink/[0.03]" />
+                </motion.button>
+
+                <footer className="flex items-start justify-between gap-6">
+                  <div className="font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray md:hidden">
+                    <p className="text-ink">{project.category}</p>
+                    <p className="mt-1">{project.year}</p>
+                  </div>
+                  <span className="hidden font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray md:block">SELECTED WORK</span>
+                  <button
+                    type="button"
+                    onClick={() => openProject(project)}
+                    className="group ml-auto inline-flex items-center gap-2 font-sans text-[12px] font-[500] uppercase tracking-[-0.015em] text-ink hover:text-acid focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4"
+                  >
+                    VIEW PROJECT
+                    <ArrowUpRight size={15} className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </button>
+                </footer>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-    </section>
+          ))}
+        </div>
+      </section>
+
+      <AnimatePresence>
+        {selectedProject && (
+          <motion.div
+            className="fixed inset-0 z-[200] bg-ink/25 p-3 md:p-7"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) setSelectedProject(null);
+            }}
+          >
+            <motion.div
+              className="relative flex h-full w-full flex-col overflow-hidden rounded-[8px] bg-canvas p-5 md:p-10"
+              initial={{ y: 18, scale: 0.99 }}
+              animate={{ y: 0, scale: 1 }}
+              exit={{ y: 18, scale: 0.99 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              role="dialog"
+              aria-modal="true"
+              aria-label={`${selectedProject.title} project preview`}
+            >
+              <div className="mb-6 flex items-start justify-between gap-6">
+                <div>
+                  <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray">
+                    {selectedProject.number} / PROJECT PREVIEW
+                  </div>
+                  <h2 className="font-sans text-[clamp(34px,5vw,76px)] font-[500] leading-[0.9] tracking-[-0.055em] text-ink">
+                    {selectedProject.title}
+                  </h2>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedProject(null)}
+                  className="p-2 text-ink transition-colors hover:text-acid focus-visible:outline-2 focus-visible:outline-acid"
+                  aria-label="Close project preview"
+                >
+                  <X size={28} strokeWidth={1.4} />
+                </button>
+              </div>
+
+              <motion.div
+                layoutId={`project-media-${selectedProject.id}`}
+                className="relative min-h-0 flex-1 overflow-hidden bg-soft-gray"
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{ backgroundImage: `url(${selectedProject.image})` }}
+                />
+              </motion.div>
+
+              <div className="mt-5 flex items-end justify-between font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray">
+                <span className="text-ink">{selectedProject.category}</span>
+                <span>{selectedProject.year}</span>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
