@@ -1,6 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ArrowDownRight } from 'lucide-react';
 import { gsap } from 'gsap';
+
+const TYPE_WORDS = ['clear.', 'useful.', 'alive.', 'memorable.'] as const;
 
 export const Hero: React.FC = () => {
   const heroRef = useRef<HTMLElement>(null);
@@ -11,6 +13,54 @@ export const Hero: React.FC = () => {
   const descriptionRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLAnchorElement>(null);
   const metaRightRef = useRef<HTMLDivElement>(null);
+  const [typedWord, setTypedWord] = useState('');
+
+  useEffect(() => {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reducedMotion) {
+      setTypedWord(TYPE_WORDS[TYPE_WORDS.length - 1]);
+      return;
+    }
+
+    let wordIndex = 0;
+    let characterIndex = 0;
+    let deleting = false;
+    let timeoutId = 0;
+
+    const tick = () => {
+      const word = TYPE_WORDS[wordIndex];
+
+      if (!deleting) {
+        characterIndex += 1;
+        setTypedWord(word.slice(0, characterIndex));
+
+        if (characterIndex === word.length) {
+          if (wordIndex === TYPE_WORDS.length - 1) return;
+          deleting = true;
+          timeoutId = window.setTimeout(tick, 420);
+          return;
+        }
+
+        timeoutId = window.setTimeout(tick, 54 + Math.random() * 32);
+        return;
+      }
+
+      characterIndex -= 1;
+      setTypedWord(word.slice(0, characterIndex));
+
+      if (characterIndex === 0) {
+        deleting = false;
+        wordIndex += 1;
+        timeoutId = window.setTimeout(tick, 145);
+        return;
+      }
+
+      timeoutId = window.setTimeout(tick, 28);
+    };
+
+    timeoutId = window.setTimeout(tick, 1120);
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   useEffect(() => {
     if (
@@ -74,7 +124,18 @@ export const Hero: React.FC = () => {
             </span>
           </h1>
 
-          <div className="mt-5 grid gap-7 border-t border-ink/10 pt-6 md:mt-7 md:grid-cols-[minmax(0,660px)_auto] md:items-end md:justify-between md:gap-10">
+          <div
+            className="mt-2 flex min-h-5 items-center gap-2 font-mono text-[9px] tracking-[0.045em] md:mt-3 md:min-h-6 md:text-[11px]"
+            aria-label="Websites should feel memorable."
+          >
+            <span className="uppercase text-muted-gray" aria-hidden="true">websites should feel</span>
+            <span className="min-w-[8.5em] text-ink" aria-hidden="true">
+              {typedWord}
+              <span className="ml-1 inline-block h-[1em] w-[2px] animate-pulse bg-acid align-[-0.12em]" />
+            </span>
+          </div>
+
+          <div className="mt-5 grid gap-7 border-t border-ink/10 pt-6 md:mt-6 md:grid-cols-[minmax(0,660px)_auto] md:items-end md:justify-between md:gap-10">
             <p ref={descriptionRef} className="max-w-[650px] text-[15px] leading-[1.55] tracking-[-0.02em] text-ink/72 md:text-[17px]">
               I design and build websites, digital products and interactive experiences — from the first idea to the final line of code.
             </p>
