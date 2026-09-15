@@ -66,22 +66,11 @@ export const Hero: React.FC = () => {
 
   return (
     <section
+      id="home"
       ref={heroRef}
-      className="relative w-full h-[calc(100vh-32px)] md:h-[calc(100vh-56px)] flex flex-col justify-between pt-6 pb-6 md:pt-10 md:pb-10 bg-canvas px-6 md:px-12"
+      className="relative w-full h-[calc(100vh-32px)] md:h-[calc(100vh-56px)] flex flex-col justify-between pt-24 pb-6 md:pt-28 md:pb-10 bg-canvas px-6 md:px-12"
     >
-      <div className="w-full flex justify-between items-center text-ink z-50">
-        <div className="font-sans font-[500] text-[11px] md:text-[13px] tracking-[-0.01em]">
-          omeryigitler.com
-        </div>
-        <nav className="flex gap-6 md:gap-12 font-sans font-[500] text-[11px] md:text-[13px] uppercase tracking-[-0.01em]" aria-label="Primary">
-          <a href="#work" className="hover:text-acid transition-colors duration-300">WORK</a>
-          <a href="#about" className="hover:text-acid transition-colors duration-300">ABOUT</a>
-          <a href="#lab" className="hover:text-acid transition-colors duration-300">LAB</a>
-          <a href="#contact" className="hover:text-acid transition-colors duration-300">CONTACT ↗</a>
-        </nav>
-      </div>
-
-      <div className="flex-1 w-full flex flex-col justify-center relative mt-12 md:mt-0">
+      <div className="flex-1 w-full flex flex-col justify-center relative">
         <div ref={preTitleRef} className="mb-6 md:mb-10 font-mono text-[10px] md:text-[11px] uppercase tracking-[0.04em] text-ink">
           I DESIGN + BUILD
         </div>

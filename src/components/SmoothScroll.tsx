@@ -23,6 +23,7 @@ export const SmoothScroll: React.FC<{ children: React.ReactNode }> = ({ children
       smoothWheel: true,
       wheelMultiplier: 0.9,
       touchMultiplier: 1,
+      anchors: { offset: -28 },
     });
 
     lenisRef.current = lenis;
