@@ -30,7 +30,7 @@ export const SmoothScroll: React.FC<{ children: React.ReactNode }> = ({ children
       smoothWheel: true,
       wheelMultiplier: 1,
       touchMultiplier: 1,
-      anchors: { offset: -72 },
+      anchors: { offset: -20 },
     });
 
     lenisRef.current = lenis;
