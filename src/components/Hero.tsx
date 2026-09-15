@@ -74,11 +74,11 @@ export const Hero: React.FC = () => {
     <section
       id="home"
       ref={heroRef}
-      className="relative flex min-h-[calc(100svh-32px)] w-full flex-col justify-between rounded-t-[8px] bg-canvas px-5 pb-8 pt-28 md:min-h-[calc(100svh-64px)] md:rounded-t-[10px] md:px-12 md:pb-10 md:pt-32 lg:px-14"
+      className="relative flex min-h-[calc(100svh-24px)] w-full scroll-mt-3 flex-col justify-between rounded-[10px] bg-canvas px-5 pb-8 pt-20 shadow-[0_20px_70px_rgba(17,17,17,0.07)] md:min-h-[calc(100svh-48px)] md:scroll-mt-6 md:px-12 md:pb-10 md:pt-24 lg:px-14"
     >
       <div className="flex flex-1 flex-col justify-center">
         <div className="mb-7 flex items-center gap-4 overflow-hidden font-mono text-[9px] uppercase tracking-[0.06em] md:mb-9 md:text-[10px]">
-          <span ref={labelRef} className="text-muted-gray">INTRO / 01</span>
+          <span ref={labelRef} className="text-muted-gray">01 / INTRO</span>
           <span className="h-px w-8 bg-soft-gray" aria-hidden="true" />
           <span ref={kickerRef} className="text-ink">I DESIGN + BUILD</span>
         </div>
