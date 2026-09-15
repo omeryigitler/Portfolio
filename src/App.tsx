@@ -11,6 +11,7 @@ import { MaskedWindow as MaskTransition } from './components/MaskedWindow';
 import { About as AboutFormation } from './components/About';
 import { SystemMap } from './components/Archive';
 import { Contact } from './components/Contact';
+import { FooterWordmark } from './components/FooterWordmark';
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
               <AboutFormation />
               <SystemMap />
               <Contact />
+              <FooterWordmark />
             </main>
           </div>
         </SmoothScroll>
