@@ -118,10 +118,10 @@ export const ChapterNav: React.FC = () => {
                     onClick={() => setIsOpen(false)}
                     className="group grid grid-cols-[36px_1fr_34px] items-center gap-2 rounded-[8px] px-3 py-3.5 transition-colors duration-200 hover:bg-ink/[0.025] focus-visible:outline-2 focus-visible:outline-acid"
                   >
-                    <span className={`font-mono text-[9px] tracking-[0.05em] ${active ? 'text-ink' : 'text-muted-gray'}`}>
+                    <span className={`font-mono text-[9px] tracking-[0.05em] transition-transform duration-300 ease-[0.16,1,0.3,1] group-hover:translate-x-1.5 ${active ? 'text-ink' : 'text-muted-gray'}`}>
                       {chapter.number}
                     </span>
-                    <span className="font-sans text-[13px] font-[500] uppercase tracking-[-0.015em] text-ink md:text-[14px]">
+                    <span className="font-sans text-[13px] font-[500] uppercase tracking-[-0.015em] text-ink transition-transform duration-300 ease-[0.16,1,0.3,1] group-hover:translate-x-1.5 md:text-[14px]">
                       {chapter.label}
                     </span>
                     <span className="flex items-center justify-end" aria-hidden="true">
