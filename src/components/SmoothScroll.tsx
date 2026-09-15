@@ -2,11 +2,13 @@ import React, { useEffect, useRef } from 'react';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useUI } from '../context/UIContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export const SmoothScroll: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const lenisRef = useRef<Lenis | null>(null);
+  const { isProjectOpen } = useUI();
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -22,7 +24,7 @@ export const SmoothScroll: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     const lenis = new Lenis({
-      lerp: 0.13,
+      lerp: 0.11,
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
@@ -53,6 +55,18 @@ export const SmoothScroll: React.FC<{ children: React.ReactNode }> = ({ children
       lenisRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    const lenis = lenisRef.current;
+    if (!lenis) return;
+
+    if (isProjectOpen) {
+      lenis.stop();
+    } else {
+      lenis.start();
+      requestAnimationFrame(() => ScrollTrigger.refresh());
+    }
+  }, [isProjectOpen]);
 
   return <>{children}</>;
 };
