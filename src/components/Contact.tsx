@@ -95,137 +95,116 @@ export const Contact: React.FC = () => {
           </div>
 
           <div className="flex items-center py-10 lg:py-8">
-            <div
-              className="relative hidden min-h-[610px] w-full lg:block"
-              onMouseLeave={() => setCtaActive(false)}
-            >
-              <motion.button
-                type="button"
-                onMouseEnter={() => setCtaActive(true)}
-                onFocus={() => setCtaActive(true)}
-                onClick={() => setCtaActive(true)}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.45 }}
-                animate={{
-                  opacity: ctaActive ? 0 : 1,
-                  x: ctaActive ? -36 : 0,
-                  scale: ctaActive ? 0.985 : 1,
-                }}
-                transition={{ duration: 0.52, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute inset-y-0 left-0 z-10 flex w-1/2 flex-col justify-between pr-12 text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
-                aria-label="Reveal start project action"
-                tabIndex={ctaActive ? -1 : 0}
-              >
-                <div>
-                  <p className="mb-6 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
-                    HAVE AN IDEA?
-                  </p>
-                  <h2 className="max-w-[720px] text-[clamp(64px,7.2vw,128px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
-                    have an
-                    <br />
-                    idea<span className="text-acid">?</span>
-                  </h2>
-                </div>
-
-                <div className="grid gap-5 border-t border-ink/10 pt-5 md:grid-cols-[minmax(0,430px)_auto] md:items-end md:justify-between">
-                  <p className="max-w-[430px] text-[14px] leading-[1.55] tracking-[-0.02em] text-ink/65 md:text-[16px]">
-                    Bring the idea, the problem or even the rough sketch. I can take it from direction to a working digital experience.
-                  </p>
-                  <span className="font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">
-                    HOVER TO EXPLORE ↗
-                  </span>
-                </div>
-              </motion.button>
-
+            <div className="hidden w-full items-center gap-16 lg:grid lg:grid-cols-[1.08fr_0.92fr] xl:gap-24">
               <motion.div
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.4 }}
-                animate={{
-                  x: ctaActive ? '-100%' : '0%',
-                  opacity: 1,
-                  scale: ctaActive ? 0.985 : 1,
-                }}
-                transition={{ duration: 0.62, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute inset-y-0 right-0 z-20 flex w-1/2 items-center pl-12"
+                transition={{ duration: 0.58, ease: [0.16, 1, 0.3, 1] }}
+                className="pr-4"
               >
                 <ProcessPanel />
               </motion.div>
 
-              <motion.button
-                type="button"
-                onClick={openForm}
-                initial={false}
-                animate={{
-                  opacity: ctaActive ? 1 : 0,
-                  x: ctaActive ? 0 : 46,
-                  scale: ctaActive ? 1 : 0.975,
-                }}
-                transition={{ duration: 0.58, ease: [0.16, 1, 0.3, 1] }}
-                className="group absolute inset-y-0 right-0 z-30 flex w-1/2 flex-col justify-center pl-14 text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
-                style={{ pointerEvents: ctaActive ? 'auto' : 'none' }}
-                aria-label="Open project request form"
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.45 }}
+                transition={{ duration: 0.62, ease: [0.16, 1, 0.3, 1] }}
+                className="relative min-h-[560px]"
+                onMouseLeave={() => setCtaActive(false)}
               >
-                <p className="mb-6 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
-                  READY WHEN YOU ARE
-                </p>
+                <motion.button
+                  type="button"
+                  onMouseEnter={() => setCtaActive(true)}
+                  onFocus={() => setCtaActive(true)}
+                  onClick={() => setCtaActive(true)}
+                  animate={{ opacity: ctaActive ? 0 : 1, x: ctaActive ? -18 : 0, scale: ctaActive ? 0.985 : 1 }}
+                  transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
+                  className="absolute inset-0 flex flex-col justify-between text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
+                  style={{ pointerEvents: ctaActive ? 'none' : 'auto' }}
+                  aria-label="Reveal start project action"
+                >
+                  <div>
+                    <p className="mb-6 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
+                      HAVE AN IDEA?
+                    </p>
+                    <h2 className="max-w-[720px] text-[clamp(72px,7.1vw,132px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
+                      have an
+                      <br />
+                      idea<span className="text-acid">?</span>
+                    </h2>
+                  </div>
 
-                <div className="inline-flex items-center gap-7">
-                  <span className="text-[clamp(72px,7.4vw,136px)] font-[500] lowercase leading-[0.84] tracking-[-0.06em] text-ink">
-                    make it real<span className="text-acid">.</span>
-                  </span>
+                  <div className="grid gap-5 border-t border-ink/10 pt-5 md:grid-cols-[minmax(0,430px)_auto] md:items-end md:justify-between">
+                    <p className="max-w-[430px] text-[14px] leading-[1.55] tracking-[-0.02em] text-ink/65 md:text-[16px]">
+                      Bring the idea, the problem or even the rough sketch. I can take it from direction to a working digital experience.
+                    </p>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">
+                      HOVER TO START ↗
+                    </span>
+                  </div>
+                </motion.button>
 
-                  <span
-                    className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-ink/15 text-[28px] text-acid transition-[transform,border-color,background-color] duration-300 ease-[0.16,1,0.3,1] group-hover:translate-x-2 group-hover:-translate-y-2 group-hover:border-ink/35 md:h-20 md:w-20 md:text-[34px]"
-                    aria-hidden="true"
-                  >
-                    ↗
-                  </span>
-                </div>
-
-                <div className="mt-10 grid gap-5 border-t border-ink/10 pt-5 md:grid-cols-[minmax(0,430px)_auto] md:items-end md:justify-between">
-                  <p className="max-w-[430px] text-[14px] leading-[1.55] tracking-[-0.02em] text-ink/65 md:text-[16px]">
-                    Tell me what you want to make, what it should do and when it needs to exist.
+                <motion.button
+                  type="button"
+                  onClick={openForm}
+                  initial={false}
+                  animate={{ opacity: ctaActive ? 1 : 0, x: ctaActive ? 0 : 34, scale: ctaActive ? 1 : 0.975 }}
+                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  className="group absolute inset-0 flex flex-col justify-center text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
+                  style={{ pointerEvents: ctaActive ? 'auto' : 'none' }}
+                  aria-label="Open project request form"
+                >
+                  <p className="mb-6 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
+                    READY WHEN YOU ARE
                   </p>
-                  <span className="font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">
-                    OPEN PROJECT FORM ↗
-                  </span>
-                </div>
-              </motion.button>
+
+                  <div className="inline-flex items-center gap-7">
+                    <span className="text-[clamp(74px,7.6vw,140px)] font-[500] lowercase leading-[0.84] tracking-[-0.06em] text-ink">
+                      make it real<span className="text-acid">.</span>
+                    </span>
+                    <span
+                      className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-ink/15 text-[28px] text-acid transition-[transform,border-color] duration-300 ease-[0.16,1,0.3,1] group-hover:translate-x-2 group-hover:-translate-y-2 group-hover:border-ink/40 md:h-20 md:w-20 md:text-[34px]"
+                      aria-hidden="true"
+                    >
+                      ↗
+                    </span>
+                  </div>
+
+                  <div className="mt-10 grid gap-5 border-t border-ink/10 pt-5 md:grid-cols-[minmax(0,430px)_auto] md:items-end md:justify-between">
+                    <p className="max-w-[430px] text-[14px] leading-[1.55] tracking-[-0.02em] text-ink/65 md:text-[16px]">
+                      Tell me what you want to make, what it should do and when it needs to exist.
+                    </p>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">
+                      OPEN PROJECT FORM ↗
+                    </span>
+                  </div>
+                </motion.button>
+              </motion.div>
             </div>
 
-            <div className="grid w-full gap-10 lg:hidden">
-              <button
-                type="button"
-                onClick={() => setCtaActive((value) => !value)}
-                className="text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
-              >
-                <p className="mb-5 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">HAVE AN IDEA?</p>
-                <h2 className="text-[clamp(58px,16vw,104px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
-                  have an idea<span className="text-acid">?</span>
-                </h2>
-              </button>
+            <div className="grid w-full gap-12 lg:hidden">
+              <ProcessPanel />
 
-              <AnimatePresence mode="wait" initial={false}>
+              <div className="relative min-h-[300px]" onMouseLeave={() => setCtaActive(false)}>
                 {!ctaActive ? (
-                  <motion.div
-                    key="process"
-                    initial={{ opacity: 0, x: 24 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -24 }}
-                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                  <button
+                    type="button"
+                    onClick={() => setCtaActive(true)}
+                    className="text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
                   >
-                    <ProcessPanel />
-                  </motion.div>
+                    <p className="mb-5 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">HAVE AN IDEA?</p>
+                    <h2 className="text-[clamp(58px,16vw,104px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
+                      have an idea<span className="text-acid">?</span>
+                    </h2>
+                  </button>
                 ) : (
                   <motion.button
-                    key="cta"
                     type="button"
                     onClick={openForm}
-                    initial={{ opacity: 0, x: 24 }}
+                    initial={{ opacity: 0, x: 22 }}
                     animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -24 }}
                     transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                     className="group text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
                   >
@@ -238,13 +217,13 @@ export const Contact: React.FC = () => {
                     </div>
                   </motion.button>
                 )}
-              </AnimatePresence>
+              </div>
             </div>
           </div>
 
           <div className="flex items-end justify-between gap-8 border-t border-ink/8 pt-5 font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray md:text-[9px]">
             <span>DESIGN / DEVELOPMENT / INTERACTION</span>
-            <span className="hidden md:block">IDEA → PROCESS → PROJECT</span>
+            <span className="hidden md:block">PROCESS → IDEA → PROJECT</span>
           </div>
         </div>
       </section>
