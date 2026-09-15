@@ -7,12 +7,12 @@ export const BackgroundLayer: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-0 bg-ink overflow-hidden pointer-events-none">
-      <div className="absolute inset-0 z-20 bg-ink/30 mix-blend-multiply"></div>
-      
+      <div className="absolute inset-0 z-20 bg-ink/30 mix-blend-multiply" />
+
       {ALL_BACKGROUNDS.map((img) => (
         <div
           key={img}
-          className={`absolute inset-0 bg-cover bg-center bg-fixed transition-opacity duration-[1200ms] ease-in-out grayscale-[0.85] contrast-[1.1] sepia-[0.1] ${
+          className={`absolute inset-0 bg-cover bg-center transition-opacity duration-[800ms] ease-out grayscale-[0.85] contrast-[1.1] sepia-[0.1] will-change-opacity ${
             activeImage === img ? 'opacity-100 z-10' : 'opacity-0 z-0'
           }`}
           style={{ backgroundImage: `url(${img})` }}

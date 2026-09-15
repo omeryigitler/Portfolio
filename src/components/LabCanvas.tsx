@@ -1,21 +1,56 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTheme } from '../context/ThemeContext';
 import { ArrowUpRight, X } from 'lucide-react';
 
 const LAB_ITEMS = [
-  { id: 1, label: "SHADER STUDY", year: "2026", w: 380, h: 480, x: 200, y: 150, img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop" },
-  { id: 2, label: "TYPE TEST", year: "2025", w: 500, h: 320, x: 700, y: 250, img: "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=800&auto=format&fit=crop" },
-  { id: 3, label: "AI VISUAL", year: "2026", w: 320, h: 320, x: 1300, y: 100, img: "https://images.unsplash.com/photo-1607499699365-d053229b48f9?q=80&w=800&auto=format&fit=crop" },
-  { id: 4, label: "WEBGL INTERACTION", year: "2025", w: 300, h: 420, x: 400, y: 700, img: "https://images.unsplash.com/photo-1518640467707-6811f4a6ab73?q=80&w=800&auto=format&fit=crop" },
-  { id: 5, label: "MOTION EXPERIMENT", year: "2026", w: 450, h: 260, x: 900, y: 750, img: "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=800&auto=format&fit=crop" },
+  { id: 1, label: 'SHADER STUDY', year: '2026', w: 380, h: 480, x: 200, y: 150, img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop' },
+  { id: 2, label: 'TYPE TEST', year: '2025', w: 500, h: 320, x: 700, y: 250, img: 'https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=800&auto=format&fit=crop' },
+  { id: 3, label: 'AI VISUAL', year: '2026', w: 320, h: 320, x: 1300, y: 100, img: 'https://images.unsplash.com/photo-1607499699365-d053229b48f9?q=80&w=800&auto=format&fit=crop' },
+  { id: 4, label: 'WEBGL INTERACTION', year: '2025', w: 300, h: 420, x: 400, y: 700, img: 'https://images.unsplash.com/photo-1518640467707-6811f4a6ab73?q=80&w=800&auto=format&fit=crop' },
+  { id: 5, label: 'MOTION EXPERIMENT', year: '2026', w: 450, h: 260, x: 900, y: 750, img: 'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=800&auto=format&fit=crop' },
 ];
 
 export const LabCanvas: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const worldRef = useRef<HTMLDivElement>(null);
+  const didDragRef = useRef(false);
   const [hasDragged, setHasDragged] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [selectedItem, setSelectedItem] = useState<(typeof LAB_ITEMS)[number] | null>(null);
+  const [dragConstraints, setDragConstraints] = useState({ left: 0, right: 0, top: 0, bottom: 0 });
   const { setCursorState, setCursorText } = useTheme();
+
+  useEffect(() => {
+    const updateConstraints = () => {
+      if (!viewportRef.current || !worldRef.current) return;
+
+      const viewportWidth = viewportRef.current.clientWidth;
+      const viewportHeight = viewportRef.current.clientHeight;
+      const worldWidth = Math.max(worldRef.current.scrollWidth, worldRef.current.offsetWidth);
+      const worldHeight = Math.max(worldRef.current.scrollHeight, worldRef.current.offsetHeight);
+
+      setDragConstraints({
+        left: Math.min(0, viewportWidth - worldWidth),
+        right: 0,
+        top: Math.min(0, viewportHeight - worldHeight),
+        bottom: 0,
+      });
+    };
+
+    updateConstraints();
+
+    const observer = new ResizeObserver(updateConstraints);
+    if (viewportRef.current) observer.observe(viewportRef.current);
+    if (worldRef.current) observer.observe(worldRef.current);
+
+    window.addEventListener('resize', updateConstraints);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', updateConstraints);
+      document.body.classList.remove('hide-cursor');
+    };
+  }, []);
 
   const handleMouseEnter = () => {
     setCursorState('project');
@@ -29,20 +64,21 @@ export const LabCanvas: React.FC = () => {
     document.body.classList.remove('hide-cursor');
   };
 
-  const handleItemClick = (item: any) => {
+  const handleItemClick = (item: (typeof LAB_ITEMS)[number]) => {
+    if (didDragRef.current) return;
     setSelectedItem(item);
-    handleMouseLeave(); // reset cursor for overlay
+    handleMouseLeave();
   };
 
   return (
-    <section id="lab" className="relative h-screen w-full bg-canvas border-t border-soft-gray/30 overflow-hidden pointer-events-auto">
+    <section id="lab" className="relative h-[100svh] min-h-[760px] w-full bg-canvas border-t border-soft-gray/30 overflow-hidden pointer-events-auto">
       <div className="absolute top-12 left-4 md:left-12 z-20 pointer-events-none flex flex-col gap-2">
         <h2 className="font-mono text-[10px] md:text-[11px] uppercase tracking-[0.04em] text-ink">LAB / EXPERIMENTS</h2>
         <AnimatePresence>
           {!hasDragged && (
-            <motion.div 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="font-mono text-[10px] uppercase tracking-[0.04em] text-muted-gray"
             >
@@ -52,81 +88,95 @@ export const LabCanvas: React.FC = () => {
         </AnimatePresence>
       </div>
 
-      <motion.div 
-        ref={containerRef}
-        drag
-        dragConstraints={{ left: -1000, right: 0, top: -500, bottom: 0 }}
-        dragElastic={0.1}
-        onDragStart={() => setHasDragged(true)}
-        className="w-[200vw] h-[150vh] relative cursor-grab active:cursor-grabbing"
-      >
-        {LAB_ITEMS.map((item) => (
-          <div
-            key={item.id}
-            className="absolute group"
-            style={{
-              width: item.w,
-              height: item.h,
-              left: item.x,
-              top: item.y
-            }}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            onClick={() => handleItemClick(item)}
-          >
-            {/* Visual Preview */}
-            <div className="w-full h-full overflow-hidden bg-soft-gray">
-              <motion.div 
-                className="w-full h-full bg-cover bg-center origin-center transition-transform duration-700 ease-out group-hover:scale-[1.03] grayscale-[0.2]"
-                style={{ backgroundImage: `url(${item.img})` }}
-              />
-            </div>
-            
-            {/* Metadata overlay */}
-            <div className="absolute -bottom-12 left-0 w-full flex justify-between items-start pt-3">
-              <div className="flex flex-col gap-1 transition-transform duration-300 group-hover:translate-x-1">
-                <div className="flex items-center gap-2">
-                  <span className="font-mono text-[10px] tracking-[0.04em] text-muted-gray">0{item.id} /</span>
-                  <span className="font-sans text-[14px] font-[500] tracking-[-0.02em] text-ink flex items-center gap-2">
-                    {item.label}
-                    <span className="w-1.5 h-1.5 rounded-full bg-acid opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                  </span>
+      <div ref={viewportRef} className="absolute inset-0 overflow-hidden">
+        <motion.div
+          ref={worldRef}
+          drag
+          dragConstraints={dragConstraints}
+          dragElastic={0.04}
+          dragMomentum={false}
+          onDragStart={() => {
+            didDragRef.current = true;
+            setHasDragged(true);
+          }}
+          onDragEnd={() => {
+            window.setTimeout(() => {
+              didDragRef.current = false;
+            }, 0);
+          }}
+          className="relative w-[200vw] min-w-[1800px] h-[150vh] min-h-[1100px] cursor-grab active:cursor-grabbing touch-none"
+        >
+          {LAB_ITEMS.map((item) => (
+            <button
+              type="button"
+              key={item.id}
+              className="absolute group appearance-none border-0 bg-transparent p-0 text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-8"
+              style={{
+                width: item.w,
+                height: item.h,
+                left: item.x,
+                top: item.y,
+              }}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              onClick={() => handleItemClick(item)}
+            >
+              <div className="w-full h-full overflow-hidden bg-soft-gray">
+                <motion.div
+                  className="w-full h-full bg-cover bg-center origin-center transition-transform duration-500 ease-out group-hover:scale-[1.03] grayscale-[0.2]"
+                  style={{ backgroundImage: `url(${item.img})` }}
+                />
+              </div>
+
+              <div className="absolute -bottom-12 left-0 w-full flex justify-between items-start pt-3">
+                <div className="flex flex-col gap-1 transition-transform duration-300 group-hover:translate-x-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-[10px] tracking-[0.04em] text-muted-gray">0{item.id} /</span>
+                    <span className="font-sans text-[14px] font-[500] tracking-[-0.02em] text-ink flex items-center gap-2">
+                      {item.label}
+                      <span className="w-1.5 h-1.5 rounded-full bg-acid opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 text-muted-gray group-hover:text-ink transition-colors duration-300">
+                  <span className="font-mono text-[10px] tracking-[0.04em]">{item.year}</span>
+                  <ArrowUpRight size={14} className="-rotate-45 group-hover:rotate-0 transition-transform duration-300" />
                 </div>
               </div>
-              
-              <div className="flex items-center gap-2 text-muted-gray group-hover:text-ink transition-colors duration-300">
-                <span className="font-mono text-[10px] tracking-[0.04em]">{item.year}</span>
-                <ArrowUpRight size={14} className="-rotate-45 group-hover:rotate-0 transition-transform duration-300" />
-              </div>
-            </div>
-          </div>
-        ))}
-      </motion.div>
+            </button>
+          ))}
+        </motion.div>
+      </div>
 
-      {/* Simple Overlay for Clicked Item */}
       <AnimatePresence>
         {selectedItem && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[200] bg-canvas/95 backdrop-blur-md flex flex-col items-center justify-center p-4 md:p-12 cursor-auto"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${selectedItem.label} experiment preview`}
           >
-            <button 
+            <button
+              type="button"
               onClick={() => setSelectedItem(null)}
               className="absolute top-8 right-8 p-4 text-ink hover:text-acid transition-colors"
+              aria-label="Close experiment preview"
             >
               <X size={32} strokeWidth={1.5} />
             </button>
 
-            <motion.div 
+            <motion.div
               initial={{ y: 40, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ delay: 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               className="w-full max-w-4xl"
             >
               <div className="w-full aspect-video bg-soft-gray mb-8">
-                <div 
+                <div
                   className="w-full h-full bg-cover bg-center grayscale-[0.2]"
                   style={{ backgroundImage: `url(${selectedItem.img})` }}
                 />
