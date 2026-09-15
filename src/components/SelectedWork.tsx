@@ -166,20 +166,20 @@ export const SelectedWork: React.FC = () => {
       <section
         id="work"
         ref={containerRef}
-        className="pointer-events-auto relative w-full bg-canvas"
+        className="pointer-events-auto relative w-full scroll-mt-3 rounded-[10px] bg-canvas shadow-[0_20px_70px_rgba(17,17,17,0.07)] md:scroll-mt-6"
         style={{ height: theatreHeight }}
       >
-        <div className="sticky top-0 h-[100svh] min-h-[720px] w-full overflow-hidden bg-canvas">
+        <div className="sticky top-0 h-[100svh] min-h-[720px] w-full overflow-hidden rounded-[10px] bg-canvas">
           {PROJECTS.map((project, index) => (
             <div
               key={project.id}
               ref={(el) => { projectRefs.current[index] = el; }}
-              className="absolute inset-0 flex items-center justify-center px-6 pb-12 pt-28 md:px-12 md:pb-14 md:pt-32"
+              className="absolute inset-0 flex items-center justify-center px-6 pb-12 pt-24 md:px-12 md:pb-14 md:pt-28"
             >
               <div className="grid h-[78svh] max-h-[860px] min-h-[560px] w-full max-w-[1360px] grid-rows-[auto_minmax(0,1fr)_auto] gap-5 md:gap-7">
                 <header>
                   <div className="mb-4 flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.05em] text-muted-gray md:text-[10px]">
-                    <span>SELECTED WORK / 02</span>
+                    <span>02 / SELECTED WORK</span>
                     <span>{project.number} / {String(PROJECTS.length).padStart(2, '0')}</span>
                   </div>
 
