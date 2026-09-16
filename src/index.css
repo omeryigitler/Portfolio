@@ -84,6 +84,11 @@
     color: transparent;
   }
 
+  /* Keep only the outer sheet edge; remove the extra inset line on the hero layer. */
+  #home > div[aria-hidden="true"].pointer-events-none {
+    display: none;
+  }
+
   /* Keep the contact process interaction identical to the original Hero process rows. */
   #contact .border-l-2.border-acid > div > span:nth-child(2) {
     transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
