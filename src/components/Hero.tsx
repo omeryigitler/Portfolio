@@ -35,6 +35,7 @@ export const Hero: React.FC = () => {
       gsap.set('.hero-top', { autoAlpha: 0, y: 10 });
       gsap.set('.hero-copy-line', { autoAlpha: 0, y: 42 });
       gsap.set('.hero-reel-shell', { autoAlpha: 0, y: 18, scale: 0.985 });
+      gsap.set('.hero-source-fragment', { autoAlpha: 0, x: 26, scale: 0.985 });
       gsap.set('.hero-support', { autoAlpha: 0, y: 14 });
       gsap.set('.hero-actions', { autoAlpha: 0, y: 14 });
       gsap.set('.hero-project-meta', { autoAlpha: 0, y: 12 });
@@ -44,6 +45,7 @@ export const Hero: React.FC = () => {
       intro.to('.hero-top', { autoAlpha: 1, y: 0, duration: 0.45 }, 0.05);
       intro.to('.hero-copy-line', { autoAlpha: 1, y: 0, duration: 0.76, stagger: 0.09 }, 0.18);
       intro.to('.hero-reel-shell', { autoAlpha: 1, y: 0, scale: 1, duration: 0.9 }, 0.48);
+      intro.to('.hero-source-fragment', { autoAlpha: 1, x: 0, scale: 1, duration: 0.9 }, 0.52);
       intro.to('.hero-support', { autoAlpha: 1, y: 0, duration: 0.46 }, 0.8);
       intro.to('.hero-actions', { autoAlpha: 1, y: 0, duration: 0.46 }, 0.9);
       intro.to('.hero-project-meta', { autoAlpha: 1, y: 0, duration: 0.42 }, 0.98);
@@ -112,7 +114,7 @@ export const Hero: React.FC = () => {
         </div>
 
         <div ref={mainRef} className="grid content-center gap-8 py-10 lg:grid-cols-12 lg:gap-x-10 lg:py-6">
-          <div className="lg:col-span-9 xl:col-span-9">
+          <div className="relative z-10 lg:col-span-9 xl:col-span-9">
             <h1
               aria-label="websites should feel alive."
               className="text-[clamp(58px,7.2vw,138px)] font-[560] leading-[0.82] tracking-[-0.062em] text-ink [font-feature-settings:'kern'_1,'liga'_1] [font-kerning:normal]"
@@ -129,7 +131,7 @@ export const Hero: React.FC = () => {
                     aria-hidden="true"
                     className={`absolute inset-0 bg-cover bg-center bg-clip-text text-transparent transition-opacity duration-700 ease-[0.16,1,0.3,1] ${index === activeProject ? 'opacity-100' : 'opacity-0'}`}
                     style={{
-                      backgroundImage: `url(${project.coverImage})`,
+                      backgroundImage: `url(${project.coverFallback ?? project.coverImage})`,
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                     }}
@@ -151,30 +153,42 @@ export const Hero: React.FC = () => {
             </h1>
           </div>
 
-          <aside className="hero-project-meta flex flex-col justify-between border-t border-ink/10 pt-4 lg:col-span-3 lg:min-h-[310px] lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0 xl:pl-10">
-            <div>
-              <p className="font-mono text-[8px] uppercase tracking-[0.07em] text-muted-gray md:text-[9px]">NOW SHOWING</p>
-              <p className="mt-3 text-[clamp(22px,2vw,34px)] font-[560] leading-[0.96] tracking-[-0.04em] text-ink">
+          <aside className="hero-project-meta relative min-h-[260px] lg:col-span-3 lg:min-h-[340px]">
+            <div
+              className="hero-source-fragment pointer-events-none absolute -bottom-[8%] -right-16 top-[7%] w-[118%] overflow-hidden md:-right-12 lg:-right-14 xl:-right-20"
+              aria-hidden="true"
+              style={{
+                WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.18) 10%, #000 28%, #000 100%)',
+                maskImage: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.18) 10%, #000 28%, #000 100%)',
+              }}
+            >
+              {REEL_PROJECTS.map((project, index) => (
+                <img
+                  key={project.id}
+                  src={project.coverFallback ?? project.coverImage}
+                  alt=""
+                  className={`absolute inset-0 h-full w-full object-cover object-center transition-[opacity,transform] duration-700 ease-[0.16,1,0.3,1] ${index === activeProject ? 'scale-100 opacity-100' : 'scale-[1.025] opacity-0'}`}
+                />
+              ))}
+              <div className="absolute inset-0 bg-gradient-to-t from-canvas/22 via-transparent to-canvas/6" />
+            </div>
+
+            <div className="absolute left-0 top-0 z-10 max-w-[220px] lg:top-[2%]">
+              <p className="font-mono text-[8px] uppercase tracking-[0.07em] text-muted-gray md:text-[9px]">
+                SOURCE / {currentProject.number}
+              </p>
+              <p className="mt-2 text-[13px] font-[600] uppercase leading-[1.05] tracking-[-0.025em] text-ink md:text-[14px]">
                 {currentProject.title}
               </p>
-              <p className="mt-3 font-mono text-[8px] uppercase leading-[1.55] tracking-[0.06em] text-muted-gray md:text-[9px]">
-                {currentProject.category}<br />
-                {currentProject.number} / {String(REEL_PROJECTS.length).padStart(2, '0')}
+              <p className="mt-2 font-mono text-[7px] uppercase leading-[1.5] tracking-[0.06em] text-muted-gray md:text-[8px]">
+                {currentProject.category}
               </p>
             </div>
 
-            <div className="mt-6 lg:mt-0">
-              <div className="mb-4 flex gap-2" aria-hidden="true">
-                {REEL_PROJECTS.map((project, index) => (
-                  <span
-                    key={project.id}
-                    className={`h-[3px] flex-1 transition-colors duration-500 ${index === activeProject ? 'bg-acid' : 'bg-ink/10'}`}
-                  />
-                ))}
-              </div>
-              <p className="max-w-[250px] font-mono text-[8px] uppercase leading-[1.5] tracking-[0.055em] text-muted-gray md:text-[9px]">
-                REAL PROJECTS / MOVING THROUGH THE WORD THAT MATTERS MOST.
-              </p>
+            <div className="absolute bottom-0 left-0 z-10 flex items-center gap-2 font-mono text-[7px] uppercase tracking-[0.06em] text-muted-gray md:text-[8px]">
+              <span>{String(activeProject + 1).padStart(2, '0')}</span>
+              <span className="h-px w-7 bg-ink/20" aria-hidden="true" />
+              <span>{String(REEL_PROJECTS.length).padStart(2, '0')}</span>
             </div>
           </aside>
 
