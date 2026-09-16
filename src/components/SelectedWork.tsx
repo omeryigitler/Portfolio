@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ArrowUpRight, X } from 'lucide-react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useTheme } from '../context/ThemeContext';
 import { useUI } from '../context/UIContext';
 import { DEFAULT_AMBIENT, PROJECTS, type ProjectData } from '../data';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const ProjectCover: React.FC<{ project: ProjectData; priority?: boolean }> = ({ project, priority = false }) => {
   const [coverSrc, setCoverSrc] = useState(project.coverImage);
@@ -24,7 +28,7 @@ const ProjectCover: React.FC<{ project: ProjectData; priority?: boolean }> = ({ 
 
   return (
     <div
-      className="absolute inset-0 overflow-hidden"
+      className="project-cover absolute -inset-y-[3%] inset-x-0 overflow-hidden will-change-transform"
       style={{ backgroundColor: project.ambientColor }}
     >
       {!coverFailed && (
@@ -34,7 +38,7 @@ const ProjectCover: React.FC<{ project: ProjectData; priority?: boolean }> = ({ 
           loading={priority ? 'eager' : 'lazy'}
           decoding="async"
           onError={handleCoverError}
-          className={`h-full w-full transition-transform duration-700 ease-[0.16,1,0.3,1] group-hover:scale-[1.018] ${
+          className={`h-full w-full transition-transform duration-700 ease-[0.16,1,0.3,1] group-hover:scale-[1.014] ${
             project.coverFit === 'contain' ? 'object-contain p-[8%]' : 'object-cover'
           }`}
         />
@@ -118,9 +122,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     <motion.button
       type="button"
       layoutId={`project-media-${project.id}`}
-      className={`group relative overflow-hidden rounded-[6px] bg-[#ecebe6] text-left shadow-[0_8px_24px_rgba(17,17,17,0.055)] focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4 ${className}`}
-      whileHover={{ y: -4, scale: 1.006, transition: { duration: 0.28, ease: [0.16, 1, 0.3, 1] } }}
-      whileFocus={{ y: -3 }}
+      className={`project-card group relative overflow-hidden rounded-[6px] bg-[#ecebe6] text-left shadow-[0_8px_24px_rgba(17,17,17,0.055)] focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4 ${className}`}
+      whileHover={{ y: -2, transition: { duration: 0.28, ease: [0.16, 1, 0.3, 1] } }}
+      whileFocus={{ y: -2 }}
       onMouseEnter={() => onEnter(project)}
       onMouseLeave={onLeave}
       onFocus={() => onFocusProject(project)}
@@ -158,6 +162,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 };
 
 export const SelectedWork: React.FC = () => {
+  const sectionRef = useRef<HTMLElement>(null);
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
   const { setActiveAmbient, setCursorState, setCursorText } = useTheme();
   const { setProjectOpen } = useUI();
@@ -195,6 +200,71 @@ export const SelectedWork: React.FC = () => {
   };
 
   useEffect(() => {
+    if (!sectionRef.current) return;
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reducedMotion) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        '.work-header',
+        { autoAlpha: 0.25, clipPath: 'inset(0% 0% 58% 0%)' },
+        {
+          autoAlpha: 1,
+          clipPath: 'inset(0% 0% 0% 0%)',
+          ease: 'none',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 92%',
+            end: 'top 68%',
+            scrub: 0.8,
+          },
+        },
+      );
+
+      const cards = gsap.utils.toArray<HTMLElement>('.project-card');
+
+      cards.forEach((card) => {
+        gsap.fromTo(
+          card,
+          { autoAlpha: 0.48, clipPath: 'inset(8% 0% 10% 0%)' },
+          {
+            autoAlpha: 1,
+            clipPath: 'inset(0% 0% 0% 0%)',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: card,
+              start: 'top 96%',
+              end: 'top 66%',
+              scrub: 0.9,
+            },
+          },
+        );
+
+        const cover = card.querySelector<HTMLElement>('.project-cover');
+        if (!cover) return;
+
+        gsap.fromTo(
+          cover,
+          { yPercent: 2.3 },
+          {
+            yPercent: -2.3,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: card,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 1,
+            },
+          },
+        );
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  useEffect(() => {
     if (!selectedProject) return;
 
     const onKeyDown = (event: KeyboardEvent) => {
@@ -225,10 +295,11 @@ export const SelectedWork: React.FC = () => {
     <>
       <section
         id="work"
-        className="pointer-events-auto relative w-full scroll-mt-3 rounded-[10px] bg-canvas px-5 py-7 shadow-[0_20px_70px_rgba(17,17,17,0.07)] md:scroll-mt-6 md:px-10 md:py-8 lg:px-12"
+        ref={sectionRef}
+        className="pointer-events-auto relative w-full scroll-mt-3 rounded-b-[21px] border-t border-ink/8 bg-canvas px-5 pb-7 pt-8 md:scroll-mt-6 md:px-10 md:pb-8 md:pt-10 lg:px-12"
       >
         <div className="mx-auto w-full max-w-[1540px]">
-          <header className="mb-4 flex items-end justify-between gap-8 md:mb-5">
+          <header className="work-header mb-4 flex items-end justify-between gap-8 md:mb-5">
             <div>
               <div className="font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
                 02 / SELECTED WORK
