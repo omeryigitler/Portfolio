@@ -24,7 +24,7 @@ export default function App() {
 
           <div className="pointer-events-none relative z-10 flex min-h-screen w-full flex-col items-center py-3 md:py-6">
             <main className="pointer-events-auto flex w-[calc(100vw-24px)] flex-col gap-4 bg-transparent md:w-[92vw] md:max-w-[1680px] md:gap-6">
-              <div className="relative w-full rounded-[22px] border border-white/70 bg-canvas shadow-[0_24px_80px_rgba(17,17,17,0.065)]">
+              <div className="relative w-full overflow-hidden rounded-[22px] border border-white/70 bg-canvas shadow-[0_24px_80px_rgba(17,17,17,0.065)]">
                 <Hero />
                 <ProjectTheatre />
               </div>
