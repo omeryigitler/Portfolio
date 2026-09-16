@@ -13,138 +13,70 @@ const TITLE_LINES = [
 
 export const Hero: React.FC = () => {
   const heroRef = useRef<HTMLElement>(null);
-  const mainRef = useRef<HTMLDivElement>(null);
   const titleWrapRef = useRef<HTMLDivElement>(null);
-  const titleOverlayRef = useRef<HTMLHeadingElement>(null);
-  const lightWashRef = useRef<HTMLSpanElement>(null);
-  const spotRef = useRef({ x: 14, y: 50 });
-
-  const paintSpot = () => {
-    if (!titleWrapRef.current) return;
-    titleWrapRef.current.style.setProperty('--spot-x', `${spotRef.current.x}%`);
-    titleWrapRef.current.style.setProperty('--spot-y', `${spotRef.current.y}%`);
-  };
 
   useEffect(() => {
-    if (!heroRef.current || !mainRef.current) return;
+    if (!heroRef.current || !titleWrapRef.current) return;
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    paintSpot();
-
     if (reducedMotion) return;
 
     const ctx = gsap.context(() => {
       gsap.set('.hero-top', { autoAlpha: 0, y: 8 });
       gsap.set('.hero-status', { autoAlpha: 0, y: 10 });
-      gsap.set('.hero-title-line > span', { yPercent: 112 });
-      gsap.set('.hero-title-overlay-line > span', { yPercent: 112 });
+      gsap.set('.hero-title-line > span', { yPercent: 108 });
       gsap.set('.hero-support', { autoAlpha: 0, y: 12 });
       gsap.set('.hero-actions', { autoAlpha: 0, y: 12 });
       gsap.set('.hero-meta', { autoAlpha: 0, y: 8 });
-      gsap.set(titleOverlayRef.current, { autoAlpha: 0 });
-      gsap.set(lightWashRef.current, { autoAlpha: 0 });
 
       const intro = gsap.timeline({ defaults: { ease: 'power4.out' } });
 
       intro.to('.hero-top', { autoAlpha: 1, y: 0, duration: 0.42 }, 0.04);
       intro.to('.hero-status', { autoAlpha: 1, y: 0, duration: 0.42 }, 0.12);
       intro.to(
-        ['.hero-title-line > span', '.hero-title-overlay-line > span'],
-        { yPercent: 0, duration: 0.84, stagger: 0.055 },
+        '.hero-title-line > span',
+        { yPercent: 0, duration: 0.9, stagger: 0.075 },
         0.18,
       );
-      intro.to('.hero-support', { autoAlpha: 1, y: 0, duration: 0.48 }, 0.62);
-      intro.to('.hero-actions', { autoAlpha: 1, y: 0, duration: 0.46 }, 0.72);
-      intro.to('.hero-meta', { autoAlpha: 1, y: 0, duration: 0.42 }, 0.82);
+      intro.to('.hero-support', { autoAlpha: 1, y: 0, duration: 0.5 }, 0.64);
+      intro.to('.hero-actions', { autoAlpha: 1, y: 0, duration: 0.48 }, 0.74);
+      intro.to('.hero-meta', { autoAlpha: 1, y: 0, duration: 0.42 }, 0.84);
 
-      gsap.to(mainRef.current, {
-        y: -14,
-        ease: 'none',
+      const exit = gsap.timeline({
         scrollTrigger: {
           trigger: heroRef.current,
           start: 'top top',
-          end: 'bottom top',
-          scrub: 0.7,
+          end: 'bottom 18%',
+          scrub: 0.9,
         },
       });
+
+      exit.to('.hero-top', { y: -18, autoAlpha: 0.28, ease: 'none' }, 0);
+      exit.to('.hero-status', { y: -28, autoAlpha: 0, ease: 'none' }, 0);
+      exit.to(
+        titleWrapRef.current,
+        {
+          yPercent: -10,
+          scale: 0.988,
+          autoAlpha: 0.12,
+          transformOrigin: '0% 35%',
+          ease: 'none',
+        },
+        0,
+      );
+      exit.to('.hero-support', { y: -30, autoAlpha: 0.08, ease: 'none' }, 0);
+      exit.to('.hero-actions', { y: -18, autoAlpha: 0.12, ease: 'none' }, 0);
+      exit.to('.hero-meta', { y: -8, autoAlpha: 0, ease: 'none' }, 0.08);
     }, heroRef);
 
-    return () => {
-      gsap.killTweensOf(spotRef.current);
-      ctx.revert();
-    };
+    return () => ctx.revert();
   }, []);
-
-  const handleTitleEnter = () => {
-    if (!titleOverlayRef.current || !lightWashRef.current) return;
-
-    gsap.killTweensOf(spotRef.current);
-    spotRef.current.x = 10;
-    spotRef.current.y = 48;
-    paintSpot();
-
-    gsap.to(titleOverlayRef.current, {
-      autoAlpha: 0.34,
-      duration: 0.36,
-      ease: 'power2.out',
-      overwrite: 'auto',
-    });
-
-    gsap.to(lightWashRef.current, {
-      autoAlpha: 1,
-      duration: 0.42,
-      ease: 'power2.out',
-      overwrite: 'auto',
-    });
-
-    gsap.to(spotRef.current, {
-      x: 90,
-      y: 52,
-      duration: 2.35,
-      ease: 'sine.inOut',
-      repeat: -1,
-      yoyo: true,
-      overwrite: 'auto',
-      onUpdate: paintSpot,
-    });
-  };
-
-  const handleTitleLeave = () => {
-    gsap.killTweensOf(spotRef.current);
-
-    gsap.to(spotRef.current, {
-      x: 50,
-      y: 50,
-      duration: 0.65,
-      ease: 'power3.out',
-      overwrite: 'auto',
-      onUpdate: paintSpot,
-    });
-
-    if (titleOverlayRef.current) {
-      gsap.to(titleOverlayRef.current, {
-        autoAlpha: 0,
-        duration: 0.42,
-        ease: 'power2.out',
-        overwrite: 'auto',
-      });
-    }
-
-    if (lightWashRef.current) {
-      gsap.to(lightWashRef.current, {
-        autoAlpha: 0,
-        duration: 0.5,
-        ease: 'power2.out',
-        overwrite: 'auto',
-      });
-    }
-  };
 
   return (
     <section
       id="home"
       ref={heroRef}
-      className="relative min-h-[calc(100svh-24px)] w-full scroll-mt-3 overflow-hidden rounded-[22px] border border-white/70 bg-canvas px-5 pb-7 pt-7 shadow-[0_24px_80px_rgba(17,17,17,0.065)] md:min-h-[calc(100svh-48px)] md:scroll-mt-6 md:px-12 md:pb-10 md:pt-10 lg:px-14"
+      className="relative min-h-[calc(100svh-24px)] w-full scroll-mt-3 overflow-hidden rounded-t-[21px] bg-canvas px-5 pb-7 pt-7 md:min-h-[calc(100svh-48px)] md:scroll-mt-6 md:px-12 md:pb-10 md:pt-10 lg:px-14"
     >
       <div className="relative mx-auto grid min-h-[calc(100svh-80px)] w-full max-w-[1580px] grid-rows-[auto_1fr_auto] md:min-h-[calc(100svh-104px)]">
         <div className="hero-top flex items-center justify-between gap-6 font-mono text-[9px] uppercase tracking-[0.06em] md:text-[10px]">
@@ -156,7 +88,7 @@ export const Hero: React.FC = () => {
           <span className="hidden text-muted-gray md:block">MALTA / WORKING WORLDWIDE / 2026</span>
         </div>
 
-        <div ref={mainRef} className="flex flex-col justify-center py-9 md:py-10 lg:py-5">
+        <div className="flex flex-col justify-center py-9 md:py-10 lg:py-5">
           <div className="hero-status mb-6 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[9px] uppercase tracking-[0.075em] text-muted-gray md:text-[10px]">
             <span className="inline-flex items-center gap-2 text-ink">
               <span className="h-[6px] w-[6px] rounded-full bg-acid" aria-hidden="true" />
@@ -166,45 +98,10 @@ export const Hero: React.FC = () => {
             <span>DESIGN / DEVELOPMENT / INTERACTION</span>
           </div>
 
-          <div
-            ref={titleWrapRef}
-            onMouseEnter={handleTitleEnter}
-            onMouseLeave={handleTitleLeave}
-            className="relative isolate cursor-default [--spot-x:14%] [--spot-y:50%]"
-          >
-            <span
-              ref={lightWashRef}
-              aria-hidden="true"
-              className="pointer-events-none absolute -inset-x-[7%] -inset-y-[24%] z-0"
-              style={{
-                background:
-                  'radial-gradient(ellipse 24% 52% at var(--spot-x) var(--spot-y), rgba(239,255,0,0.11) 0%, rgba(246,247,220,0.09) 30%, rgba(255,255,255,0) 72%)',
-                filter: 'blur(18px)',
-              }}
-            />
-
-            <h1 className="relative z-10 select-none text-[clamp(54px,7.3vw,138px)] font-[560] leading-[0.84] tracking-[-0.066em] text-ink [font-feature-settings:'kern'_1,'liga'_1] [font-kerning:normal]">
+          <div ref={titleWrapRef} className="relative">
+            <h1 className="select-none text-[clamp(54px,7.3vw,138px)] font-[560] leading-[0.84] tracking-[-0.066em] text-ink [font-feature-settings:'kern'_1,'liga'_1] [font-kerning:normal]">
               {TITLE_LINES.map((line) => (
                 <span key={line} className="hero-title-line block overflow-hidden pb-[0.075em] last:pb-[0.12em]">
-                  <span className="block">{line}</span>
-                </span>
-              ))}
-            </h1>
-
-            <h1
-              ref={titleOverlayRef}
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 z-20 select-none text-[clamp(54px,7.3vw,138px)] font-[560] leading-[0.84] tracking-[-0.066em] text-transparent [font-feature-settings:'kern'_1,'liga'_1] [font-kerning:normal]"
-              style={{
-                backgroundImage:
-                  'radial-gradient(ellipse 21% 56% at var(--spot-x) var(--spot-y), rgba(239,255,0,0.95) 0%, rgba(179,191,0,0.62) 16%, rgba(17,17,17,0.28) 32%, rgba(17,17,17,0) 61%)',
-                WebkitBackgroundClip: 'text',
-                backgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              {TITLE_LINES.map((line) => (
-                <span key={line} className="hero-title-overlay-line block overflow-hidden pb-[0.075em] last:pb-[0.12em]">
                   <span className="block">{line}</span>
                 </span>
               ))}
