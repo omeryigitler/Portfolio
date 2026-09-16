@@ -1,140 +1,47 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, Plus } from 'lucide-react';
+import { PROJECTS } from '../data';
 
 const CAPABILITIES = [
   {
     id: 'design',
     number: '01',
     label: 'DESIGN',
-    note: 'HOW IT LOOKS & FEELS.',
-    description: 'Art direction, interface and visual systems shaped around the idea — not a template.',
-    services: ['ART DIRECTION', 'UI / UX', 'IDENTITY', 'DESIGN SYSTEMS'],
+    note: 'ART DIRECTION / UI / SYSTEMS',
+    statement: 'I shape the visual language, interface and system before anything gets built.',
+    services: ['ART DIRECTION', 'UI / UX', 'DIGITAL IDENTITY', 'DESIGN SYSTEMS'],
+    projects: ['japanese-bakery', 'berfin-akbas', 'xxl-cafe'],
   },
   {
-    id: 'build',
+    id: 'development',
     number: '02',
-    label: 'BUILD',
-    note: 'HOW IT WORKS & MOVES.',
-    description: 'Frontend, motion and interaction built as part of the design rather than handed off later.',
-    services: ['FRONTEND', 'MOTION', 'APIS', 'CREATIVE DEVELOPMENT'],
+    label: 'DEVELOPMENT',
+    note: 'FRONTEND / APIS / PERFORMANCE',
+    statement: 'I turn the design into an interface that survives outside the mockup.',
+    services: ['FRONTEND', 'CREATIVE DEVELOPMENT', 'APIS', 'PERFORMANCE'],
+    projects: ['architecture-3d', 'reformer', 'xxl-cafe'],
   },
   {
-    id: 'experiment',
+    id: 'interaction',
     number: '03',
-    label: 'EXPERIMENT',
-    note: 'WHERE IT CAN GO NEXT.',
-    description: 'New interaction models, AI, 3D and generative systems when the project benefits from them.',
-    services: ['AI', '3D', 'GENERATIVE', 'INTERACTIVE SYSTEMS'],
+    label: 'INTERACTION',
+    note: 'MOTION / 3D / AI',
+    statement: 'Movement should explain, guide or reward — not compete with the experience.',
+    services: ['MOTION', 'CREATIVE DEVELOPMENT', 'WEBGL / 3D', 'AI / GENERATIVE'],
+    projects: ['architecture-3d', 'japanese-bakery', 'reformer'],
   },
 ] as const;
 
 type CapabilityId = (typeof CAPABILITIES)[number]['id'];
 
-type DetailProps = {
-  active: CapabilityId;
-};
-
-const DesignSignal: React.FC = () => (
-  <div className="grid h-full min-h-[150px] grid-cols-[0.8fr_1.2fr] gap-4 md:min-h-[170px] md:gap-6">
-    <div className="flex items-end border-r border-ink/10 pr-4 md:pr-6">
-      <div>
-        <span className="block text-[clamp(54px,7vw,108px)] font-[500] leading-[0.72] tracking-[-0.075em] text-ink">Aa</span>
-        <span className="mt-5 block font-mono text-[8px] uppercase tracking-[0.07em] text-muted-gray md:text-[9px]">TYPE / SCALE / RHYTHM</span>
-      </div>
-    </div>
-    <div className="grid grid-cols-6 gap-2 md:gap-3">
-      {Array.from({ length: 12 }).map((_, index) => (
-        <div
-          key={index}
-          className={`border border-ink/10 ${index === 1 || index === 8 ? 'bg-acid' : index === 4 || index === 10 ? 'bg-ink/10' : 'bg-canvas'}`}
-        />
-      ))}
-    </div>
-  </div>
-);
-
-const BuildSignal: React.FC = () => (
-  <div className="flex h-full min-h-[150px] flex-col justify-between bg-[#171717] p-5 text-white md:min-h-[170px] md:p-6">
-    <div className="flex items-center justify-between font-mono text-[8px] uppercase tracking-[0.07em] text-white/40 md:text-[9px]">
-      <span>INTERACTION.TSX</span>
-      <span>BUILD / 02</span>
-    </div>
-
-    <div className="space-y-2 font-mono text-[10px] leading-[1.5] text-white/72 md:text-[11px]">
-      <div><span className="mr-4 text-white/20">01</span>const experience = {'{'}</div>
-      <div className="pl-9"><span className="text-acid">interface</span>: 'clear',</div>
-      <div className="pl-9"><span className="text-acid">motion</span>: 'intentional',</div>
-      <div className="pl-9"><span className="text-acid">performance</span>: 'fast'</div>
-      <div><span className="mr-4 text-white/20">05</span>{'}'};</div>
-    </div>
-
-    <div className="flex items-center justify-between border-t border-white/10 pt-3 font-mono text-[8px] uppercase tracking-[0.07em] text-white/36">
-      <span>DESIGN → CODE → SHIP</span>
-      <span className="h-[3px] w-16 bg-acid" />
-    </div>
-  </div>
-);
-
-const ExperimentSignal: React.FC = () => (
-  <div className="relative h-full min-h-[150px] overflow-hidden border border-ink/10 bg-[#efeee9] md:min-h-[170px]">
-    <div
-      className="absolute inset-0 opacity-60"
-      style={{
-        backgroundImage:
-          'linear-gradient(rgba(17,17,17,0.075) 1px, transparent 1px), linear-gradient(90deg, rgba(17,17,17,0.075) 1px, transparent 1px)',
-        backgroundSize: '34px 34px',
-      }}
-    />
-    <motion.div
-      className="absolute left-[10%] top-[18%] h-[54%] w-[26%] rounded-[44%_56%_62%_38%] border border-ink/12 bg-[#d2d2cc]"
-      animate={{ rotate: [0, 4, -2, 0], borderRadius: ['44% 56% 62% 38%', '58% 42% 36% 64%', '44% 56% 62% 38%'] }}
-      transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-    />
-    <motion.div
-      className="absolute right-[12%] top-[24%] h-[46%] w-[32%] rounded-full border border-ink/10 bg-[#bebfba]"
-      animate={{ scale: [1, 1.04, 0.98, 1], x: [0, 8, -4, 0] }}
-      transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-    />
-    <div className="absolute left-[8%] top-[10%] font-mono text-[8px] uppercase tracking-[0.07em] text-muted-gray md:text-[9px]">GENERATIVE / INTERACTIVE</div>
-    <div className="absolute bottom-[10%] right-[8%] h-3 w-3 bg-acid" />
-  </div>
-);
-
-const CapabilityDetail: React.FC<DetailProps> = ({ active }) => {
-  const capability = CAPABILITIES.find((item) => item.id === active)!;
-
-  return (
-    <motion.div
-      key={active}
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-      className="grid gap-6 border-t border-ink/8 bg-[#f3f2ed] px-4 py-5 md:grid-cols-[0.9fr_1.1fr] md:px-8 md:py-7 lg:gap-12 lg:px-10"
-    >
-      <div className="flex flex-col justify-between gap-8 py-1">
-        <p className="max-w-[620px] text-[18px] leading-[1.38] tracking-[-0.028em] text-ink md:text-[22px] lg:text-[24px]">
-          {capability.description}
-        </p>
-        <div className="flex flex-wrap gap-x-5 gap-y-2 font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray md:text-[9px]">
-          {capability.services.map((service) => (
-            <span key={service}>{service}</span>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        {active === 'design' && <DesignSignal />}
-        {active === 'build' && <BuildSignal />}
-        {active === 'experiment' && <ExperimentSignal />}
-      </div>
-    </motion.div>
-  );
-};
-
 export const SystemMap: React.FC = () => {
-  const [active, setActive] = useState<CapabilityId>('design');
+  const [openId, setOpenId] = useState<CapabilityId | null>(null);
+
+  const projectMap = useMemo(
+    () => new Map(PROJECTS.map((project) => [project.id, project])),
+    [],
+  );
 
   return (
     <section
@@ -144,55 +51,114 @@ export const SystemMap: React.FC = () => {
       <div className="mx-auto flex min-h-[calc(100svh-88px)] w-full max-w-[1580px] flex-col md:min-h-[calc(100svh-128px)]">
         <div className="flex items-center justify-between gap-8 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
           <span>05 / CAPABILITIES</span>
-          <span className="hidden md:block">DESIGN / BUILD / EXPERIMENT</span>
+          <span className="hidden md:block">CLICK A DISCIPLINE TO OPEN</span>
         </div>
 
-        <div className="flex flex-1 flex-col justify-center py-10 md:py-12">
-          <div className="mb-10 grid gap-6 border-b border-ink/10 pb-8 md:mb-12 md:grid-cols-[1.1fr_0.9fr] md:items-end md:pb-10">
-            <h2 className="max-w-[980px] text-[clamp(42px,5.6vw,90px)] font-[500] leading-[0.9] tracking-[-0.055em] text-ink">
-              The work behind the work.
+        <div className="flex flex-1 flex-col justify-center py-12 md:py-16">
+          <div className="mb-12 max-w-[980px] md:mb-16">
+            <p className="font-mono text-[9px] uppercase tracking-[0.07em] text-muted-gray md:text-[10px]">SCOPE OF WORK</p>
+            <h2 className="mt-4 text-[clamp(42px,5vw,84px)] font-[500] leading-[0.92] tracking-[-0.055em] text-ink">
+              A practice across design, development and interaction.
             </h2>
-            <p className="max-w-[520px] text-[15px] leading-[1.55] tracking-[-0.02em] text-ink/62 md:justify-self-end md:text-[17px]">
-              Three disciplines I stay close to from first sketch to shipped interface.
-            </p>
           </div>
 
           <div className="border-b border-ink/10">
             {CAPABILITIES.map((capability) => {
-              const isActive = active === capability.id;
+              const isOpen = openId === capability.id;
 
               return (
-                <div key={capability.id} className="border-t border-ink/10 first:border-t-0">
+                <div key={capability.id} className="border-t border-ink/10">
                   <button
                     type="button"
-                    onMouseEnter={() => setActive(capability.id)}
-                    onFocus={() => setActive(capability.id)}
-                    onClick={() => setActive(capability.id)}
-                    aria-expanded={isActive}
-                    className="group grid w-full grid-cols-[34px_minmax(0,1fr)_auto] items-center gap-3 py-5 text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4 md:grid-cols-[52px_minmax(0,1fr)_260px_auto] md:py-7"
+                    onClick={() => setOpenId(isOpen ? null : capability.id)}
+                    className="group grid w-full grid-cols-[42px_minmax(0,1fr)_auto] items-center gap-3 py-6 text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4 md:grid-cols-[62px_minmax(0,1fr)_330px_auto] md:py-8"
+                    aria-expanded={isOpen}
+                    aria-controls={`capability-${capability.id}`}
                   >
-                    <span className="font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray md:text-[9px]">{capability.number}</span>
-                    <span
-                      className={`text-[clamp(38px,5vw,82px)] font-[500] leading-[0.84] tracking-[-0.055em] text-ink transition-transform duration-300 ease-[0.16,1,0.3,1] ${
-                        isActive ? 'translate-x-2' : 'group-hover:translate-x-2'
-                      }`}
-                    >
+                    <span className="font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray md:text-[9px]">
+                      {capability.number}
+                    </span>
+
+                    <span className="text-[clamp(40px,5.4vw,92px)] font-[500] leading-[0.84] tracking-[-0.055em] text-ink transition-transform duration-300 ease-[0.16,1,0.3,1] group-hover:translate-x-2">
                       {capability.label}
                     </span>
-                    <span className="hidden text-right font-mono text-[8px] uppercase tracking-[0.05em] text-muted-gray md:block md:text-[9px]">
+
+                    <span className="hidden text-right font-mono text-[8px] uppercase leading-[1.45] tracking-[0.055em] text-muted-gray md:block md:text-[9px]">
                       {capability.note}
                     </span>
-                    <ArrowUpRight
-                      size={20}
-                      strokeWidth={1.4}
-                      className={`text-ink transition-transform duration-300 ease-[0.16,1,0.3,1] ${
-                        isActive ? 'translate-x-1 -translate-y-1' : 'group-hover:translate-x-1 group-hover:-translate-y-1'
-                      }`}
-                    />
+
+                    <span className={`grid h-10 w-10 place-items-center rounded-full border border-ink/15 text-ink transition-[transform,border-color] duration-300 ease-[0.16,1,0.3,1] group-hover:border-ink/35 ${isOpen ? 'rotate-45' : 'group-hover:rotate-12'}`}>
+                      <Plus size={17} strokeWidth={1.5} />
+                    </span>
                   </button>
 
                   <AnimatePresence initial={false}>
-                    {isActive && <CapabilityDetail active={capability.id} />}
+                    {isOpen && (
+                      <motion.div
+                        id={`capability-${capability.id}`}
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                        className="overflow-hidden"
+                      >
+                        <div className="relative mb-7 overflow-hidden rounded-[8px] bg-[#f1f0ea] px-5 py-7 md:mb-9 md:px-8 md:py-9 lg:px-10 lg:py-10">
+                          <span className="absolute left-0 top-0 h-full w-[3px] bg-acid" aria-hidden="true" />
+
+                          <div className="grid gap-10 lg:grid-cols-[1.05fr_0.7fr_0.9fr] lg:gap-14 xl:gap-20">
+                            <div>
+                              <p className="mb-4 font-mono text-[8px] uppercase tracking-[0.07em] text-muted-gray md:text-[9px]">
+                                {capability.number} / {capability.label}
+                              </p>
+                              <p className="max-w-[640px] text-[clamp(28px,3vw,48px)] leading-[1.02] tracking-[-0.045em] text-ink">
+                                {capability.statement}
+                              </p>
+                            </div>
+
+                            <div>
+                              <p className="mb-5 font-mono text-[8px] uppercase tracking-[0.07em] text-muted-gray md:text-[9px]">WHAT IT INCLUDES</p>
+                              <div className="space-y-0 border-b border-ink/10">
+                                {capability.services.map((service) => (
+                                  <div
+                                    key={service}
+                                    className="border-t border-ink/10 py-3.5 font-mono text-[9px] uppercase tracking-[0.055em] text-ink md:text-[10px]"
+                                  >
+                                    {service}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div>
+                              <p className="mb-5 font-mono text-[8px] uppercase tracking-[0.07em] text-muted-gray md:text-[9px]">USED IN REAL WORK</p>
+                              <div className="space-y-0 border-b border-ink/10">
+                                {capability.projects.map((projectId) => {
+                                  const project = projectMap.get(projectId);
+                                  if (!project) return null;
+
+                                  return (
+                                    <a
+                                      key={project.id}
+                                      href={project.url}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="group/project flex items-center justify-between gap-4 border-t border-ink/10 py-3.5 text-[13px] font-[560] tracking-[-0.02em] text-ink md:text-[14px]"
+                                    >
+                                      <span>{project.title}</span>
+                                      <ArrowUpRight
+                                        size={15}
+                                        strokeWidth={1.4}
+                                        className="shrink-0 transition-transform duration-300 group-hover/project:translate-x-1 group-hover/project:-translate-y-1"
+                                      />
+                                    </a>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
                   </AnimatePresence>
                 </div>
               );
@@ -201,8 +167,8 @@ export const SystemMap: React.FC = () => {
         </div>
 
         <div className="flex items-end justify-between gap-8 border-t border-ink/8 pt-5 font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray md:text-[9px]">
-          <span>STRATEGY / INTERFACE / CODE</span>
-          <span className="hidden md:block">OPEN A ROW / SEE THE DISCIPLINE</span>
+          <span>DESIGN / DEVELOPMENT / INTERACTION</span>
+          <span className="hidden md:block">CAPABILITY → REAL PROJECT</span>
         </div>
       </div>
     </section>
