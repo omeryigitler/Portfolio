@@ -170,14 +170,12 @@ export const Hero: React.FC = () => {
             </div>
 
             <div className="hero-actions border-ink/10 md:border-l md:pl-8">
-              <a href="#contact" className="group inline-flex items-center gap-4 text-[11px] font-[600] uppercase tracking-[0.01em] text-ink">
+              <a href="#contact" className="group inline-flex items-center gap-3 text-[11px] font-[600] uppercase tracking-[0.01em] text-ink">
                 <span className="relative pb-1">
                   START A PROJECT
                   <span className="absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 bg-acid transition-transform duration-300 group-hover:scale-x-100" />
                 </span>
-                <span className="grid h-10 w-10 place-items-center rounded-full border border-ink/18 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:border-ink/35">
-                  <ArrowUpRight size={16} />
-                </span>
+                <ArrowUpRight size={16} className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
               </a>
             </div>
           </div>
