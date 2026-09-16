@@ -16,21 +16,19 @@ export const Hero: React.FC = () => {
   const mainRef = useRef<HTMLDivElement>(null);
   const titleWrapRef = useRef<HTMLDivElement>(null);
   const titleOverlayRef = useRef<HTMLHeadingElement>(null);
-  const scanRef = useRef<HTMLSpanElement>(null);
-  const spotRef = useRef({ x: 50, y: 50 });
+  const surfaceGlowRef = useRef<HTMLSpanElement>(null);
+  const spotRef = useRef({ x: 0, y: 0 });
 
   const paintSpot = () => {
     if (!titleWrapRef.current) return;
-    titleWrapRef.current.style.setProperty('--spot-x', `${spotRef.current.x}%`);
-    titleWrapRef.current.style.setProperty('--spot-y', `${spotRef.current.y}%`);
+    titleWrapRef.current.style.setProperty('--spot-x', `${spotRef.current.x}px`);
+    titleWrapRef.current.style.setProperty('--spot-y', `${spotRef.current.y}px`);
   };
 
   useEffect(() => {
     if (!heroRef.current || !mainRef.current) return;
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    paintSpot();
-
     if (reducedMotion) return;
 
     const ctx = gsap.context(() => {
@@ -41,8 +39,8 @@ export const Hero: React.FC = () => {
       gsap.set('.hero-support', { autoAlpha: 0, y: 12 });
       gsap.set('.hero-actions', { autoAlpha: 0, y: 12 });
       gsap.set('.hero-meta', { autoAlpha: 0, y: 8 });
-      gsap.set(titleOverlayRef.current, { autoAlpha: 0.08 });
-      gsap.set(scanRef.current, { autoAlpha: 0, xPercent: -170 });
+      gsap.set(titleOverlayRef.current, { autoAlpha: 0 });
+      gsap.set(surfaceGlowRef.current, { autoAlpha: 0 });
 
       const intro = gsap.timeline({ defaults: { ease: 'power4.out' } });
 
@@ -56,9 +54,6 @@ export const Hero: React.FC = () => {
       intro.to('.hero-support', { autoAlpha: 1, y: 0, duration: 0.48 }, 0.62);
       intro.to('.hero-actions', { autoAlpha: 1, y: 0, duration: 0.46 }, 0.72);
       intro.to('.hero-meta', { autoAlpha: 1, y: 0, duration: 0.42 }, 0.82);
-      intro.to(scanRef.current, { autoAlpha: 1, duration: 0.18, ease: 'power1.out' }, 0.5);
-      intro.to(scanRef.current, { xPercent: 620, duration: 1.65, ease: 'power2.inOut' }, 0.52);
-      intro.to(scanRef.current, { autoAlpha: 0, duration: 0.3 }, 1.86);
 
       gsap.to(mainRef.current, {
         y: -14,
@@ -76,43 +71,56 @@ export const Hero: React.FC = () => {
   }, []);
 
   const handleTitleMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (!titleWrapRef.current || !titleOverlayRef.current) return;
+    if (!titleWrapRef.current || !titleOverlayRef.current || !surfaceGlowRef.current) return;
 
     const bounds = titleWrapRef.current.getBoundingClientRect();
-    const x = Math.min(100, Math.max(0, ((event.clientX - bounds.left) / bounds.width) * 100));
-    const y = Math.min(100, Math.max(0, ((event.clientY - bounds.top) / bounds.height) * 100));
+    const x = Math.min(bounds.width, Math.max(0, event.clientX - bounds.left));
+    const y = Math.min(bounds.height, Math.max(0, event.clientY - bounds.top));
+
+    if (spotRef.current.x === 0 && spotRef.current.y === 0) {
+      spotRef.current.x = x;
+      spotRef.current.y = y;
+      paintSpot();
+    }
 
     gsap.to(spotRef.current, {
       x,
       y,
-      duration: 0.42,
-      ease: 'power3.out',
+      duration: 0.2,
+      ease: 'power2.out',
       overwrite: 'auto',
       onUpdate: paintSpot,
     });
 
+    gsap.to(surfaceGlowRef.current, {
+      autoAlpha: 1,
+      duration: 0.24,
+      ease: 'power2.out',
+      overwrite: 'auto',
+    });
+
     gsap.to(titleOverlayRef.current, {
-      autoAlpha: 0.24,
-      duration: 0.3,
+      autoAlpha: 0.38,
+      duration: 0.24,
       ease: 'power2.out',
       overwrite: 'auto',
     });
   };
 
   const handleTitleLeave = () => {
-    gsap.to(spotRef.current, {
-      x: 50,
-      y: 50,
-      duration: 0.9,
-      ease: 'power3.out',
-      overwrite: 'auto',
-      onUpdate: paintSpot,
-    });
+    if (surfaceGlowRef.current) {
+      gsap.to(surfaceGlowRef.current, {
+        autoAlpha: 0,
+        duration: 0.58,
+        ease: 'power2.out',
+        overwrite: 'auto',
+      });
+    }
 
     if (titleOverlayRef.current) {
       gsap.to(titleOverlayRef.current, {
-        autoAlpha: 0.08,
-        duration: 0.7,
+        autoAlpha: 0,
+        duration: 0.5,
         ease: 'power2.out',
         overwrite: 'auto',
       });
@@ -151,6 +159,16 @@ export const Hero: React.FC = () => {
             onMouseLeave={handleTitleLeave}
             className="relative isolate cursor-default [--spot-x:50%] [--spot-y:50%]"
           >
+            <span
+              ref={surfaceGlowRef}
+              aria-hidden="true"
+              className="pointer-events-none absolute -inset-x-[6%] -inset-y-[18%] z-0 blur-[8px]"
+              style={{
+                backgroundImage:
+                  'radial-gradient(circle 330px at var(--spot-x) var(--spot-y), rgba(255,255,255,0.92) 0%, rgba(247,250,215,0.62) 22%, rgba(239,255,0,0.055) 38%, rgba(255,255,255,0.2) 55%, rgba(255,255,255,0) 74%)',
+              }}
+            />
+
             <h1 className="relative z-10 select-none text-[clamp(54px,7.3vw,138px)] font-[560] leading-[0.84] tracking-[-0.066em] text-ink [font-feature-settings:'kern'_1,'liga'_1] [font-kerning:normal]">
               {TITLE_LINES.map((line) => (
                 <span key={line} className="hero-title-line block overflow-hidden pb-[0.075em] last:pb-[0.12em]">
@@ -165,7 +183,7 @@ export const Hero: React.FC = () => {
               className="pointer-events-none absolute inset-0 z-20 select-none text-[clamp(54px,7.3vw,138px)] font-[560] leading-[0.84] tracking-[-0.066em] text-transparent [font-feature-settings:'kern'_1,'liga'_1] [font-kerning:normal]"
               style={{
                 backgroundImage:
-                  'radial-gradient(circle at var(--spot-x) var(--spot-y), rgba(239,255,0,0.98) 0%, rgba(190,204,0,0.62) 7%, rgba(17,17,17,0.38) 15%, rgba(17,17,17,0) 31%)',
+                  'radial-gradient(circle 230px at var(--spot-x) var(--spot-y), rgba(201,211,75,0.72) 0%, rgba(159,167,58,0.42) 28%, rgba(17,17,17,0.18) 52%, rgba(17,17,17,0) 76%)',
                 WebkitBackgroundClip: 'text',
                 backgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
@@ -177,12 +195,6 @@ export const Hero: React.FC = () => {
                 </span>
               ))}
             </h1>
-
-            <span
-              ref={scanRef}
-              aria-hidden="true"
-              className="pointer-events-none absolute -bottom-[3%] -top-[3%] left-0 z-0 w-[14%] bg-[linear-gradient(90deg,transparent,rgba(239,255,0,0.065),transparent)] blur-[10px]"
-            />
           </div>
 
           <div className="mt-7 grid gap-7 border-t border-ink/10 pt-5 md:mt-8 md:grid-cols-[1.45fr_auto_auto] md:items-end md:gap-0">
