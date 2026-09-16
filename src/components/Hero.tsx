@@ -103,7 +103,7 @@ export const Hero: React.FC = () => {
               <span className="hero-headline-line block pb-[0.1em]">should feel</span>
               <span className="hero-headline-line relative inline-block pb-[0.2em] italic">
                 alive<span className="not-italic">.</span>
-                <span className="absolute bottom-[0.06em] left-[-0.02em] -z-10 h-[0.12em] w-[1.08em] origin-left rounded-full bg-acid" />
+                <span className="absolute bottom-[0.06em] left-[-0.02em] right-[-0.03em] -z-10 h-[0.12em] origin-left rounded-full bg-acid" />
               </span>
             </h1>
 
