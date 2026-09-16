@@ -2,133 +2,132 @@ import React, { useEffect, useRef } from 'react';
 import { ArrowDownRight, ArrowUpRight } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { PROJECTS } from '../data';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const TITLE_LINES = [
-  'Designing digital experiences',
-  'with character, precision',
-  'and code.',
-] as const;
-
 export const Hero: React.FC = () => {
   const heroRef = useRef<HTMLElement>(null);
-  const titleWrapRef = useRef<HTMLDivElement>(null);
+  const mediaRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!heroRef.current || !titleWrapRef.current) return;
+    if (!heroRef.current || !mediaRef.current || !cardRef.current) return;
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reducedMotion) return;
 
     const ctx = gsap.context(() => {
-      gsap.set('.hero-top', { autoAlpha: 0, y: 8 });
-      gsap.set('.hero-status', { autoAlpha: 0, y: 10 });
-      gsap.set('.hero-title-line > span', { yPercent: 108 });
-      gsap.set('.hero-support', { autoAlpha: 0, y: 12 });
-      gsap.set('.hero-actions', { autoAlpha: 0, y: 12 });
+      gsap.set('.hero-kicker', { autoAlpha: 0, y: 10 });
+      gsap.set('.hero-card', { autoAlpha: 0, y: 26, scale: 0.985 });
+      gsap.set('.hero-card-title-line > span', { yPercent: 108 });
+      gsap.set('.hero-foot', { autoAlpha: 0, y: 10 });
 
       const intro = gsap.timeline({ defaults: { ease: 'power4.out' } });
-
-      intro.to('.hero-top', { autoAlpha: 1, y: 0, duration: 0.42 }, 0.04);
-      intro.to('.hero-status', { autoAlpha: 1, y: 0, duration: 0.42 }, 0.12);
+      intro.to('.hero-kicker', { autoAlpha: 1, y: 0, duration: 0.55 }, 0.08);
+      intro.to('.hero-card', { autoAlpha: 1, y: 0, scale: 1, duration: 0.78 }, 0.16);
       intro.to(
-        '.hero-title-line > span',
-        { yPercent: 0, duration: 0.92, stagger: 0.075 },
-        0.18,
+        '.hero-card-title-line > span',
+        { yPercent: 0, duration: 0.82, stagger: 0.085 },
+        0.34,
       );
-      intro.to('.hero-support', { autoAlpha: 1, y: 0, duration: 0.5 }, 0.64);
-      intro.to('.hero-actions', { autoAlpha: 1, y: 0, duration: 0.48 }, 0.74);
+      intro.to('.hero-foot', { autoAlpha: 1, y: 0, duration: 0.5 }, 0.68);
 
-      const lines = gsap.utils.toArray<HTMLElement>('.hero-title-line > span');
-      const exit = gsap.timeline({
+      const scrollTl = gsap.timeline({
         scrollTrigger: {
           trigger: heroRef.current,
           start: 'top top',
-          end: 'bottom 28%',
-          scrub: 1,
+          end: 'bottom top',
+          scrub: 0.9,
         },
       });
 
-      exit.to('.hero-top', { y: -16, autoAlpha: 0.25, ease: 'none' }, 0);
-      exit.to('.hero-status', { y: -24, autoAlpha: 0, ease: 'none' }, 0);
-      exit.to(titleWrapRef.current, { scale: 0.982, transformOrigin: '0% 40%', ease: 'none' }, 0);
-
-      if (lines[0]) exit.to(lines[0], { x: -42, autoAlpha: 0.18, ease: 'none' }, 0);
-      if (lines[1]) exit.to(lines[1], { x: 30, autoAlpha: 0.18, ease: 'none' }, 0);
-      if (lines[2]) exit.to(lines[2], { x: -18, autoAlpha: 0.18, ease: 'none' }, 0);
-
-      exit.to('.hero-support', { y: -34, autoAlpha: 0.06, ease: 'none' }, 0);
-      exit.to('.hero-actions', { y: -22, autoAlpha: 0.08, ease: 'none' }, 0);
+      scrollTl.to(
+        mediaRef.current,
+        { scale: 1.085, yPercent: 5, ease: 'none' },
+        0,
+      );
+      scrollTl.to(
+        cardRef.current,
+        { yPercent: -22, scale: 0.94, autoAlpha: 0.16, ease: 'none' },
+        0,
+      );
+      scrollTl.to('.hero-kicker', { y: -22, autoAlpha: 0, ease: 'none' }, 0);
+      scrollTl.to('.hero-foot', { y: -14, autoAlpha: 0, ease: 'none' }, 0.05);
     }, heroRef);
 
     return () => ctx.revert();
   }, []);
 
+  const heroProject = PROJECTS[0];
+
   return (
     <section
       id="home"
       ref={heroRef}
-      className="relative z-10 min-h-[calc(100svh-24px)] w-full scroll-mt-3 overflow-hidden rounded-t-[21px] bg-canvas px-5 pb-7 pt-7 md:min-h-[calc(100svh-48px)] md:scroll-mt-6 md:px-12 md:pb-10 md:pt-10 lg:px-14"
+      className="relative min-h-[calc(100svh-24px)] w-full scroll-mt-3 overflow-hidden bg-[#090909] text-white md:min-h-[calc(100svh-48px)] md:scroll-mt-6"
     >
-      <div className="relative mx-auto grid min-h-[calc(100svh-80px)] w-full max-w-[1580px] grid-rows-[auto_1fr] md:min-h-[calc(100svh-104px)]">
-        <div className="hero-top flex items-center justify-between gap-6 font-mono text-[9px] uppercase tracking-[0.06em] md:text-[10px]">
-          <div className="flex items-center gap-4">
-            <span className="text-muted-gray">01 / INTRO</span>
-            <span className="h-px w-8 bg-soft-gray" aria-hidden="true" />
-            <span className="text-ink">ÖMER YİĞİTLER / INDEPENDENT DESIGNER + DEVELOPER</span>
-          </div>
-          <span className="hidden text-muted-gray md:block">MALTA / WORKING WORLDWIDE / 2026</span>
-        </div>
+      <div ref={mediaRef} className="absolute -inset-[4%] will-change-transform">
+        <img
+          src={heroProject.coverImage}
+          alt=""
+          className={`h-full w-full ${heroProject.coverFit === 'contain' ? 'object-contain' : 'object-cover'} opacity-[0.34] grayscale-[0.18]`}
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(4,4,4,0.78)_0%,rgba(4,4,4,0.48)_52%,rgba(4,4,4,0.68)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.18)_0%,rgba(0,0,0,0.05)_52%,rgba(0,0,0,0.5)_100%)]" />
+      </div>
 
-        <div className="flex flex-col justify-center pb-[11svh] pt-8 md:pb-[13svh] md:pt-10 lg:pt-5">
-          <div className="hero-status mb-6 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[9px] uppercase tracking-[0.075em] text-muted-gray md:text-[10px]">
-            <span className="inline-flex items-center gap-2 text-ink">
-              <span className="h-[6px] w-[6px] rounded-full bg-acid" aria-hidden="true" />
-              ACCEPTING SELECTED PROJECTS
-            </span>
-            <span className="hidden h-px w-10 bg-soft-gray md:block" aria-hidden="true" />
-            <span>DESIGN / DEVELOPMENT / INTERACTION</span>
+      <div className="hero-kicker absolute inset-x-5 top-6 z-20 flex items-center justify-between font-mono text-[8px] uppercase tracking-[0.08em] text-white/65 md:inset-x-12 md:top-9 md:text-[9px] lg:inset-x-14">
+        <span>ÖMER YİĞİTLER</span>
+        <span className="hidden md:inline">INDEPENDENT DESIGNER + DEVELOPER / 2026</span>
+        <span>MALTA</span>
+      </div>
+
+      <div className="relative z-10 flex min-h-[calc(100svh-24px)] items-center px-5 py-24 md:min-h-[calc(100svh-48px)] md:px-12 lg:px-14">
+        <div
+          ref={cardRef}
+          className="hero-card relative ml-[1vw] flex aspect-[1/1.03] w-[min(88vw,520px)] flex-col justify-between bg-[#f6f5f1] p-5 text-[#111] shadow-[0_30px_100px_rgba(0,0,0,0.22)] md:ml-[4vw] md:w-[min(42vw,560px)] md:p-6 lg:ml-[5vw] lg:w-[min(35vw,590px)]"
+        >
+          <div className="flex items-start justify-between gap-6 text-[10px] tracking-[-0.015em] text-black/58 md:text-[11px]">
+            <span>Ömer Yiğitler</span>
+            <span>Based in Malta</span>
           </div>
 
-          <div ref={titleWrapRef} className="relative will-change-transform">
-            <h1 className="select-none text-[clamp(54px,7.3vw,138px)] font-[560] leading-[0.84] tracking-[-0.066em] text-ink [font-feature-settings:'kern'_1,'liga'_1] [font-kerning:normal]">
-              {TITLE_LINES.map((line) => (
-                <span key={line} className="hero-title-line block overflow-hidden pb-[0.075em] last:pb-[0.12em]">
-                  <span className="block will-change-transform">{line}</span>
-                </span>
-              ))}
+          <div>
+            <div className="mb-2 flex items-end justify-between gap-6 text-[9px] tracking-[-0.01em] text-black/55 md:text-[10px]">
+              <span>Independent Designer + Developer</span>
+              <span className="font-mono">(01*)</span>
+            </div>
+
+            <h1 className="text-[clamp(38px,4.35vw,74px)] font-[560] leading-[0.82] tracking-[-0.067em]">
+              <span className="hero-card-title-line block overflow-hidden pb-[0.07em]"><span className="block">Digital experiences</span></span>
+              <span className="hero-card-title-line block overflow-hidden pb-[0.07em]"><span className="block">with character,</span></span>
+              <span className="hero-card-title-line block overflow-hidden pb-[0.11em]"><span className="block">clarity &amp; precision.</span></span>
             </h1>
           </div>
-
-          <div className="mt-7 grid gap-7 border-t border-ink/10 pt-5 md:mt-8 md:grid-cols-[1.45fr_auto_auto] md:items-end md:gap-0">
-            <div className="hero-support pr-6">
-              <p className="max-w-[760px] text-[14px] leading-[1.58] tracking-[-0.02em] text-ink/70 md:text-[17px]">
-                Independent designer &amp; developer creating considered websites and interactive systems — from art direction to production code.
-              </p>
-            </div>
-
-            <div className="hero-actions border-ink/10 md:border-l md:px-8">
-              <a href="#work" className="group inline-flex items-center gap-3 text-[11px] font-[600] uppercase tracking-[0.01em] text-ink">
-                <span className="relative pb-1">
-                  VIEW SELECTED WORK
-                  <span className="absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 bg-acid transition-transform duration-300 group-hover:scale-x-100" />
-                </span>
-                <ArrowDownRight size={16} className="transition-transform duration-300 group-hover:translate-x-1 group-hover:translate-y-1" />
-              </a>
-            </div>
-
-            <div className="hero-actions border-ink/10 md:border-l md:pl-8">
-              <a href="#contact" className="group inline-flex items-center gap-3 text-[11px] font-[600] uppercase tracking-[0.01em] text-ink">
-                <span className="relative pb-1">
-                  START A PROJECT
-                  <span className="absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 bg-acid transition-transform duration-300 group-hover:scale-x-100" />
-                </span>
-                <ArrowUpRight size={16} className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
-              </a>
-            </div>
-          </div>
         </div>
+      </div>
+
+      <div className="hero-foot absolute inset-x-5 bottom-5 z-20 grid items-end gap-5 md:inset-x-12 md:bottom-8 md:grid-cols-[1fr_auto_1fr] lg:inset-x-14">
+        <div className="hidden max-w-[330px] font-mono text-[8px] uppercase leading-[1.45] tracking-[0.065em] text-white/58 md:block">
+          DESIGNING AND BUILDING DISTINCTIVE WEBSITES, DIGITAL PRODUCTS AND INTERACTIVE SYSTEMS.
+        </div>
+
+        <a
+          href="#work"
+          className="group inline-flex items-center justify-self-start gap-3 font-mono text-[8px] uppercase tracking-[0.075em] text-white/72 transition-colors hover:text-white md:justify-self-center md:text-[9px]"
+        >
+          SCROLL TO SELECTED WORK
+          <ArrowDownRight size={13} className="transition-transform duration-300 group-hover:translate-y-0.5" />
+        </a>
+
+        <a
+          href="#contact"
+          className="group hidden items-center justify-self-end gap-3 text-[10px] font-[600] uppercase tracking-[0.01em] text-white md:inline-flex"
+        >
+          START A PROJECT
+          <ArrowUpRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+        </a>
       </div>
     </section>
   );
