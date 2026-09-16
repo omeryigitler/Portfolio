@@ -9,7 +9,11 @@ import { DEFAULT_AMBIENT, PROJECTS, type ProjectData } from '../data';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const ProjectCover: React.FC<{ project: ProjectData; priority?: boolean }> = ({ project, priority = false }) => {
+const ProjectCover: React.FC<{ project: ProjectData; priority?: boolean; className?: string }> = ({
+  project,
+  priority = false,
+  className = '',
+}) => {
   const [coverSrc, setCoverSrc] = useState(project.coverImage);
   const [coverFailed, setCoverFailed] = useState(false);
 
@@ -28,7 +32,7 @@ const ProjectCover: React.FC<{ project: ProjectData; priority?: boolean }> = ({ 
 
   return (
     <div
-      className="project-cover absolute -inset-y-[3%] inset-x-0 overflow-hidden will-change-transform"
+      className={`project-cover absolute -inset-y-[3%] inset-x-0 overflow-hidden will-change-transform ${className}`}
       style={{ backgroundColor: project.ambientColor }}
     >
       {!coverFailed && (
@@ -38,7 +42,7 @@ const ProjectCover: React.FC<{ project: ProjectData; priority?: boolean }> = ({ 
           loading={priority ? 'eager' : 'lazy'}
           decoding="async"
           onError={handleCoverError}
-          className={`h-full w-full transition-transform duration-700 ease-[0.16,1,0.3,1] group-hover:scale-[1.014] ${
+          className={`h-full w-full transition-transform duration-700 ease-[0.16,1,0.3,1] group-hover:scale-[1.012] ${
             project.coverFit === 'contain' ? 'object-contain p-[8%]' : 'object-cover'
           }`}
         />
@@ -90,9 +94,8 @@ const ProjectLiveViewport: React.FC<{ project: ProjectData }> = ({ project }) =>
 
 type ProjectCardProps = {
   project: ProjectData;
-  size?: 'featured' | 'medium' | 'standard';
+  size?: 'medium' | 'standard';
   className?: string;
-  priority?: boolean;
   onEnter: (project: ProjectData) => void;
   onLeave: () => void;
   onOpen: (project: ProjectData) => void;
@@ -104,25 +107,19 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   project,
   size = 'standard',
   className = '',
-  priority = false,
   onEnter,
   onLeave,
   onOpen,
   onFocusProject,
   onBlurProject,
 }) => {
-  const titleSize =
-    size === 'featured'
-      ? 'text-[21px] md:text-[26px]'
-      : size === 'medium'
-        ? 'text-[17px] md:text-[19px]'
-        : 'text-[15px] md:text-[17px]';
+  const titleSize = size === 'medium' ? 'text-[18px] md:text-[22px]' : 'text-[15px] md:text-[17px]';
 
   return (
     <motion.button
       type="button"
       layoutId={`project-media-${project.id}`}
-      className={`project-card group relative overflow-hidden rounded-[6px] bg-[#ecebe6] text-left shadow-[0_8px_24px_rgba(17,17,17,0.055)] focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4 ${className}`}
+      className={`project-card-standard group relative overflow-hidden rounded-[6px] bg-[#ecebe6] text-left shadow-[0_8px_24px_rgba(17,17,17,0.05)] focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4 ${className}`}
       whileHover={{ y: -2, transition: { duration: 0.28, ease: [0.16, 1, 0.3, 1] } }}
       whileFocus={{ y: -2 }}
       onMouseEnter={() => onEnter(project)}
@@ -132,9 +129,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       onClick={() => onOpen(project)}
       aria-label={`Open ${project.title} fullscreen project`}
     >
-      <ProjectCover project={project} priority={priority} />
+      <ProjectCover project={project} />
 
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/14 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/12 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
       <div className="pointer-events-none absolute left-3 top-3 flex items-center gap-2 rounded-[3px] border border-white/45 bg-canvas/90 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.06em] text-ink backdrop-blur-md md:text-[10px]">
         <span>{project.number}</span>
@@ -163,6 +160,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
 export const SelectedWork: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const featuredStageRef = useRef<HTMLDivElement>(null);
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
   const { setActiveAmbient, setCursorState, setCursorText } = useTheme();
   const { setProjectOpen } = useUI();
@@ -200,43 +198,102 @@ export const SelectedWork: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!sectionRef.current) return;
+    if (!sectionRef.current || !featuredStageRef.current) return;
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reducedMotion) return;
 
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        '.work-header',
-        { autoAlpha: 0.25, clipPath: 'inset(0% 0% 58% 0%)' },
+        '.work-kicker',
+        { autoAlpha: 0, y: 18 },
         {
           autoAlpha: 1,
-          clipPath: 'inset(0% 0% 0% 0%)',
+          y: 0,
           ease: 'none',
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: 'top 92%',
-            end: 'top 68%',
-            scrub: 0.8,
+            start: 'top 98%',
+            end: 'top 76%',
+            scrub: 0.7,
           },
         },
       );
 
-      const cards = gsap.utils.toArray<HTMLElement>('.project-card');
+      gsap.fromTo(
+        featuredStageRef.current,
+        {
+          y: 110,
+          scale: 0.94,
+          clipPath: 'inset(13% 4% 8% 4%)',
+          borderRadius: 18,
+          transformOrigin: '50% 0%',
+        },
+        {
+          y: 0,
+          scale: 1,
+          clipPath: 'inset(0% 0% 0% 0%)',
+          borderRadius: 6,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 98%',
+            end: 'top 42%',
+            scrub: 1,
+          },
+        },
+      );
 
+      const featuredCover = featuredStageRef.current.querySelector<HTMLElement>('.project-cover');
+      if (featuredCover) {
+        gsap.fromTo(
+          featuredCover,
+          { yPercent: 3.5, scale: 1.025 },
+          {
+            yPercent: -2.5,
+            scale: 1,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: featuredStageRef.current,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 1.1,
+            },
+          },
+        );
+      }
+
+      gsap.fromTo(
+        '.work-index-line',
+        { autoAlpha: 0, y: 14 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.work-index-line',
+            start: 'top 92%',
+            end: 'top 76%',
+            scrub: 0.7,
+          },
+        },
+      );
+
+      const cards = gsap.utils.toArray<HTMLElement>('.project-card-standard');
       cards.forEach((card) => {
         gsap.fromTo(
           card,
-          { autoAlpha: 0.48, clipPath: 'inset(8% 0% 10% 0%)' },
+          { y: 34, autoAlpha: 0.36, clipPath: 'inset(10% 0% 8% 0%)' },
           {
+            y: 0,
             autoAlpha: 1,
             clipPath: 'inset(0% 0% 0% 0%)',
             ease: 'none',
             scrollTrigger: {
               trigger: card,
               start: 'top 96%',
-              end: 'top 66%',
-              scrub: 0.9,
+              end: 'top 68%',
+              scrub: 0.85,
             },
           },
         );
@@ -246,9 +303,9 @@ export const SelectedWork: React.FC = () => {
 
         gsap.fromTo(
           cover,
-          { yPercent: 2.3 },
+          { yPercent: 2.2 },
           {
-            yPercent: -2.3,
+            yPercent: -2.2,
             ease: 'none',
             scrollTrigger: {
               trigger: card,
@@ -291,57 +348,79 @@ export const SelectedWork: React.FC = () => {
     onBlurProject: () => setActiveAmbient(DEFAULT_AMBIENT),
   };
 
+  const featured = PROJECTS[0];
+
   return (
     <>
       <section
         id="work"
         ref={sectionRef}
-        className="pointer-events-auto relative w-full scroll-mt-3 rounded-b-[21px] border-t border-ink/8 bg-canvas px-5 pb-7 pt-8 md:scroll-mt-6 md:px-10 md:pb-8 md:pt-10 lg:px-12"
+        className="pointer-events-auto relative z-20 -mt-[14svh] w-full scroll-mt-20 rounded-b-[21px] bg-canvas px-5 pb-7 pt-0 md:-mt-[16svh] md:px-10 md:pb-8 lg:px-12"
       >
         <div className="mx-auto w-full max-w-[1540px]">
-          <header className="work-header mb-4 flex items-end justify-between gap-8 md:mb-5">
-            <div>
-              <div className="font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
-                02 / SELECTED WORK
-              </div>
-              <h2 className="mt-2 text-[clamp(30px,3vw,50px)] font-[500] leading-[0.95] tracking-[-0.045em] text-ink">
-                Selected work.
-              </h2>
-            </div>
-
-            <div className="hidden max-w-[350px] text-right md:block">
-              <p className="text-[13px] leading-[1.45] tracking-[-0.015em] text-ink/70">
-                Seven projects, arranged by emphasis rather than chronology. Choose one to open the live experience.
-              </p>
-              <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">
-                01 FEATURED / 02 SELECTED / 04 INDEX
-              </p>
-            </div>
-          </header>
-
-          <div className="grid gap-3 lg:h-[360px] lg:grid-cols-12 xl:h-[390px]">
-            <ProjectCard
-              project={PROJECTS[0]}
-              size="featured"
-              priority
-              className="min-h-[330px] lg:col-span-7 lg:h-full lg:min-h-0"
-              {...cardHandlers}
-            />
-
-            <div className="grid gap-3 md:grid-cols-2 lg:col-span-5 lg:grid-cols-1 lg:grid-rows-2">
-              {PROJECTS.slice(1, 3).map((project) => (
-                <ProjectCard
-                  key={project.id}
-                  project={project}
-                  size="medium"
-                  className="min-h-[240px] lg:h-full lg:min-h-0"
-                  {...cardHandlers}
-                />
-              ))}
-            </div>
+          <div className="work-kicker flex items-end justify-between gap-6 border-t border-ink/10 pb-4 pt-4 font-mono text-[8px] uppercase tracking-[0.065em] text-muted-gray md:pb-5 md:pt-5 md:text-[9px]">
+            <span>02 / SELECTED WORK</span>
+            <span className="hidden sm:block">07 PROJECTS / LIVE ON CLICK</span>
           </div>
 
-          <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:h-[170px] lg:grid-cols-4 xl:h-[190px]">
+          <div ref={featuredStageRef} className="relative h-[58svh] min-h-[410px] overflow-hidden will-change-transform md:h-[68svh] md:min-h-[500px]">
+            <motion.button
+              type="button"
+              layoutId={`project-media-${featured.id}`}
+              className="group relative h-full w-full overflow-hidden rounded-[6px] bg-[#ecebe6] text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4"
+              onMouseEnter={() => handleEnter(featured)}
+              onMouseLeave={handleLeave}
+              onFocus={() => setActiveAmbient(featured.ambientColor)}
+              onBlur={() => setActiveAmbient(DEFAULT_AMBIENT)}
+              onClick={() => openProject(featured)}
+              aria-label={`Open ${featured.title} fullscreen project`}
+            >
+              <ProjectCover project={featured} priority className="featured-project-cover" />
+
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/28 via-transparent to-transparent opacity-70" />
+
+              <div className="pointer-events-none absolute left-4 top-4 flex items-center gap-3 rounded-[3px] border border-white/35 bg-canvas/88 px-2.5 py-1.5 font-mono text-[8px] uppercase tracking-[0.065em] text-ink backdrop-blur-md md:left-5 md:top-5 md:text-[9px]">
+                <span>{featured.number} / FEATURED</span>
+                <span className="h-[4px] w-[4px] rounded-full bg-acid" />
+              </div>
+
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-6 border-t border-white/20 bg-canvas/94 px-4 py-4 backdrop-blur-md md:px-6 md:py-5">
+                <div className="min-w-0">
+                  <p className="truncate text-[clamp(26px,3.1vw,52px)] font-[560] leading-[0.9] tracking-[-0.045em] text-ink">
+                    {featured.title}
+                  </p>
+                  <p className="mt-2 font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray md:text-[9px]">
+                    {featured.category} / {featured.year}
+                  </p>
+                </div>
+
+                <ArrowUpRight
+                  size={23}
+                  strokeWidth={1.3}
+                  className="shrink-0 text-ink transition-transform duration-300 ease-[0.16,1,0.3,1] group-hover:translate-x-1 group-hover:-translate-y-1 md:h-7 md:w-7"
+                />
+              </div>
+            </motion.button>
+          </div>
+
+          <div className="work-index-line mt-8 flex items-center justify-between border-t border-ink/10 pb-4 pt-4 font-mono text-[8px] uppercase tracking-[0.065em] text-muted-gray md:mt-10 md:text-[9px]">
+            <span>PROJECT INDEX / 02—07</span>
+            <span>DESIGN · DEVELOPMENT · INTERACTION</span>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:h-[330px] xl:h-[360px]">
+            {PROJECTS.slice(1, 3).map((project) => (
+              <ProjectCard
+                key={project.id}
+                project={project}
+                size="medium"
+                className="min-h-[300px] lg:h-full lg:min-h-0"
+                {...cardHandlers}
+              />
+            ))}
+          </div>
+
+          <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:h-[190px] lg:grid-cols-4 xl:h-[210px]">
             {PROJECTS.slice(3).map((project) => (
               <ProjectCard
                 key={project.id}
@@ -354,7 +433,7 @@ export const SelectedWork: React.FC = () => {
 
           <div className="mt-4 flex items-center justify-between border-t border-ink/8 pt-4 font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray md:text-[9px]">
             <span>STATIC INDEX / LIVE AFTER CLICK</span>
-            <span>DESIGN · DEVELOPMENT · INTERACTION</span>
+            <span>07 SELECTED PROJECTS</span>
           </div>
         </div>
       </section>
@@ -417,7 +496,7 @@ export const SelectedWork: React.FC = () => {
               <span className="mx-2">/</span>
               <span>{selectedProject.year}</span>
               <span className="mx-2">/</span>
-              <span>SCROLL & INTERACT INSIDE PROJECT</span>
+              <span>SCROLL &amp; INTERACT INSIDE PROJECT</span>
             </div>
           </motion.div>
         )}
