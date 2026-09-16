@@ -35,21 +35,19 @@ export const Hero: React.FC = () => {
       gsap.set('.hero-top', { autoAlpha: 0, y: 10 });
       gsap.set('.hero-copy-line', { autoAlpha: 0, y: 42 });
       gsap.set('.hero-reel-shell', { autoAlpha: 0, y: 18, scale: 0.985 });
-      gsap.set('.hero-source-fragment', { autoAlpha: 0, x: 26, scale: 0.985 });
+      gsap.set('.hero-source', { autoAlpha: 0, y: 10 });
       gsap.set('.hero-support', { autoAlpha: 0, y: 14 });
       gsap.set('.hero-actions', { autoAlpha: 0, y: 14 });
-      gsap.set('.hero-project-meta', { autoAlpha: 0, y: 12 });
       gsap.set('.hero-footer', { autoAlpha: 0, y: 10 });
 
       const intro = gsap.timeline({ defaults: { ease: 'power4.out' } });
       intro.to('.hero-top', { autoAlpha: 1, y: 0, duration: 0.45 }, 0.05);
       intro.to('.hero-copy-line', { autoAlpha: 1, y: 0, duration: 0.76, stagger: 0.09 }, 0.18);
       intro.to('.hero-reel-shell', { autoAlpha: 1, y: 0, scale: 1, duration: 0.9 }, 0.48);
-      intro.to('.hero-source-fragment', { autoAlpha: 1, x: 0, scale: 1, duration: 0.9 }, 0.52);
+      intro.to('.hero-source', { autoAlpha: 1, y: 0, duration: 0.42 }, 0.72);
       intro.to('.hero-support', { autoAlpha: 1, y: 0, duration: 0.46 }, 0.8);
       intro.to('.hero-actions', { autoAlpha: 1, y: 0, duration: 0.46 }, 0.9);
-      intro.to('.hero-project-meta', { autoAlpha: 1, y: 0, duration: 0.42 }, 0.98);
-      intro.to('.hero-footer', { autoAlpha: 1, y: 0, duration: 0.42 }, 1.04);
+      intro.to('.hero-footer', { autoAlpha: 1, y: 0, duration: 0.42 }, 1.02);
 
       gsap.to(mainRef.current, {
         y: -18,
@@ -113,11 +111,11 @@ export const Hero: React.FC = () => {
           <span className="hidden text-muted-gray md:block">INDEPENDENT DESIGNER + DEVELOPER / 2026</span>
         </div>
 
-        <div ref={mainRef} className="grid content-center gap-8 py-10 lg:grid-cols-12 lg:gap-x-10 lg:py-6">
-          <div className="relative z-10 lg:col-span-9 xl:col-span-9">
+        <div ref={mainRef} className="flex flex-col justify-center py-10 lg:py-6">
+          <div className="max-w-[1380px]">
             <h1
               aria-label="websites should feel alive."
-              className="text-[clamp(58px,7.2vw,138px)] font-[560] leading-[0.82] tracking-[-0.062em] text-ink [font-feature-settings:'kern'_1,'liga'_1] [font-kerning:normal]"
+              className="text-[clamp(58px,8vw,154px)] font-[560] leading-[0.82] tracking-[-0.062em] text-ink [font-feature-settings:'kern'_1,'liga'_1] [font-kerning:normal]"
             >
               <span className="hero-copy-line block pb-[0.08em]">websites should</span>
               <span className="hero-copy-line block">feel</span>
@@ -151,50 +149,22 @@ export const Hero: React.FC = () => {
                 <span className="absolute bottom-[0.03em] left-0 right-[-0.02em] -z-10 h-[0.105em] rounded-full bg-acid" aria-hidden="true" />
               </span>
             </h1>
+
+            <div className="hero-source mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray md:mt-3 md:text-[9px]">
+              <span className="inline-flex items-center gap-2 text-ink">
+                <span className="h-[5px] w-[5px] rounded-full bg-acid" aria-hidden="true" />
+                SOURCE {currentProject.number}
+              </span>
+              <span aria-hidden="true">/</span>
+              <span className="text-ink">{currentProject.title}</span>
+              <span aria-hidden="true">—</span>
+              <span>{currentProject.category}</span>
+            </div>
           </div>
 
-          <aside className="hero-project-meta relative min-h-[260px] lg:col-span-3 lg:min-h-[340px]">
-            <div
-              className="hero-source-fragment pointer-events-none absolute -bottom-[8%] -right-16 top-[7%] w-[118%] overflow-hidden md:-right-12 lg:-right-14 xl:-right-20"
-              aria-hidden="true"
-              style={{
-                WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.18) 10%, #000 28%, #000 100%)',
-                maskImage: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.18) 10%, #000 28%, #000 100%)',
-              }}
-            >
-              {REEL_PROJECTS.map((project, index) => (
-                <img
-                  key={project.id}
-                  src={project.coverFallback ?? project.coverImage}
-                  alt=""
-                  className={`absolute inset-0 h-full w-full object-cover object-center transition-[opacity,transform] duration-700 ease-[0.16,1,0.3,1] ${index === activeProject ? 'scale-100 opacity-100' : 'scale-[1.025] opacity-0'}`}
-                />
-              ))}
-              <div className="absolute inset-0 bg-gradient-to-t from-canvas/22 via-transparent to-canvas/6" />
-            </div>
-
-            <div className="absolute left-0 top-0 z-10 max-w-[220px] lg:top-[2%]">
-              <p className="font-mono text-[8px] uppercase tracking-[0.07em] text-muted-gray md:text-[9px]">
-                SOURCE / {currentProject.number}
-              </p>
-              <p className="mt-2 text-[13px] font-[600] uppercase leading-[1.05] tracking-[-0.025em] text-ink md:text-[14px]">
-                {currentProject.title}
-              </p>
-              <p className="mt-2 font-mono text-[7px] uppercase leading-[1.5] tracking-[0.06em] text-muted-gray md:text-[8px]">
-                {currentProject.category}
-              </p>
-            </div>
-
-            <div className="absolute bottom-0 left-0 z-10 flex items-center gap-2 font-mono text-[7px] uppercase tracking-[0.06em] text-muted-gray md:text-[8px]">
-              <span>{String(activeProject + 1).padStart(2, '0')}</span>
-              <span className="h-px w-7 bg-ink/20" aria-hidden="true" />
-              <span>{String(REEL_PROJECTS.length).padStart(2, '0')}</span>
-            </div>
-          </aside>
-
-          <div className="hero-footer lg:col-span-12 mt-3 grid gap-6 border-t border-ink/10 pt-5 md:grid-cols-[1.5fr_auto_auto] md:items-center md:gap-0">
-            <p className="hero-support max-w-[760px] pr-6 text-[14px] leading-[1.55] tracking-[-0.02em] text-ink/68 md:text-[16px]">
-              I design and build websites, digital products and interactive experiences — from the first idea to the final line of code.
+          <div className="hero-footer mt-10 grid gap-6 border-t border-ink/10 pt-5 md:grid-cols-[1.5fr_auto_auto] md:items-center md:gap-0 lg:mt-12">
+            <p className="hero-support max-w-[820px] pr-6 text-[14px] leading-[1.55] tracking-[-0.02em] text-ink/68 md:text-[16px]">
+              I design and build distinctive websites, digital products and interactive experiences for brands that want to be remembered — from concept to working code.
             </p>
 
             <div className="hero-actions border-ink/10 md:border-l md:px-8">
