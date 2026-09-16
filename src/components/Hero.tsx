@@ -5,73 +5,63 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const DISCIPLINES = [
-  ['01', 'ART DIRECTION', 'VISUAL LANGUAGE / TYPE / RHYTHM'],
-  ['02', 'INTERFACE DESIGN', 'SYSTEMS / UX / RESPONSIVE'],
-  ['03', 'FRONTEND', 'REACT / TYPESCRIPT / PRODUCTION'],
-  ['04', 'INTERACTION', 'MOTION / FEEDBACK / POLISH'],
+const TITLE_LINES = [
+  'Designing digital experiences',
+  'with character, precision',
+  'and code.',
 ] as const;
 
 export const Hero: React.FC = () => {
   const heroRef = useRef<HTMLElement>(null);
   const mainRef = useRef<HTMLDivElement>(null);
-  const railMarkerRef = useRef<HTMLSpanElement>(null);
+  const titleWrapRef = useRef<HTMLDivElement>(null);
+  const titleOverlayRef = useRef<HTMLHeadingElement>(null);
+  const scanRef = useRef<HTMLSpanElement>(null);
+  const spotRef = useRef({ x: 50, y: 50 });
+
+  const paintSpot = () => {
+    if (!titleWrapRef.current) return;
+    titleWrapRef.current.style.setProperty('--spot-x', `${spotRef.current.x}%`);
+    titleWrapRef.current.style.setProperty('--spot-y', `${spotRef.current.y}%`);
+  };
 
   useEffect(() => {
     if (!heroRef.current || !mainRef.current) return;
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    paintSpot();
+
     if (reducedMotion) return;
 
     const ctx = gsap.context(() => {
       gsap.set('.hero-top', { autoAlpha: 0, y: 8 });
       gsap.set('.hero-status', { autoAlpha: 0, y: 10 });
       gsap.set('.hero-title-line > span', { yPercent: 112 });
-      gsap.set('.hero-system', { autoAlpha: 0, y: 16 });
-      gsap.set('.hero-discipline-row', { autoAlpha: 0.35 });
+      gsap.set('.hero-title-overlay-line > span', { yPercent: 112 });
       gsap.set('.hero-support', { autoAlpha: 0, y: 12 });
       gsap.set('.hero-actions', { autoAlpha: 0, y: 12 });
       gsap.set('.hero-meta', { autoAlpha: 0, y: 8 });
-      gsap.set(railMarkerRef.current, { top: '0%' });
+      gsap.set(titleOverlayRef.current, { autoAlpha: 0.08 });
+      gsap.set(scanRef.current, { autoAlpha: 0, xPercent: -170 });
 
       const intro = gsap.timeline({ defaults: { ease: 'power4.out' } });
 
-      intro.to('.hero-top', { autoAlpha: 1, y: 0, duration: 0.4 }, 0.04);
-      intro.to('.hero-status', { autoAlpha: 1, y: 0, duration: 0.4 }, 0.12);
+      intro.to('.hero-top', { autoAlpha: 1, y: 0, duration: 0.42 }, 0.04);
+      intro.to('.hero-status', { autoAlpha: 1, y: 0, duration: 0.42 }, 0.12);
       intro.to(
-        '.hero-title-line > span',
-        { yPercent: 0, duration: 0.78, stagger: 0.08 },
+        ['.hero-title-line > span', '.hero-title-overlay-line > span'],
+        { yPercent: 0, duration: 0.84, stagger: 0.055 },
         0.18,
       );
-      intro.to('.hero-system', { autoAlpha: 1, y: 0, duration: 0.64 }, 0.42);
-
-      DISCIPLINES.forEach((_, index) => {
-        const position = 0.56 + index * 0.16;
-        intro.to(
-          `.hero-discipline-row:nth-of-type(${index + 1})`,
-          { autoAlpha: 1, x: 4, duration: 0.22, ease: 'power2.out' },
-          position,
-        );
-        intro.to(
-          railMarkerRef.current,
-          { top: `${index * 33.333}%`, duration: 0.26, ease: 'power2.inOut' },
-          position,
-        );
-        if (index < DISCIPLINES.length - 1) {
-          intro.to(
-            `.hero-discipline-row:nth-of-type(${index + 1})`,
-            { autoAlpha: 0.42, x: 0, duration: 0.3, ease: 'power2.out' },
-            position + 0.18,
-          );
-        }
-      });
-
-      intro.to('.hero-support', { autoAlpha: 1, y: 0, duration: 0.46 }, 0.78);
-      intro.to('.hero-actions', { autoAlpha: 1, y: 0, duration: 0.46 }, 0.9);
-      intro.to('.hero-meta', { autoAlpha: 1, y: 0, duration: 0.42 }, 1.02);
+      intro.to('.hero-support', { autoAlpha: 1, y: 0, duration: 0.48 }, 0.62);
+      intro.to('.hero-actions', { autoAlpha: 1, y: 0, duration: 0.46 }, 0.72);
+      intro.to('.hero-meta', { autoAlpha: 1, y: 0, duration: 0.42 }, 0.82);
+      intro.to(scanRef.current, { autoAlpha: 1, duration: 0.18, ease: 'power1.out' }, 0.5);
+      intro.to(scanRef.current, { xPercent: 620, duration: 1.65, ease: 'power2.inOut' }, 0.52);
+      intro.to(scanRef.current, { autoAlpha: 0, duration: 0.3 }, 1.86);
 
       gsap.to(mainRef.current, {
-        y: -16,
+        y: -14,
         ease: 'none',
         scrollTrigger: {
           trigger: heroRef.current,
@@ -84,6 +74,50 @@ export const Hero: React.FC = () => {
 
     return () => ctx.revert();
   }, []);
+
+  const handleTitleMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (!titleWrapRef.current || !titleOverlayRef.current) return;
+
+    const bounds = titleWrapRef.current.getBoundingClientRect();
+    const x = Math.min(100, Math.max(0, ((event.clientX - bounds.left) / bounds.width) * 100));
+    const y = Math.min(100, Math.max(0, ((event.clientY - bounds.top) / bounds.height) * 100));
+
+    gsap.to(spotRef.current, {
+      x,
+      y,
+      duration: 0.42,
+      ease: 'power3.out',
+      overwrite: 'auto',
+      onUpdate: paintSpot,
+    });
+
+    gsap.to(titleOverlayRef.current, {
+      autoAlpha: 0.24,
+      duration: 0.3,
+      ease: 'power2.out',
+      overwrite: 'auto',
+    });
+  };
+
+  const handleTitleLeave = () => {
+    gsap.to(spotRef.current, {
+      x: 50,
+      y: 50,
+      duration: 0.9,
+      ease: 'power3.out',
+      overwrite: 'auto',
+      onUpdate: paintSpot,
+    });
+
+    if (titleOverlayRef.current) {
+      gsap.to(titleOverlayRef.current, {
+        autoAlpha: 0.08,
+        duration: 0.7,
+        ease: 'power2.out',
+        overwrite: 'auto',
+      });
+    }
+  };
 
   return (
     <section
@@ -101,61 +135,60 @@ export const Hero: React.FC = () => {
           <span className="hidden text-muted-gray md:block">MALTA / WORKING WORLDWIDE / 2026</span>
         </div>
 
-        <div ref={mainRef} className="grid content-center gap-10 py-10 lg:grid-cols-12 lg:gap-x-12 lg:py-6 xl:gap-x-16">
-          <div className="lg:col-span-8 xl:col-span-8">
-            <div className="hero-status mb-6 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[9px] uppercase tracking-[0.075em] text-muted-gray md:text-[10px]">
-              <span className="inline-flex items-center gap-2 text-ink">
-                <span className="h-[6px] w-[6px] rounded-full bg-acid" aria-hidden="true" />
-                ACCEPTING SELECTED PROJECTS
-              </span>
-              <span className="hidden h-px w-10 bg-soft-gray md:block" aria-hidden="true" />
-              <span>DESIGN / CODE / INTERACTION</span>
-            </div>
-
-            <h1 className="max-w-[1080px] text-[clamp(56px,7.1vw,132px)] font-[560] leading-[0.85] tracking-[-0.064em] text-ink [font-feature-settings:'kern'_1,'liga'_1] [font-kerning:normal]">
-              <span className="hero-title-line block overflow-hidden pb-[0.07em]"><span className="block">Websites with</span></span>
-              <span className="hero-title-line block overflow-hidden pb-[0.07em]"><span className="block">clarity, character</span></span>
-              <span className="hero-title-line block overflow-hidden pb-[0.13em]"><span className="block">&amp; technical precision.</span></span>
-            </h1>
+        <div ref={mainRef} className="flex flex-col justify-center py-9 md:py-10 lg:py-5">
+          <div className="hero-status mb-6 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[9px] uppercase tracking-[0.075em] text-muted-gray md:text-[10px]">
+            <span className="inline-flex items-center gap-2 text-ink">
+              <span className="h-[6px] w-[6px] rounded-full bg-acid" aria-hidden="true" />
+              ACCEPTING SELECTED PROJECTS
+            </span>
+            <span className="hidden h-px w-10 bg-soft-gray md:block" aria-hidden="true" />
+            <span>DESIGN / DEVELOPMENT / INTERACTION</span>
           </div>
 
-          <aside className="hero-system flex items-end lg:col-span-4 xl:col-span-4">
-            <div className="w-full lg:pl-2 xl:pl-5">
-              <div className="mb-4 flex items-center justify-between font-mono text-[8px] uppercase tracking-[0.07em] text-muted-gray md:text-[9px]">
-                <span>WORKING ACROSS</span>
-                <span>04 DISCIPLINES</span>
-              </div>
+          <div
+            ref={titleWrapRef}
+            onMouseMove={handleTitleMove}
+            onMouseLeave={handleTitleLeave}
+            className="relative isolate cursor-default [--spot-x:50%] [--spot-y:50%]"
+          >
+            <h1 className="relative z-10 select-none text-[clamp(54px,7.3vw,138px)] font-[560] leading-[0.84] tracking-[-0.066em] text-ink [font-feature-settings:'kern'_1,'liga'_1] [font-kerning:normal]">
+              {TITLE_LINES.map((line) => (
+                <span key={line} className="hero-title-line block overflow-hidden pb-[0.075em] last:pb-[0.12em]">
+                  <span className="block">{line}</span>
+                </span>
+              ))}
+            </h1>
 
-              <div className="relative border-b border-ink/10">
-                <span
-                  ref={railMarkerRef}
-                  className="absolute -left-[1px] z-10 h-10 w-[2px] bg-acid shadow-[0_0_0_1px_rgba(239,255,0,0.08)]"
-                  aria-hidden="true"
-                />
+            <h1
+              ref={titleOverlayRef}
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 z-20 select-none text-[clamp(54px,7.3vw,138px)] font-[560] leading-[0.84] tracking-[-0.066em] text-transparent [font-feature-settings:'kern'_1,'liga'_1] [font-kerning:normal]"
+              style={{
+                backgroundImage:
+                  'radial-gradient(circle at var(--spot-x) var(--spot-y), rgba(239,255,0,0.98) 0%, rgba(190,204,0,0.62) 7%, rgba(17,17,17,0.38) 15%, rgba(17,17,17,0) 31%)',
+                WebkitBackgroundClip: 'text',
+                backgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              {TITLE_LINES.map((line) => (
+                <span key={line} className="hero-title-overlay-line block overflow-hidden pb-[0.075em] last:pb-[0.12em]">
+                  <span className="block">{line}</span>
+                </span>
+              ))}
+            </h1>
 
-                {DISCIPLINES.map(([number, label, note]) => (
-                  <div
-                    key={number}
-                    className="hero-discipline-row group grid grid-cols-[30px_1fr] gap-3 border-t border-ink/10 py-4 pl-4 transition-transform duration-300 ease-[0.16,1,0.3,1] hover:translate-x-1 md:py-5"
-                  >
-                    <span className="font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray md:text-[9px]">{number}</span>
-                    <div>
-                      <div className="flex items-center justify-between gap-5">
-                        <p className="text-[13px] font-[600] uppercase tracking-[-0.01em] text-ink md:text-[14px]">{label}</p>
-                        <span className="h-px w-0 bg-acid transition-[width] duration-300 group-hover:w-8" aria-hidden="true" />
-                      </div>
-                      <p className="mt-1.5 font-mono text-[7px] uppercase leading-[1.5] tracking-[0.06em] text-muted-gray md:text-[8px]">{note}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </aside>
+            <span
+              ref={scanRef}
+              aria-hidden="true"
+              className="pointer-events-none absolute -bottom-[3%] -top-[3%] left-0 z-0 w-[14%] bg-[linear-gradient(90deg,transparent,rgba(239,255,0,0.065),transparent)] blur-[10px]"
+            />
+          </div>
 
-          <div className="lg:col-span-12 mt-2 grid gap-7 border-t border-ink/10 pt-5 md:grid-cols-[1.35fr_auto_auto] md:items-center md:gap-0 lg:mt-3">
+          <div className="mt-7 grid gap-7 border-t border-ink/10 pt-5 md:mt-8 md:grid-cols-[1.45fr_auto_auto] md:items-end md:gap-0">
             <div className="hero-support pr-6">
-              <p className="max-w-[790px] text-[14px] leading-[1.58] tracking-[-0.02em] text-ink/70 md:text-[17px]">
-                I design and build distinctive digital experiences — combining art direction, interface design and production code into one considered system.
+              <p className="max-w-[760px] text-[14px] leading-[1.58] tracking-[-0.02em] text-ink/70 md:text-[17px]">
+                Independent designer &amp; developer creating considered websites and interactive systems — from art direction to production code.
               </p>
             </div>
 
@@ -182,7 +215,7 @@ export const Hero: React.FC = () => {
         </div>
 
         <div className="hero-meta flex items-end justify-between gap-8 border-t border-ink/8 pt-5 font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray md:text-[9px]">
-          <span>WEB DESIGN / DEVELOPMENT / INTERACTION</span>
+          <span>ART DIRECTION / INTERFACE / FRONTEND / MOTION</span>
           <span className="hidden items-center gap-3 md:flex">
             <span className="h-[5px] w-[5px] rounded-full bg-acid" aria-hidden="true" />
             SCROLL TO SELECTED WORK ↓
