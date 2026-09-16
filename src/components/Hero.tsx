@@ -16,19 +16,21 @@ export const Hero: React.FC = () => {
   const mainRef = useRef<HTMLDivElement>(null);
   const titleWrapRef = useRef<HTMLDivElement>(null);
   const titleOverlayRef = useRef<HTMLHeadingElement>(null);
-  const surfaceGlowRef = useRef<HTMLSpanElement>(null);
-  const spotRef = useRef({ x: 0, y: 0 });
+  const lightWashRef = useRef<HTMLSpanElement>(null);
+  const spotRef = useRef({ x: 14, y: 50 });
 
   const paintSpot = () => {
     if (!titleWrapRef.current) return;
-    titleWrapRef.current.style.setProperty('--spot-x', `${spotRef.current.x}px`);
-    titleWrapRef.current.style.setProperty('--spot-y', `${spotRef.current.y}px`);
+    titleWrapRef.current.style.setProperty('--spot-x', `${spotRef.current.x}%`);
+    titleWrapRef.current.style.setProperty('--spot-y', `${spotRef.current.y}%`);
   };
 
   useEffect(() => {
     if (!heroRef.current || !mainRef.current) return;
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    paintSpot();
+
     if (reducedMotion) return;
 
     const ctx = gsap.context(() => {
@@ -40,7 +42,7 @@ export const Hero: React.FC = () => {
       gsap.set('.hero-actions', { autoAlpha: 0, y: 12 });
       gsap.set('.hero-meta', { autoAlpha: 0, y: 8 });
       gsap.set(titleOverlayRef.current, { autoAlpha: 0 });
-      gsap.set(surfaceGlowRef.current, { autoAlpha: 0 });
+      gsap.set(lightWashRef.current, { autoAlpha: 0 });
 
       const intro = gsap.timeline({ defaults: { ease: 'power4.out' } });
 
@@ -67,58 +69,69 @@ export const Hero: React.FC = () => {
       });
     }, heroRef);
 
-    return () => ctx.revert();
+    return () => {
+      gsap.killTweensOf(spotRef.current);
+      ctx.revert();
+    };
   }, []);
 
-  const handleTitleMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (!titleWrapRef.current || !titleOverlayRef.current || !surfaceGlowRef.current) return;
+  const handleTitleEnter = () => {
+    if (!titleOverlayRef.current || !lightWashRef.current) return;
 
-    const bounds = titleWrapRef.current.getBoundingClientRect();
-    const x = Math.min(bounds.width, Math.max(0, event.clientX - bounds.left));
-    const y = Math.min(bounds.height, Math.max(0, event.clientY - bounds.top));
-
-    if (spotRef.current.x === 0 && spotRef.current.y === 0) {
-      spotRef.current.x = x;
-      spotRef.current.y = y;
-      paintSpot();
-    }
-
-    gsap.to(spotRef.current, {
-      x,
-      y,
-      duration: 0.2,
-      ease: 'power2.out',
-      overwrite: 'auto',
-      onUpdate: paintSpot,
-    });
-
-    gsap.to(surfaceGlowRef.current, {
-      autoAlpha: 1,
-      duration: 0.24,
-      ease: 'power2.out',
-      overwrite: 'auto',
-    });
+    gsap.killTweensOf(spotRef.current);
+    spotRef.current.x = 10;
+    spotRef.current.y = 48;
+    paintSpot();
 
     gsap.to(titleOverlayRef.current, {
-      autoAlpha: 0.38,
-      duration: 0.24,
+      autoAlpha: 0.34,
+      duration: 0.36,
       ease: 'power2.out',
       overwrite: 'auto',
+    });
+
+    gsap.to(lightWashRef.current, {
+      autoAlpha: 1,
+      duration: 0.42,
+      ease: 'power2.out',
+      overwrite: 'auto',
+    });
+
+    gsap.to(spotRef.current, {
+      x: 90,
+      y: 52,
+      duration: 2.35,
+      ease: 'sine.inOut',
+      repeat: -1,
+      yoyo: true,
+      overwrite: 'auto',
+      onUpdate: paintSpot,
     });
   };
 
   const handleTitleLeave = () => {
-    if (surfaceGlowRef.current) {
-      gsap.to(surfaceGlowRef.current, {
+    gsap.killTweensOf(spotRef.current);
+
+    gsap.to(spotRef.current, {
+      x: 50,
+      y: 50,
+      duration: 0.65,
+      ease: 'power3.out',
+      overwrite: 'auto',
+      onUpdate: paintSpot,
+    });
+
+    if (titleOverlayRef.current) {
+      gsap.to(titleOverlayRef.current, {
         autoAlpha: 0,
-        duration: 0.58,
+        duration: 0.42,
         ease: 'power2.out',
         overwrite: 'auto',
       });
     }
 
-    if (titleOverlayRef.current) {
-      gsap.to(titleOverlayRef.current, {
+    if (lightWashRef.current) {
+      gsap.to(lightWashRef.current, {
         autoAlpha: 0,
         duration: 0.5,
         ease: 'power2.out',
@@ -155,17 +168,18 @@ export const Hero: React.FC = () => {
 
           <div
             ref={titleWrapRef}
-            onMouseMove={handleTitleMove}
+            onMouseEnter={handleTitleEnter}
             onMouseLeave={handleTitleLeave}
-            className="relative isolate cursor-default [--spot-x:50%] [--spot-y:50%]"
+            className="relative isolate cursor-default [--spot-x:14%] [--spot-y:50%]"
           >
             <span
-              ref={surfaceGlowRef}
+              ref={lightWashRef}
               aria-hidden="true"
-              className="pointer-events-none absolute -inset-x-[6%] -inset-y-[18%] z-0 blur-[8px]"
+              className="pointer-events-none absolute -inset-x-[7%] -inset-y-[24%] z-0"
               style={{
-                backgroundImage:
-                  'radial-gradient(circle 330px at var(--spot-x) var(--spot-y), rgba(255,255,255,0.92) 0%, rgba(247,250,215,0.62) 22%, rgba(239,255,0,0.055) 38%, rgba(255,255,255,0.2) 55%, rgba(255,255,255,0) 74%)',
+                background:
+                  'radial-gradient(ellipse 24% 52% at var(--spot-x) var(--spot-y), rgba(239,255,0,0.11) 0%, rgba(246,247,220,0.09) 30%, rgba(255,255,255,0) 72%)',
+                filter: 'blur(18px)',
               }}
             />
 
@@ -183,7 +197,7 @@ export const Hero: React.FC = () => {
               className="pointer-events-none absolute inset-0 z-20 select-none text-[clamp(54px,7.3vw,138px)] font-[560] leading-[0.84] tracking-[-0.066em] text-transparent [font-feature-settings:'kern'_1,'liga'_1] [font-kerning:normal]"
               style={{
                 backgroundImage:
-                  'radial-gradient(circle 230px at var(--spot-x) var(--spot-y), rgba(201,211,75,0.72) 0%, rgba(159,167,58,0.42) 28%, rgba(17,17,17,0.18) 52%, rgba(17,17,17,0) 76%)',
+                  'radial-gradient(ellipse 21% 56% at var(--spot-x) var(--spot-y), rgba(239,255,0,0.95) 0%, rgba(179,191,0,0.62) 16%, rgba(17,17,17,0.28) 32%, rgba(17,17,17,0) 61%)',
                 WebkitBackgroundClip: 'text',
                 backgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
