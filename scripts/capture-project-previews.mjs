@@ -71,9 +71,6 @@ const settlePage = async (page, delay) => {
   await page.evaluate(async () => {
     document.documentElement.style.scrollBehavior = 'auto';
     document.body.style.scrollBehavior = 'auto';
-
-    // The portfolio card already provides the framing. Remove browser-page gutters from
-    // the captured asset so the homepage itself can sit edge-to-edge in the card.
     document.documentElement.style.margin = '0';
     document.documentElement.style.padding = '0';
     document.body.style.margin = '0';
@@ -105,29 +102,56 @@ const getCaptureClip = async (page) => {
   return page.evaluate(() => {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
-    const candidates = [
-      document.querySelector('#root'),
-      document.querySelector('#__next'),
-      document.querySelector('main'),
-      document.body.firstElementChild,
-    ].filter(Boolean);
+    const fallback = { x: 0, y: 0, width: viewportWidth, height: viewportHeight };
 
-    for (const element of candidates) {
-      const rect = element.getBoundingClientRect();
-      if (rect.width < viewportWidth * 0.72 || rect.height < 280) continue;
+    // Breadth-first search matters here: we want the first large page frame inside
+    // #root/body, not a smaller hero/card deeper in the site.
+    const queue = Array.from(document.body.children).map((element) => ({ element, depth: 0 }));
 
-      const x = Math.max(0, rect.left);
-      const y = Math.max(0, rect.top);
-      const width = Math.min(viewportWidth - x, rect.width);
-      const height = Math.min(viewportHeight - y, Math.max(280, rect.height));
+    while (queue.length) {
+      const current = queue.shift();
+      if (!current) break;
+      const { element, depth } = current;
+      const style = window.getComputedStyle(element);
 
-      // Only crop genuine outer gutters. Large offsets are usually intentional layout.
-      if (x <= 80 && y <= 100 && width >= viewportWidth * 0.82) {
-        return { x, y, width, height };
+      if (
+        style.display !== 'none' &&
+        style.visibility !== 'hidden' &&
+        Number(style.opacity || 1) > 0
+      ) {
+        const rect = element.getBoundingClientRect();
+        const left = Math.max(0, rect.left);
+        const top = Math.max(0, rect.top);
+        const right = Math.max(0, viewportWidth - Math.min(viewportWidth, rect.right));
+        const bottom = Math.max(0, viewportHeight - Math.min(viewportHeight, rect.bottom));
+        const width = Math.min(viewportWidth - left, rect.width);
+        const height = Math.min(viewportHeight - top, rect.height);
+
+        const largeEnough = width >= viewportWidth * 0.82 && height >= viewportHeight * 0.68;
+        const nearViewport = left <= 120 && right <= 120 && top <= 120 && bottom <= 180;
+        const hasRealInset = [left, right, top, bottom].filter((value) => value >= 6).length >= 2;
+        const notFullViewport =
+          left >= 6 || right >= 6 || top >= 6 || bottom >= 6 ||
+          width <= viewportWidth * 0.985 || height <= viewportHeight * 0.985;
+
+        if (largeEnough && nearViewport && hasRealInset && notFullViewport) {
+          return {
+            x: Math.round(left),
+            y: Math.round(top),
+            width: Math.round(width),
+            height: Math.round(height),
+          };
+        }
+      }
+
+      if (depth < 5) {
+        for (const child of Array.from(element.children)) {
+          queue.push({ element: child, depth: depth + 1 });
+        }
       }
     }
 
-    return { x: 0, y: 0, width: viewportWidth, height: viewportHeight };
+    return fallback;
   });
 };
 
@@ -167,7 +191,9 @@ const capture = async (browser, project) => {
       caret: 'hide',
       type: 'png',
     });
-    console.log(`  ${project.repo}: saved ${Math.round(clip.width)}x${Math.round(clip.height)}`);
+    console.log(
+      `  ${project.repo}: saved ${Math.round(clip.width)}x${Math.round(clip.height)} @ ${Math.round(clip.x)},${Math.round(clip.y)}`,
+    );
     return true;
   } catch (error) {
     console.warn(`  ${project.repo}: ${error instanceof Error ? error.message : String(error)}`);
