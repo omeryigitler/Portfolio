@@ -5,6 +5,8 @@ import { chromium } from 'playwright';
 const ARCHIVE_FILE = path.resolve('src/archiveData.ts');
 const OUTPUT_DIR = path.resolve('public/project-previews');
 const WORKERS = 4;
+const VIEWPORT = { width: 1200, height: 912 };
+const TARGET_RATIO = VIEWPORT.width / VIEWPORT.height;
 
 const EXTRA_DELAY = {
   'reformerpilatesmalta.com': 3000,
@@ -28,8 +30,8 @@ const EXTRA_DELAY = {
   'olinkbu.com': 3500,
   'date.omeryigitler.com': 3500,
   'berfinakbas.com': 4500,
-  'Dashboard': 3500,
-  'startpage': 3500,
+  Dashboard: 3500,
+  startpage: 3500,
   'ramazanda-malta.omeryigitler.com': 3500,
   'atelier-couture-belgium': 4500,
 };
@@ -80,7 +82,7 @@ const settlePage = async (page, delay) => {
       .querySelectorAll('[data-vercel-toolbar], vercel-live-feedback, #vercel-live-feedback')
       .forEach((element) => element.remove());
 
-    const images = Array.from(document.images).slice(0, 24);
+    const images = Array.from(document.images).slice(0, 32);
     await Promise.all(
       images.map(
         (image) =>
@@ -98,12 +100,64 @@ const settlePage = async (page, delay) => {
   await page.waitForTimeout(300);
 };
 
+const normalizeClip = (clip, viewportWidth, viewportHeight) => {
+  let { x, y, width, height } = clip;
+  const ratio = width / height;
+
+  if (ratio > TARGET_RATIO) {
+    const nextHeight = width / TARGET_RATIO;
+    if (nextHeight > viewportHeight) {
+      return { x: 0, y: 0, width: viewportWidth, height: viewportHeight };
+    }
+    y = Math.max(0, Math.min(viewportHeight - nextHeight, y - (nextHeight - height) / 2));
+    height = nextHeight;
+  } else if (ratio < TARGET_RATIO) {
+    const nextWidth = height * TARGET_RATIO;
+    if (nextWidth > viewportWidth) {
+      return { x: 0, y: 0, width: viewportWidth, height: viewportHeight };
+    }
+    x = Math.max(0, Math.min(viewportWidth - nextWidth, x - (nextWidth - width) / 2));
+    width = nextWidth;
+  }
+
+  return {
+    x: Math.round(x),
+    y: Math.round(y),
+    width: Math.round(width),
+    height: Math.round(height),
+  };
+};
+
 const getCaptureClip = async (page) => {
-  return page.evaluate(() => {
+  return page.evaluate(({ targetRatio }) => {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     const fallback = { x: 0, y: 0, width: viewportWidth, height: viewportHeight };
     const queue = Array.from(document.body.children).map((element) => ({ element, depth: 0 }));
+
+    const normalize = (clip) => {
+      let { x, y, width, height } = clip;
+      const ratio = width / height;
+
+      if (ratio > targetRatio) {
+        const nextHeight = width / targetRatio;
+        if (nextHeight > viewportHeight) return fallback;
+        y = Math.max(0, Math.min(viewportHeight - nextHeight, y - (nextHeight - height) / 2));
+        height = nextHeight;
+      } else if (ratio < targetRatio) {
+        const nextWidth = height * targetRatio;
+        if (nextWidth > viewportWidth) return fallback;
+        x = Math.max(0, Math.min(viewportWidth - nextWidth, x - (nextWidth - width) / 2));
+        width = nextWidth;
+      }
+
+      return {
+        x: Math.round(x),
+        y: Math.round(y),
+        width: Math.round(width),
+        height: Math.round(height),
+      };
+    };
 
     while (queue.length) {
       const current = queue.shift();
@@ -111,11 +165,7 @@ const getCaptureClip = async (page) => {
       const { element, depth } = current;
       const style = window.getComputedStyle(element);
 
-      if (
-        style.display !== 'none' &&
-        style.visibility !== 'hidden' &&
-        Number(style.opacity || 1) > 0
-      ) {
+      if (style.display !== 'none' && style.visibility !== 'hidden' && Number(style.opacity || 1) > 0) {
         const rect = element.getBoundingClientRect();
         const left = Math.max(0, rect.left);
         const top = Math.max(0, rect.top);
@@ -124,20 +174,15 @@ const getCaptureClip = async (page) => {
         const width = Math.min(viewportWidth - left, rect.width);
         const height = Math.min(viewportHeight - top, rect.height);
 
-        const largeEnough = width >= viewportWidth * 0.70 && height >= viewportHeight * 0.60;
-        const nearViewport = left <= 240 && right <= 240 && top <= 180 && bottom <= 260;
+        const largeEnough = width >= viewportWidth * 0.68 && height >= viewportHeight * 0.56;
+        const nearViewport = left <= 220 && right <= 220 && top <= 180 && bottom <= 260;
         const hasRealInset = [left, right, top, bottom].filter((value) => value >= 6).length >= 2;
         const notFullViewport =
           left >= 6 || right >= 6 || top >= 6 || bottom >= 6 ||
           width <= viewportWidth * 0.985 || height <= viewportHeight * 0.985;
 
         if (largeEnough && nearViewport && hasRealInset && notFullViewport) {
-          return {
-            x: Math.round(left),
-            y: Math.round(top),
-            width: Math.round(width),
-            height: Math.round(height),
-          };
+          return normalize({ x: left, y: top, width, height });
         }
       }
 
@@ -149,12 +194,12 @@ const getCaptureClip = async (page) => {
     }
 
     return fallback;
-  });
+  }, { targetRatio: TARGET_RATIO });
 };
 
 const capture = async (browser, project) => {
   const context = await browser.newContext({
-    viewport: { width: 1440, height: 900 },
+    viewport: VIEWPORT,
     deviceScaleFactor: 1,
     colorScheme: 'light',
     reducedMotion: 'reduce',
@@ -179,8 +224,10 @@ const capture = async (browser, project) => {
       return false;
     }
 
-    const clip = await getCaptureClip(page);
+    const detected = await getCaptureClip(page);
+    const clip = normalizeClip(detected, VIEWPORT.width, VIEWPORT.height);
     const output = path.join(OUTPUT_DIR, `${safeName(project.repo)}.png`);
+
     await page.screenshot({
       path: output,
       clip,
@@ -188,8 +235,9 @@ const capture = async (browser, project) => {
       caret: 'hide',
       type: 'png',
     });
+
     console.log(
-      `  ${project.repo}: saved ${Math.round(clip.width)}x${Math.round(clip.height)} @ ${Math.round(clip.x)},${Math.round(clip.y)}`,
+      `  ${project.repo}: saved ${clip.width}x${clip.height} @ ${clip.x},${clip.y} ratio ${(clip.width / clip.height).toFixed(3)}`,
     );
     return true;
   } catch (error) {
