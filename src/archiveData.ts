@@ -31,7 +31,7 @@ export const ARCHIVE_PROJECTS: ArchiveProject[] = [
   },
   {
     repo: 'omeryigitler.com',
-    title: 'Ömer Yiğitler.com',
+    title: 'Ömer Yiğitler',
     category: 'sites',
     kind: 'Studio portfolio system',
     stack: ['React', 'Vite', 'TypeScript', 'Tailwind'],
