@@ -8,6 +8,7 @@ const LENS_ZOOM = 1.38;
 export const ProjectArchiveLauncher: React.FC = () => {
   const [query, setQuery] = useState('');
   const [isCoarsePointer, setIsCoarsePointer] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const lensRef = useRef<HTMLDivElement>(null);
   const lensCloneRef = useRef<HTMLDivElement>(null);
@@ -50,21 +51,26 @@ export const ProjectArchiveLauncher: React.FC = () => {
   const moveLens = (event: React.PointerEvent<HTMLElement>) => {
     if (isCoarsePointer || event.pointerType === 'touch') return;
 
+    const section = sectionRef.current;
     const source = contentRef.current;
     const lens = lensRef.current;
     const clone = lensCloneRef.current;
-    if (!source || !lens || !clone) return;
+    if (!section || !source || !lens || !clone) return;
 
-    const rect = source.getBoundingClientRect();
-    const localX = event.clientX - rect.left;
-    const localY = event.clientY - rect.top;
+    const sectionRect = section.getBoundingClientRect();
+    const sourceRect = source.getBoundingClientRect();
+
+    const sectionX = event.clientX - sectionRect.left;
+    const sectionY = event.clientY - sectionRect.top;
+    const sourceX = event.clientX - sourceRect.left;
+    const sourceY = event.clientY - sourceRect.top;
 
     lens.style.opacity = '1';
-    lens.style.transform = `translate3d(${event.clientX - LENS_SIZE / 2}px, ${event.clientY - LENS_SIZE / 2}px, 0)`;
+    lens.style.transform = `translate3d(${sectionX - LENS_SIZE / 2}px, ${sectionY - LENS_SIZE / 2}px, 0)`;
 
-    clone.style.width = `${rect.width}px`;
-    clone.style.height = `${rect.height}px`;
-    clone.style.transform = `translate3d(${LENS_SIZE / 2 - localX * LENS_ZOOM}px, ${LENS_SIZE / 2 - localY * LENS_ZOOM}px, 0) scale(${LENS_ZOOM})`;
+    clone.style.width = `${sourceRect.width}px`;
+    clone.style.height = `${sourceRect.height}px`;
+    clone.style.transform = `translate3d(${LENS_SIZE / 2 - sourceX * LENS_ZOOM}px, ${LENS_SIZE / 2 - sourceY * LENS_ZOOM}px, 0) scale(${LENS_ZOOM})`;
   };
 
   const hideLens = () => {
@@ -73,6 +79,7 @@ export const ProjectArchiveLauncher: React.FC = () => {
 
   return (
     <section
+      ref={sectionRef}
       id="work"
       className="relative border-t border-ink/10 bg-canvas md:cursor-none"
       onPointerEnter={(event) => {
@@ -157,7 +164,7 @@ export const ProjectArchiveLauncher: React.FC = () => {
         <div
           ref={lensRef}
           aria-hidden="true"
-          className="pointer-events-none fixed left-0 top-0 z-[180] overflow-hidden rounded-full border border-ink/80 bg-canvas opacity-0 shadow-[0_3px_14px_rgba(17,17,17,0.16),inset_0_0_0_1px_rgba(255,255,255,0.65)] will-change-transform"
+          className="pointer-events-none absolute left-0 top-0 z-[180] overflow-hidden rounded-full border border-ink/80 bg-canvas opacity-0 shadow-[0_3px_14px_rgba(17,17,17,0.16),inset_0_0_0_1px_rgba(255,255,255,0.65)] will-change-transform"
           style={{ width: LENS_SIZE, height: LENS_SIZE, transition: 'opacity 120ms ease' }}
         >
           <div
