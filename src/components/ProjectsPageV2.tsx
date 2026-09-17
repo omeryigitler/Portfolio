@@ -116,7 +116,7 @@ export const ProjectsPageV2: React.FC = () => {
           </h1>
         </div>
 
-        <div className="sticky top-3 z-30 -mx-1 mb-8 bg-canvas/92 px-1 py-3 backdrop-blur-xl md:top-6 md:mb-10">
+        <div className="sticky top-0 z-30 -mx-1 mb-8 bg-canvas/92 px-1 pb-3 pt-0 backdrop-blur-xl md:top-0 md:mb-10">
           <div className="grid min-h-[74px] grid-cols-[auto_1fr_auto] items-center gap-4 border-y border-ink/10 md:min-h-[88px] md:gap-6">
             <Search size={20} strokeWidth={1.25} className="text-muted-gray md:h-6 md:w-6" />
             <input
