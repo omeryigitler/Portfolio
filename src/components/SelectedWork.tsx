@@ -6,23 +6,34 @@ import { useUI } from '../context/UIContext';
 import { DEFAULT_AMBIENT, PROJECTS, type ProjectData } from '../data';
 
 const desktopLayouts = [
-  'lg:col-start-1 lg:col-span-5 lg:row-start-1 lg:row-span-3',
+  'lg:col-start-1 lg:col-span-5 lg:row-start-1 lg:row-span-4',
   'lg:col-start-6 lg:col-span-3 lg:row-start-1 lg:row-span-2',
-  'lg:col-start-9 lg:col-span-4 lg:row-start-1 lg:row-span-3',
+  'lg:col-start-9 lg:col-span-4 lg:row-start-1 lg:row-span-4',
   'lg:col-start-6 lg:col-span-3 lg:row-start-3 lg:row-span-2',
-  'lg:col-start-10 lg:col-span-3 lg:row-start-4 lg:row-span-3',
-  'lg:col-start-1 lg:col-span-3 lg:row-start-4 lg:row-span-3',
-  'lg:col-start-4 lg:col-span-6 lg:row-start-5 lg:row-span-2',
+  'lg:col-start-10 lg:col-span-3 lg:row-start-5 lg:row-span-4',
+  'lg:col-start-1 lg:col-span-3 lg:row-start-5 lg:row-span-4',
+  'lg:col-start-4 lg:col-span-6 lg:row-start-5 lg:row-span-4',
 ];
 
-const HOMEPAGE_VIEWPORT_WIDTH = 1440;
-const HOMEPAGE_MIN_HEIGHT = 1000;
+const HOMEPAGE_DEFAULT_VIEWPORT_WIDTH = 1600;
+const HOMEPAGE_MIN_HEIGHT = 1200;
+
+const previewViewportWidths: Record<string, number> = {
+  'japanese-bakery': 1900,
+  'architecture-3d': 1760,
+  mybabyshire: 1660,
+  reformer: 1800,
+  parfum: 1560,
+  'nail-studio': 1440,
+  'xxl-cafe': 2000,
+};
 
 const ProjectHomepagePreview: React.FC<{ project: ProjectData; priority?: boolean }> = ({ project, priority = false }) => {
   const hostRef = useRef<HTMLDivElement>(null);
   const [loaded, setLoaded] = useState(false);
   const [scale, setScale] = useState(0.24);
   const [viewportHeight, setViewportHeight] = useState(HOMEPAGE_MIN_HEIGHT);
+  const viewportWidth = previewViewportWidths[project.id] ?? HOMEPAGE_DEFAULT_VIEWPORT_WIDTH;
 
   useEffect(() => setLoaded(false), [project.url]);
 
@@ -34,7 +45,7 @@ const ProjectHomepagePreview: React.FC<{ project: ProjectData; priority?: boolea
       const bounds = host.getBoundingClientRect();
       if (!bounds.width || !bounds.height) return;
 
-      const nextScale = bounds.width / HOMEPAGE_VIEWPORT_WIDTH;
+      const nextScale = bounds.width / viewportWidth;
       if (!Number.isFinite(nextScale) || nextScale <= 0) return;
 
       setScale(nextScale);
@@ -45,7 +56,7 @@ const ProjectHomepagePreview: React.FC<{ project: ProjectData; priority?: boolea
     const observer = new ResizeObserver(updatePreview);
     observer.observe(host);
     return () => observer.disconnect();
-  }, []);
+  }, [viewportWidth]);
 
   return (
     <div ref={hostRef} className="absolute inset-x-0 bottom-[54px] top-0 overflow-hidden bg-white md:bottom-[60px]">
@@ -59,7 +70,7 @@ const ProjectHomepagePreview: React.FC<{ project: ProjectData; priority?: boolea
       <div
         className={`pointer-events-none absolute left-0 top-0 bg-white transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}
         style={{
-          width: HOMEPAGE_VIEWPORT_WIDTH,
+          width: viewportWidth,
           height: viewportHeight,
           transform: `scale(${scale})`,
           transformOrigin: 'top left',
@@ -228,7 +239,7 @@ export const SelectedWork: React.FC = () => {
             </div>
           </header>
 
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:h-[78svh] lg:min-h-[700px] lg:max-h-[920px] lg:grid-cols-12 lg:grid-rows-6">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:h-[108svh] lg:min-h-[920px] lg:max-h-[1220px] lg:grid-cols-12 lg:grid-rows-8">
             {PROJECTS.map((project, index) => (
               <motion.button
                 key={project.id}
