@@ -56,3 +56,5 @@ jobs:
           else
             echo 'No preview changes to commit.'
           fi
+
+# Manual refresh: linked project content updated.
