@@ -17,11 +17,10 @@ const githubFallback = (repo: string) => `https://github.com/omeryigitler/${repo
 const displayUrl = (url: string) =>
   url.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
 
-// Capture the actual homepage UI after intro/load animations have had time to finish.
-// The 1200x800 frame keeps navigation + hero + primary UI visible instead of turning
-// each project into a cropped photography tile.
+// Keep the captured viewport close to the desktop card ratio so the full homepage
+// remains visible without creating a second top/bottom letterbox inside the card.
 const previewSnapshotUrl = (url: string) =>
-  `https://image.thum.io/get/noanimate/wait/6/width/1200/crop/800/maxAge/168/${url}`;
+  `https://image.thum.io/get/noanimate/wait/6/width/1200/crop/910/maxAge/168/${url}`;
 
 export const ProjectsPage: React.FC = () => {
   const initialParams = new URLSearchParams(window.location.search);
@@ -177,7 +176,7 @@ export const ProjectsPage: React.FC = () => {
                 >
                   {previewActive && project.siteUrl && (
                     <div
-                      className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden bg-[#e8e6df] p-2 md:p-3"
+                      className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden bg-[#e8e6df]"
                       aria-hidden="true"
                     >
                       <img
@@ -185,7 +184,7 @@ export const ProjectsPage: React.FC = () => {
                         alt=""
                         onLoad={() => setLoadedPreview(project.repo)}
                         onError={() => setLoadedPreview(null)}
-                        className={`h-full w-full object-contain object-center shadow-[0_12px_40px_rgba(17,17,17,0.08)] transition-[opacity,transform] duration-500 ease-out ${
+                        className={`h-full w-full object-contain object-center transition-[opacity,transform] duration-500 ease-out ${
                           previewLoaded ? 'scale-100 opacity-100' : 'scale-[0.99] opacity-0'
                         }`}
                       />
