@@ -169,7 +169,7 @@ export const ProjectArchiveLauncher: React.FC = () => {
         >
           <div
             ref={lensCloneRef}
-            className="pointer-events-none absolute left-0 top-0 origin-top-left bg-canvas"
+            className="pointer-events-none absolute left-0 top-0 box-border origin-top-left bg-canvas px-5 py-7 md:px-10 md:py-9 lg:px-12"
             style={{ transformOrigin: 'top left', willChange: 'transform' }}
           />
           <span className="pointer-events-none absolute inset-[3px] rounded-full border border-white/35" />
