@@ -16,12 +16,13 @@ const desktopLayouts = [
 ];
 
 const HOMEPAGE_VIEWPORT_WIDTH = 1440;
-const HOMEPAGE_VIEWPORT_HEIGHT = 1000;
+const HOMEPAGE_MIN_HEIGHT = 1000;
 
 const ProjectHomepagePreview: React.FC<{ project: ProjectData; priority?: boolean }> = ({ project, priority = false }) => {
   const hostRef = useRef<HTMLDivElement>(null);
   const [loaded, setLoaded] = useState(false);
   const [scale, setScale] = useState(0.24);
+  const [viewportHeight, setViewportHeight] = useState(HOMEPAGE_MIN_HEIGHT);
 
   useEffect(() => setLoaded(false), [project.url]);
 
@@ -29,44 +30,39 @@ const ProjectHomepagePreview: React.FC<{ project: ProjectData; priority?: boolea
     const host = hostRef.current;
     if (!host) return;
 
-    const updateScale = () => {
+    const updatePreview = () => {
       const bounds = host.getBoundingClientRect();
-      const nextScale = Math.min(
-        bounds.width / HOMEPAGE_VIEWPORT_WIDTH,
-        bounds.height / HOMEPAGE_VIEWPORT_HEIGHT,
-      );
-      if (Number.isFinite(nextScale) && nextScale > 0) setScale(nextScale);
+      if (!bounds.width || !bounds.height) return;
+
+      const nextScale = bounds.width / HOMEPAGE_VIEWPORT_WIDTH;
+      if (!Number.isFinite(nextScale) || nextScale <= 0) return;
+
+      setScale(nextScale);
+      setViewportHeight(Math.max(HOMEPAGE_MIN_HEIGHT, Math.ceil(bounds.height / nextScale)));
     };
 
-    updateScale();
-    const observer = new ResizeObserver(updateScale);
+    updatePreview();
+    const observer = new ResizeObserver(updatePreview);
     observer.observe(host);
     return () => observer.disconnect();
   }, []);
 
   return (
-    <div
-      ref={hostRef}
-      className="absolute inset-0 overflow-hidden"
-      style={{ backgroundColor: project.ambientColor }}
-    >
+    <div ref={hostRef} className="absolute inset-x-0 bottom-[54px] top-0 overflow-hidden bg-white md:bottom-[60px]">
       <div
-        className={`pointer-events-none absolute inset-0 z-10 grid place-items-center transition-opacity duration-500 ${loaded ? 'opacity-0' : 'opacity-100'}`}
+        className={`pointer-events-none absolute inset-0 z-10 grid place-items-center bg-white transition-opacity duration-300 ${loaded ? 'opacity-0' : 'opacity-100'}`}
         aria-hidden="true"
       >
-        <div className="flex items-center gap-2 rounded-[3px] border border-black/8 bg-canvas/80 px-2.5 py-1.5 font-mono text-[8px] uppercase tracking-[0.07em] text-muted-gray backdrop-blur-md md:text-[9px]">
-          <span className="h-[4px] w-[4px] rounded-full bg-acid" />
-          <span>LOADING HOMEPAGE</span>
-        </div>
+        <span className="font-mono text-[8px] uppercase tracking-[0.07em] text-muted-gray md:text-[9px]">LOADING HOMEPAGE</span>
       </div>
 
       <div
-        className={`pointer-events-none absolute left-1/2 top-1/2 overflow-hidden bg-white shadow-[0_18px_50px_rgba(17,17,17,0.18)] transition-[opacity,filter] duration-500 ${loaded ? 'opacity-100' : 'opacity-0 blur-[2px]'}`}
+        className={`pointer-events-none absolute left-0 top-0 bg-white transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}
         style={{
           width: HOMEPAGE_VIEWPORT_WIDTH,
-          height: HOMEPAGE_VIEWPORT_HEIGHT,
-          transform: `translate(-50%, -50%) scale(${scale})`,
-          transformOrigin: 'center center',
+          height: viewportHeight,
+          transform: `scale(${scale})`,
+          transformOrigin: 'top left',
         }}
         aria-hidden="true"
       >
@@ -79,8 +75,6 @@ const ProjectHomepagePreview: React.FC<{ project: ProjectData; priority?: boolea
           className="pointer-events-none h-full w-full border-0 bg-white"
         />
       </div>
-
-      <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-black/[0.04]" />
     </div>
   );
 };
@@ -242,8 +236,7 @@ export const SelectedWork: React.FC = () => {
                 data-project-index={index}
                 type="button"
                 layoutId={`project-media-${project.id}`}
-                className={`group relative min-h-[56svh] overflow-hidden rounded-[5px] bg-[#ecebe6] text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-[-2px] md:min-h-[360px] lg:min-h-0 ${desktopLayouts[index] ?? ''}`}
-                whileHover={{ y: -4, transition: { duration: 0.28, ease: [0.16, 1, 0.3, 1] } }}
+                className={`group relative min-h-[56svh] overflow-hidden rounded-[5px] bg-white text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-[-2px] md:min-h-[360px] lg:min-h-0 ${desktopLayouts[index] ?? ''}`}
                 onMouseEnter={() => handleEnter(project, index)}
                 onMouseLeave={handleLeave}
                 onFocus={() => handleEnter(project, index)}
@@ -253,23 +246,13 @@ export const SelectedWork: React.FC = () => {
               >
                 <ProjectHomepagePreview project={project} priority={index < 3} />
 
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-black/[0.03] opacity-50 transition-opacity duration-300 group-hover:opacity-25" />
-
-                <div className="pointer-events-none absolute left-3 top-3 flex items-center gap-2 rounded-[3px] border border-white/35 bg-canvas/90 px-2 py-1 font-mono text-[8px] uppercase tracking-[0.06em] text-ink backdrop-blur-md md:text-[9px]">
-                  <span>{project.number}</span>
-                  <span className="h-[4px] w-[4px] rounded-full bg-acid" />
-                </div>
-
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 border-t border-white/30 bg-canvas/94 px-3 py-3 backdrop-blur-md md:px-4 md:py-4">
-                  <div className="min-w-0">
-                    <p className={`${index === 0 || index === 2 || index === 6 ? 'text-[19px] md:text-[22px]' : 'text-[15px] md:text-[17px]'} truncate font-[600] leading-none tracking-[-0.035em] text-ink`}>
-                      {project.title}
-                    </p>
-                    <p className="mt-1.5 truncate font-mono text-[8px] uppercase tracking-[0.05em] text-muted-gray md:text-[9px]">
-                      {project.category} / {project.year}
-                    </p>
-                  </div>
-                  <ArrowUpRight size={16} strokeWidth={1.5} className="shrink-0 text-ink transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-[54px] items-center gap-4 border-t border-ink/10 bg-canvas px-3 md:h-[60px] md:gap-5 md:px-4">
+                  <span className="shrink-0 font-mono text-[9px] tracking-[0.04em] text-muted-gray md:text-[10px]">
+                    {project.number}
+                  </span>
+                  <span className="truncate text-[12px] font-[500] tracking-[-0.025em] text-ink md:text-[14px]">
+                    {project.title}
+                  </span>
                 </div>
               </motion.button>
             ))}
