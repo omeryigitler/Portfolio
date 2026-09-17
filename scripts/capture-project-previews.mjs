@@ -103,9 +103,6 @@ const getCaptureClip = async (page) => {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     const fallback = { x: 0, y: 0, width: viewportWidth, height: viewportHeight };
-
-    // Breadth-first search matters here: we want the first large page frame inside
-    // #root/body, not a smaller hero/card deeper in the site.
     const queue = Array.from(document.body.children).map((element) => ({ element, depth: 0 }));
 
     while (queue.length) {
@@ -127,8 +124,8 @@ const getCaptureClip = async (page) => {
         const width = Math.min(viewportWidth - left, rect.width);
         const height = Math.min(viewportHeight - top, rect.height);
 
-        const largeEnough = width >= viewportWidth * 0.82 && height >= viewportHeight * 0.68;
-        const nearViewport = left <= 120 && right <= 120 && top <= 120 && bottom <= 180;
+        const largeEnough = width >= viewportWidth * 0.70 && height >= viewportHeight * 0.60;
+        const nearViewport = left <= 240 && right <= 240 && top <= 180 && bottom <= 260;
         const hasRealInset = [left, right, top, bottom].filter((value) => value >= 6).length >= 2;
         const notFullViewport =
           left >= 6 || right >= 6 || top >= 6 || bottom >= 6 ||
@@ -144,7 +141,7 @@ const getCaptureClip = async (page) => {
         }
       }
 
-      if (depth < 5) {
+      if (depth < 8) {
         for (const child of Array.from(element.children)) {
           queue.push({ element: child, depth: depth + 1 });
         }
