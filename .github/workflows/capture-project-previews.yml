@@ -1,0 +1,57 @@
+name: Capture project previews
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - fix/interaction-runtime
+    paths:
+      - '.github/workflows/capture-project-previews.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: project-preview-capture
+  cancel-in-progress: true
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/interaction-runtime
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install app dependencies
+        run: npm ci
+
+      - name: Install Playwright
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Capture homepage previews
+        run: node scripts/capture-project-previews.mjs
+
+      - name: Commit generated previews
+        run: |
+          if git status --porcelain public/project-previews | grep -q .; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add public/project-previews
+            git commit -m 'chore: refresh static project previews'
+            git push origin HEAD:fix/interaction-runtime
+          else
+            echo 'No preview changes to commit.'
+          fi
