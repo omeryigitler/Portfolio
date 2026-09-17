@@ -50,9 +50,9 @@ export const PROJECTS: ProjectData[] = [
     category: "COMMERCE / BRAND",
     year: "2026",
     bgImage: DEFAULT_BG,
-    coverImage: "https://mybabyshire-archive-hlxfxa7zq-omeryigitlers-projects.vercel.app/toy-teddy-ring-teether.png",
+    coverImage: "https://mybabyshire-archive.vercel.app/toy-teddy-ring-teether.png",
     ambientColor: "#E8D9CB",
-    url: "https://mybabyshire-archive-hlxfxa7zq-omeryigitlers-projects.vercel.app",
+    url: "https://mybabyshire-archive.vercel.app",
   },
   {
     id: "reformer",
