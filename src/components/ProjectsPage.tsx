@@ -24,6 +24,8 @@ export const ProjectsPage: React.FC = () => {
   const [filter, setFilter] = useState<ArchiveFilter>(
     isArchiveFilter(initialFilter) ? initialFilter : 'all',
   );
+  const [activePreview, setActivePreview] = useState<string | null>(null);
+  const [loadedPreview, setLoadedPreview] = useState<string | null>(null);
 
   const results = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -55,6 +57,16 @@ export const ProjectsPage: React.FC = () => {
   const updateQuery = (nextQuery: string) => {
     setQuery(nextQuery);
     syncUrl(filter, nextQuery);
+  };
+
+  const showPreview = (repo: string) => {
+    setLoadedPreview(null);
+    setActivePreview(repo);
+  };
+
+  const hidePreview = (repo: string) => {
+    setActivePreview((current) => (current === repo ? null : current));
+    setLoadedPreview((current) => (current === repo ? null : current));
   };
 
   return (
@@ -138,6 +150,8 @@ export const ProjectsPage: React.FC = () => {
               const repositoryUrl = project.githubUrl ?? githubFallback(project.repo);
               const targetUrl = project.siteUrl ?? repositoryUrl;
               const hasLiveSite = Boolean(project.siteUrl);
+              const previewActive = hasLiveSite && activePreview === project.repo;
+              const previewLoaded = previewActive && loadedPreview === project.repo;
 
               return (
                 <a
@@ -145,34 +159,66 @@ export const ProjectsPage: React.FC = () => {
                   href={targetUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="group flex min-h-[290px] flex-col border-b border-r border-ink/10 p-5 transition-colors hover:bg-white md:min-h-[330px] md:p-6"
+                  onMouseEnter={() => hasLiveSite && showPreview(project.repo)}
+                  onMouseLeave={() => hasLiveSite && hidePreview(project.repo)}
+                  onFocus={() => hasLiveSite && showPreview(project.repo)}
+                  onBlur={() => hasLiveSite && hidePreview(project.repo)}
+                  className={`group relative flex min-h-[290px] overflow-hidden border-b border-r border-ink/10 p-5 md:min-h-[330px] md:p-6 ${
+                    hasLiveSite ? 'bg-canvas' : 'transition-colors hover:bg-white'
+                  }`}
                 >
-                  <div className="flex items-start justify-between gap-6">
-                    <span className="font-mono text-[9px] tracking-[0.05em] text-muted-gray md:text-[10px]">
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
-                    <span className="font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray md:text-[9px]">
-                      {project.category}
-                    </span>
-                  </div>
+                  {previewActive && project.siteUrl && (
+                    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-canvas" aria-hidden="true">
+                      <iframe
+                        src={project.siteUrl}
+                        title={`${project.title} live preview`}
+                        tabIndex={-1}
+                        loading="eager"
+                        onLoad={() => setLoadedPreview(project.repo)}
+                        className={`h-full w-full border-0 transition-[opacity,transform] duration-500 ease-out ${
+                          previewLoaded ? 'scale-100 opacity-100' : 'scale-[1.025] opacity-0'
+                        }`}
+                      />
+                    </div>
+                  )}
 
-                  <div className="mt-14 md:mt-20">
-                    <h2 className="max-w-[90%] text-[clamp(24px,2.4vw,40px)] font-[520] leading-[0.96] tracking-[-0.045em] text-ink">
-                      {project.title}
-                    </h2>
-                    <p className="mt-4 break-all font-mono text-[8px] tracking-[0.04em] text-muted-gray md:text-[9px]">
-                      {hasLiveSite ? displayUrl(project.siteUrl!) : `github / omeryigitler / ${project.repo}`}
-                    </p>
-                  </div>
+                  {hasLiveSite && (
+                    <div
+                      className={`pointer-events-none absolute inset-0 z-10 bg-canvas transition-opacity duration-500 ${
+                        previewLoaded ? 'opacity-[0.52]' : 'opacity-100'
+                      }`}
+                      aria-hidden="true"
+                    />
+                  )}
 
-                  <div className="mt-auto flex items-end justify-between gap-6 pt-10 font-mono text-[8px] uppercase tracking-[0.06em] md:text-[9px]">
-                    <span className="text-muted-gray">
-                      {hasLiveSite ? 'LIVE PROJECT' : 'REPOSITORY'}
-                    </span>
-                    <span className="inline-flex items-center gap-2 text-ink">
-                      {hasLiveSite ? 'LIVE SITE' : 'GITHUB'}
-                      <ArrowUpRight size={13} strokeWidth={1.4} className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
-                    </span>
+                  <div className="relative z-20 flex w-full flex-col">
+                    <div className="flex items-start justify-between gap-6">
+                      <span className="font-mono text-[9px] tracking-[0.05em] text-muted-gray md:text-[10px]">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      <span className="font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray md:text-[9px]">
+                        {project.category}
+                      </span>
+                    </div>
+
+                    <div className="mt-14 md:mt-20">
+                      <h2 className="max-w-[90%] text-[clamp(24px,2.4vw,40px)] font-[520] leading-[0.96] tracking-[-0.045em] text-ink">
+                        {project.title}
+                      </h2>
+                      <p className="mt-4 break-all font-mono text-[8px] tracking-[0.04em] text-muted-gray md:text-[9px]">
+                        {hasLiveSite ? displayUrl(project.siteUrl!) : `github / omeryigitler / ${project.repo}`}
+                      </p>
+                    </div>
+
+                    <div className="mt-auto flex items-end justify-between gap-6 pt-10 font-mono text-[8px] uppercase tracking-[0.06em] md:text-[9px]">
+                      <span className="text-muted-gray">
+                        {hasLiveSite ? (previewLoaded ? 'LIVE PREVIEW' : 'LIVE PROJECT') : 'REPOSITORY'}
+                      </span>
+                      <span className="inline-flex items-center gap-2 text-ink">
+                        {hasLiveSite ? 'LIVE SITE' : 'GITHUB'}
+                        <ArrowUpRight size={13} strokeWidth={1.4} className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+                      </span>
+                    </div>
                   </div>
                 </a>
               );
