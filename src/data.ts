@@ -19,7 +19,7 @@ export interface ProjectData {
 
 // Real portfolio projects. The white editorial sheet stays consistent, while
 // the outer layer picks up a restrained tint from each project's visual world.
-// Index covers are static project media; the live site only loads after a project is opened.
+// Selected Work renders the live homepage for every project and opens it fullscreen on click.
 export const PROJECTS: ProjectData[] = [
   {
     id: "japanese-bakery",
@@ -44,15 +44,15 @@ export const PROJECTS: ProjectData[] = [
     url: "https://architecture-e-commerce-3d.vercel.app",
   },
   {
-    id: "berfin-akbas",
+    id: "mybabyshire",
     number: "03",
-    title: "BERFIN AKBAŞ",
-    category: "PORTFOLIO / IDENTITY",
+    title: "MYBABYSHIRE",
+    category: "COMMERCE / BRAND",
     year: "2026",
     bgImage: DEFAULT_BG,
-    coverImage: "https://raw.githubusercontent.com/omeryigitler/berfinakbas.com/main/public/berfin-hero-full-1%20%281%29.png",
-    ambientColor: "#E2D5D3",
-    url: "https://berfinakbas-com.vercel.app",
+    coverImage: "https://mybabyshire-archive-hlxfxa7zq-omeryigitlers-projects.vercel.app/toy-teddy-ring-teether.png",
+    ambientColor: "#E8D9CB",
+    url: "https://mybabyshire-archive-hlxfxa7zq-omeryigitlers-projects.vercel.app",
   },
   {
     id: "reformer",
