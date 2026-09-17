@@ -86,15 +86,11 @@ type ProjectChapterProps = {
 };
 
 const ProjectChapter: React.FC<ProjectChapterProps> = ({ project, index, onEnter, onLeave, onOpen }) => {
-  const reverse = index % 2 === 1;
-
   return (
     <motion.button
-      id={`project-${project.id}`}
       type="button"
       layoutId={`project-media-${project.id}`}
-      data-project-index={index}
-      className={`project-stage group relative block h-[88svh] w-full scroll-mt-0 overflow-hidden bg-[#111] text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-[-2px] md:h-[100svh] ${index === 0 ? '' : 'border-t border-white/10'}`}
+      className="project-stage group relative block h-[82svh] w-full overflow-hidden border-t border-white/10 bg-[#111] text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-[-2px] md:h-[96svh]"
       onMouseEnter={() => onEnter(project)}
       onMouseLeave={onLeave}
       onFocus={() => onEnter(project)}
@@ -108,20 +104,20 @@ const ProjectChapter: React.FC<ProjectChapterProps> = ({ project, index, onEnter
         </div>
       </div>
 
-      <div className="pointer-events-none absolute inset-0 bg-black/18 transition-colors duration-700 group-hover:bg-black/10" />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.34)_0%,rgba(0,0,0,0.01)_43%,rgba(0,0,0,0.62)_100%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-black/16 transition-colors duration-700 group-hover:bg-black/10" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.34)_0%,rgba(0,0,0,0.02)_42%,rgba(0,0,0,0.58)_100%)]" />
 
       <div className="project-stage-info absolute inset-x-5 top-5 z-10 flex items-start justify-between gap-6 font-mono text-[8px] uppercase tracking-[0.075em] text-white/72 md:inset-x-10 md:top-8 md:text-[9px] lg:inset-x-12">
         <span>{project.number} / {String(PROJECTS.length).padStart(2, '0')}</span>
         <span>{project.category} / {project.year}</span>
       </div>
 
-      <div className={`project-stage-info absolute inset-x-5 bottom-5 z-10 flex items-end justify-between gap-6 md:inset-x-10 md:bottom-8 lg:inset-x-12 ${reverse ? 'md:flex-row-reverse' : ''}`}>
-        <div className={reverse ? 'md:text-right' : ''}>
+      <div className="project-stage-info absolute inset-x-5 bottom-5 z-10 flex items-end justify-between gap-6 md:inset-x-10 md:bottom-8 lg:inset-x-12">
+        <div>
           <div className="mb-2 font-mono text-[8px] uppercase tracking-[0.08em] text-white/58 md:text-[9px]">
-            {index === 0 ? 'FROM INTRO / INTO WORK' : 'SELECTED PROJECT'}
+            SELECTED PROJECT
           </div>
-          <h3 className={`max-w-[12ch] text-[clamp(44px,7vw,118px)] font-[560] leading-[0.84] tracking-[-0.06em] text-white ${reverse ? 'md:ml-auto' : ''}`}>
+          <h3 className="max-w-[12ch] text-[clamp(44px,7vw,118px)] font-[560] leading-[0.84] tracking-[-0.06em] text-white">
             {project.title}
           </h3>
         </div>
@@ -155,6 +151,7 @@ export const SelectedWork: React.FC = () => {
   };
 
   const handleLeave = () => {
+    setActiveAmbient(DEFAULT_AMBIENT);
     resetCursor();
   };
 
@@ -166,10 +163,9 @@ export const SelectedWork: React.FC = () => {
   };
 
   const closeProject = () => {
-    const returnAmbient = selectedProject?.ambientColor ?? DEFAULT_AMBIENT;
     setSelectedProject(null);
     setProjectOpen(false);
-    setActiveAmbient(returnAmbient);
+    setActiveAmbient(DEFAULT_AMBIENT);
     resetCursor();
   };
 
@@ -177,51 +173,52 @@ export const SelectedWork: React.FC = () => {
     if (!sectionRef.current) return;
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reducedMotion) return;
 
     const ctx = gsap.context(() => {
+      gsap.fromTo(
+        '.work-intro-inner',
+        { y: 26, autoAlpha: 0, clipPath: 'inset(0 0 100% 0)' },
+        {
+          y: 0,
+          autoAlpha: 1,
+          clipPath: 'inset(0 0 0% 0)',
+          ease: 'none',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 96%',
+            end: 'top 72%',
+            scrub: 0.8,
+          },
+        },
+      );
+
       const stages = gsap.utils.toArray<HTMLElement>('.project-stage');
 
-      stages.forEach((stage, index) => {
-        const project = PROJECTS[index];
-        if (!project) return;
-
-        ScrollTrigger.create({
-          trigger: stage,
-          start: 'top 58%',
-          end: 'bottom 42%',
-          onEnter: () => setActiveAmbient(project.ambientColor),
-          onEnterBack: () => setActiveAmbient(project.ambientColor),
-        });
-
-        if (reducedMotion) return;
-
+      stages.forEach((stage) => {
         const mask = stage.querySelector<HTMLElement>('.project-stage-mask');
         const media = stage.querySelector<HTMLElement>('.project-stage-media');
         const info = stage.querySelectorAll<HTMLElement>('.project-stage-info');
         if (!mask || !media) return;
 
-        if (index === 0) {
-          gsap.set(mask, { clipPath: 'inset(0% 0% 0% 0%)' });
-        } else {
-          gsap.fromTo(
-            mask,
-            { clipPath: 'inset(9% 5% 9% 5%)' },
-            {
-              clipPath: 'inset(0% 0% 0% 0%)',
-              ease: 'none',
-              scrollTrigger: {
-                trigger: stage,
-                start: 'top 96%',
-                end: 'top 54%',
-                scrub: 0.95,
-              },
+        gsap.fromTo(
+          mask,
+          { clipPath: 'inset(10% 6% 10% 6%)' },
+          {
+            clipPath: 'inset(0% 0% 0% 0%)',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: stage,
+              start: 'top 96%',
+              end: 'top 54%',
+              scrub: 0.95,
             },
-          );
-        }
+          },
+        );
 
         gsap.fromTo(
           media,
-          { scale: index === 0 ? 1.025 : 1.06, yPercent: index === 0 ? 1 : 2.5 },
+          { scale: 1.065, yPercent: 2.5 },
           {
             scale: 1,
             yPercent: -2.5,
@@ -237,32 +234,24 @@ export const SelectedWork: React.FC = () => {
 
         gsap.fromTo(
           info,
-          { y: index === 0 ? 16 : 26, autoAlpha: index === 0 ? 0.3 : 0.12 },
+          { y: 26, autoAlpha: 0.12 },
           {
             y: 0,
             autoAlpha: 1,
             ease: 'none',
             scrollTrigger: {
               trigger: stage,
-              start: index === 0 ? 'top 92%' : 'top 82%',
+              start: 'top 82%',
               end: 'top 54%',
               scrub: 0.85,
             },
           },
         );
       });
-
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: 'top bottom',
-        end: 'bottom top',
-        onLeaveBack: () => setActiveAmbient(DEFAULT_AMBIENT),
-        onLeave: () => setActiveAmbient(DEFAULT_AMBIENT),
-      });
     }, sectionRef);
 
     return () => ctx.revert();
-  }, [setActiveAmbient]);
+  }, []);
 
   useEffect(() => {
     if (!selectedProject) return;
@@ -286,6 +275,22 @@ export const SelectedWork: React.FC = () => {
   return (
     <>
       <section id="work" ref={sectionRef} className="relative w-full scroll-mt-0 bg-[#090909] text-white">
+        <div className="work-intro flex min-h-[190px] items-end border-t border-white/10 px-5 pb-7 pt-12 md:min-h-[230px] md:px-10 md:pb-10 lg:px-12">
+          <div className="work-intro-inner flex w-full items-end justify-between gap-8">
+            <div>
+              <div className="font-mono text-[8px] uppercase tracking-[0.08em] text-white/45 md:text-[9px]">
+                02 / SELECTED WORK
+              </div>
+              <p className="mt-3 max-w-[620px] text-[clamp(24px,3vw,46px)] font-[500] leading-[0.95] tracking-[-0.045em] text-white">
+                A selection of digital experiences, built from direction to production.
+              </p>
+            </div>
+            <span className="hidden font-mono text-[8px] uppercase tracking-[0.08em] text-white/42 md:block md:text-[9px]">
+              {String(PROJECTS.length).padStart(2, '0')} PROJECTS / SCROLL TO EXPLORE
+            </span>
+          </div>
+        </div>
+
         {PROJECTS.map((project, index) => (
           <ProjectChapter
             key={project.id}
