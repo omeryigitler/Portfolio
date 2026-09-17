@@ -7,12 +7,11 @@ import { DEFAULT_AMBIENT, PROJECTS, type ProjectData } from '../data';
 
 const desktopLayouts = [
   'lg:col-start-1 lg:col-span-5 lg:row-start-1 lg:row-span-4',
-  'lg:col-start-6 lg:col-span-3 lg:row-start-1 lg:row-span-2',
+  'lg:col-start-6 lg:col-span-3 lg:row-start-1 lg:row-span-4',
   'lg:col-start-9 lg:col-span-4 lg:row-start-1 lg:row-span-4',
-  'lg:col-start-6 lg:col-span-3 lg:row-start-3 lg:row-span-2',
-  'lg:col-start-10 lg:col-span-3 lg:row-start-5 lg:row-span-4',
   'lg:col-start-1 lg:col-span-3 lg:row-start-5 lg:row-span-4',
   'lg:col-start-4 lg:col-span-6 lg:row-start-5 lg:row-span-4',
+  'lg:col-start-10 lg:col-span-3 lg:row-start-5 lg:row-span-4',
 ];
 
 const HOMEPAGE_DEFAULT_VIEWPORT_WIDTH = 1600;
@@ -20,12 +19,11 @@ const HOMEPAGE_MIN_HEIGHT = 1200;
 
 const previewViewportWidths: Record<string, number> = {
   'japanese-bakery': 1900,
-  'architecture-3d': 1760,
+  'built-with-seyhan': 1720,
   mybabyshire: 1660,
-  reformer: 1800,
+  'architecture-3d': 1760,
+  'elena-moreau': 1720,
   parfum: 1560,
-  'nail-studio': 1440,
-  'xxl-cafe': 2000,
 };
 
 const ProjectHomepagePreview: React.FC<{ project: ProjectData; priority?: boolean }> = ({ project, priority = false }) => {
