@@ -188,14 +188,14 @@ export const ProjectsPageV2: React.FC = () => {
                   }`}
                 >
                   {previewActive && !failedPreviews.has(project.repo) && (
-                    <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden bg-[#e8e6df] p-2 md:p-3" aria-hidden="true">
+                    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
                       <img
                         src={previewUrl(project.repo)}
                         alt=""
                         onLoad={() => setLoadedPreview(project.repo)}
                         onError={() => markFailed(project.repo)}
-                        className={`h-full w-full object-contain object-center shadow-[0_12px_40px_rgba(17,17,17,0.08)] transition-[opacity,transform] duration-450 ease-out ${
-                          previewLoaded ? 'scale-100 opacity-100' : 'scale-[0.99] opacity-0'
+                        className={`absolute inset-0 h-full w-full object-cover object-center transition-[opacity,transform] duration-450 ease-out ${
+                          previewLoaded ? 'scale-100 opacity-100' : 'scale-[1.01] opacity-0'
                         }`}
                       />
                     </div>
