@@ -7,7 +7,6 @@ import { BackgroundLayer } from './components/BackgroundLayer';
 import { ChapterNav } from './components/ChapterNav';
 import { Hero } from './components/Hero';
 import { ProjectArchiveLauncher } from './components/ProjectArchiveLauncher';
-import { SelectedWork as ProjectTheatre } from './components/SelectedWork';
 import { MaskedWindow as MaskTransition } from './components/MaskedWindow';
 import { About as AboutFormation } from './components/About';
 import { SystemMap } from './components/Archive';
@@ -39,7 +38,6 @@ export default function App() {
                 <div className="relative w-full overflow-hidden rounded-[22px] border border-white/70 bg-canvas shadow-[0_24px_80px_rgba(17,17,17,0.065)]">
                   <Hero />
                   <ProjectArchiveLauncher />
-                  <ProjectTheatre />
                 </div>
                 <MaskTransition />
                 <AboutFormation />
