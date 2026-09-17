@@ -17,8 +17,11 @@ const githubFallback = (repo: string) => `https://github.com/omeryigitler/${repo
 const displayUrl = (url: string) =>
   url.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
 
+// Capture a proper desktop viewport and keep roughly the same 4:3 ratio as
+// the archive cards. The preview is rendered with object-contain below so the
+// left/right edges of responsive homepages are never cropped away.
 const previewSnapshotUrl = (url: string) =>
-  `https://image.thum.io/get/noanimate/width/1000/crop/800/maxAge/24/${url}`;
+  `https://image.thum.io/get/noanimate/width/1440/crop/1080/maxAge/24/${url}`;
 
 export const ProjectsPage: React.FC = () => {
   const initialParams = new URLSearchParams(window.location.search);
@@ -173,14 +176,14 @@ export const ProjectsPage: React.FC = () => {
                   }`}
                 >
                   {previewActive && project.siteUrl && (
-                    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-canvas" aria-hidden="true">
+                    <div className="pointer-events-none absolute inset-0 z-0 grid place-items-start overflow-hidden bg-[#f2f1ed]" aria-hidden="true">
                       <img
                         src={previewSnapshotUrl(project.siteUrl)}
                         alt=""
                         onLoad={() => setLoadedPreview(project.repo)}
                         onError={() => setLoadedPreview(null)}
-                        className={`h-full w-full object-cover object-top transition-[opacity,transform] duration-500 ease-out ${
-                          previewLoaded ? 'scale-100 opacity-100' : 'scale-[1.025] opacity-0'
+                        className={`h-full w-full object-contain object-top transition-[opacity,transform] duration-500 ease-out ${
+                          previewLoaded ? 'scale-100 opacity-100' : 'scale-[1.01] opacity-0'
                         }`}
                       />
                     </div>
