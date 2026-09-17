@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ArrowLeft, ArrowUpRight, Search, X } from 'lucide-react';
 import {
   ARCHIVE_COUNT,
@@ -9,27 +9,6 @@ import {
 
 type ArchiveFilter = 'all' | ArchiveCategory;
 
-type SpecialPreview =
-  | { type: 'image'; src: string; fit?: 'cover' | 'contain' }
-  | { type: 'video'; src: string }
-  | { type: 'xxl-hero'; src: string };
-
-const SPECIAL_PREVIEWS: Record<string, SpecialPreview> = {
-  'xxl-cafe-o-co.': {
-    type: 'xxl-hero',
-    src: 'https://raw.githubusercontent.com/omeryigitler/xxl-cafe-o-co./main/src/assets/images/yeni-bardak%2Cpng.png',
-  },
-  'Japanese-Bakery': {
-    type: 'image',
-    src: 'https://raw.githubusercontent.com/omeryigitler/Japanese-Bakery/main/public/hero.png',
-    fit: 'cover',
-  },
-  'dawlstudio.com': {
-    type: 'video',
-    src: 'https://res.cloudinary.com/dnqwjhjuf/video/upload/v1772343684/Mum_bardan_alev_ksm_ad15bcfefa_dhrrau.mp4',
-  },
-};
-
 const isArchiveFilter = (value: string | null): value is ArchiveFilter =>
   value === 'all' || ARCHIVE_FILTERS.some((filter) => filter.value === value);
 
@@ -38,8 +17,11 @@ const githubFallback = (repo: string) => `https://github.com/omeryigitler/${repo
 const displayUrl = (url: string) =>
   url.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
 
+// Capture the actual homepage UI after intro/load animations have had time to finish.
+// The 1200x800 frame keeps navigation + hero + primary UI visible instead of turning
+// each project into a cropped photography tile.
 const previewSnapshotUrl = (url: string) =>
-  `https://image.thum.io/get/noanimate/width/1440/crop/1080/maxAge/24/${url}`;
+  `https://image.thum.io/get/noanimate/wait/6/width/1200/crop/800/maxAge/168/${url}`;
 
 export const ProjectsPage: React.FC = () => {
   const initialParams = new URLSearchParams(window.location.search);
@@ -50,21 +32,6 @@ export const ProjectsPage: React.FC = () => {
   );
   const [activePreview, setActivePreview] = useState<string | null>(null);
   const [loadedPreview, setLoadedPreview] = useState<string | null>(null);
-
-  useEffect(() => {
-    Object.values(SPECIAL_PREVIEWS).forEach((preview) => {
-      if (preview.type === 'video') {
-        const video = document.createElement('video');
-        video.preload = 'metadata';
-        video.muted = true;
-        video.src = preview.src;
-        return;
-      }
-
-      const image = new Image();
-      image.src = preview.src;
-    });
-  }, []);
 
   const results = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -193,7 +160,6 @@ export const ProjectsPage: React.FC = () => {
               const hasLiveSite = Boolean(project.siteUrl);
               const previewActive = hasLiveSite && activePreview === project.repo;
               const previewLoaded = previewActive && loadedPreview === project.repo;
-              const specialPreview = SPECIAL_PREVIEWS[project.repo];
 
               return (
                 <a
@@ -210,58 +176,19 @@ export const ProjectsPage: React.FC = () => {
                   }`}
                 >
                   {previewActive && project.siteUrl && (
-                    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-[#f2f1ed]" aria-hidden="true">
-                      {specialPreview?.type === 'xxl-hero' ? (
-                        <div className="relative h-full w-full overflow-hidden bg-[#fbfbfb]">
-                          <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-black/[0.055]">
-                            <span className="text-[clamp(58px,7vw,118px)] font-black uppercase leading-[0.82] tracking-[-0.08em]">Fuel Your</span>
-                            <span className="text-[clamp(58px,7vw,118px)] font-black uppercase leading-[0.82] tracking-[-0.08em]">Morning.</span>
-                          </div>
-                          <img
-                            src={specialPreview.src}
-                            alt=""
-                            onLoad={() => setLoadedPreview(project.repo)}
-                            onError={() => setLoadedPreview(null)}
-                            className={`absolute left-1/2 top-1/2 h-[82%] w-[62%] -translate-x-1/2 -translate-y-1/2 object-contain mix-blend-multiply transition-[opacity,transform] duration-500 ease-out ${
-                              previewLoaded ? 'scale-100 opacity-100' : 'scale-[1.03] opacity-0'
-                            }`}
-                          />
-                        </div>
-                      ) : specialPreview?.type === 'video' ? (
-                        <video
-                          src={specialPreview.src}
-                          autoPlay
-                          muted
-                          loop
-                          playsInline
-                          preload="auto"
-                          onCanPlay={() => setLoadedPreview(project.repo)}
-                          onError={() => setLoadedPreview(null)}
-                          className={`h-full w-full object-cover object-center transition-[opacity,transform] duration-500 ease-out ${
-                            previewLoaded ? 'scale-100 opacity-100' : 'scale-[1.02] opacity-0'
-                          }`}
-                        />
-                      ) : specialPreview?.type === 'image' ? (
-                        <img
-                          src={specialPreview.src}
-                          alt=""
-                          onLoad={() => setLoadedPreview(project.repo)}
-                          onError={() => setLoadedPreview(null)}
-                          className={`h-full w-full ${specialPreview.fit === 'contain' ? 'object-contain' : 'object-cover'} object-center transition-[opacity,transform] duration-500 ease-out ${
-                            previewLoaded ? 'scale-100 opacity-100' : 'scale-[1.02] opacity-0'
-                          }`}
-                        />
-                      ) : (
-                        <img
-                          src={previewSnapshotUrl(project.siteUrl)}
-                          alt=""
-                          onLoad={() => setLoadedPreview(project.repo)}
-                          onError={() => setLoadedPreview(null)}
-                          className={`h-full w-full object-contain object-top transition-[opacity,transform] duration-500 ease-out ${
-                            previewLoaded ? 'scale-100 opacity-100' : 'scale-[1.01] opacity-0'
-                          }`}
-                        />
-                      )}
+                    <div
+                      className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden bg-[#e8e6df] p-2 md:p-3"
+                      aria-hidden="true"
+                    >
+                      <img
+                        src={previewSnapshotUrl(project.siteUrl)}
+                        alt=""
+                        onLoad={() => setLoadedPreview(project.repo)}
+                        onError={() => setLoadedPreview(null)}
+                        className={`h-full w-full object-contain object-center shadow-[0_12px_40px_rgba(17,17,17,0.08)] transition-[opacity,transform] duration-500 ease-out ${
+                          previewLoaded ? 'scale-100 opacity-100' : 'scale-[0.99] opacity-0'
+                        }`}
+                      />
                     </div>
                   )}
 
