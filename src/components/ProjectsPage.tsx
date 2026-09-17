@@ -17,6 +17,9 @@ const githubFallback = (repo: string) => `https://github.com/omeryigitler/${repo
 const displayUrl = (url: string) =>
   url.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
 
+const previewSnapshotUrl = (url: string) =>
+  `https://image.thum.io/get/width/1000/crop/800/maxAge/24/${url}`;
+
 export const ProjectsPage: React.FC = () => {
   const initialParams = new URLSearchParams(window.location.search);
   const initialFilter = initialParams.get('filter');
@@ -169,13 +172,12 @@ export const ProjectsPage: React.FC = () => {
                 >
                   {previewActive && project.siteUrl && (
                     <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-canvas" aria-hidden="true">
-                      <iframe
-                        src={project.siteUrl}
-                        title={`${project.title} live preview`}
-                        tabIndex={-1}
-                        loading="eager"
+                      <img
+                        src={previewSnapshotUrl(project.siteUrl)}
+                        alt=""
                         onLoad={() => setLoadedPreview(project.repo)}
-                        className={`h-full w-full border-0 transition-[opacity,transform] duration-500 ease-out ${
+                        onError={() => setLoadedPreview(null)}
+                        className={`h-full w-full object-cover object-top transition-[opacity,transform] duration-500 ease-out ${
                           previewLoaded ? 'scale-100 opacity-100' : 'scale-[1.025] opacity-0'
                         }`}
                       />
@@ -185,7 +187,7 @@ export const ProjectsPage: React.FC = () => {
                   {hasLiveSite && (
                     <div
                       className={`pointer-events-none absolute inset-0 z-10 bg-canvas transition-opacity duration-500 ${
-                        previewLoaded ? 'opacity-[0.52]' : 'opacity-100'
+                        previewLoaded ? 'opacity-[0.44]' : 'opacity-100'
                       }`}
                       aria-hidden="true"
                     />
@@ -212,7 +214,7 @@ export const ProjectsPage: React.FC = () => {
 
                     <div className="mt-auto flex items-end justify-between gap-6 pt-10 font-mono text-[8px] uppercase tracking-[0.06em] md:text-[9px]">
                       <span className="text-muted-gray">
-                        {hasLiveSite ? (previewLoaded ? 'LIVE PREVIEW' : 'LIVE PROJECT') : 'REPOSITORY'}
+                        {hasLiveSite ? (previewLoaded ? 'SITE PREVIEW' : 'LIVE PROJECT') : 'REPOSITORY'}
                       </span>
                       <span className="inline-flex items-center gap-2 text-ink">
                         {hasLiveSite ? 'LIVE SITE' : 'GITHUB'}
