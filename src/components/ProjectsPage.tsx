@@ -17,8 +17,11 @@ const githubFallback = (repo: string) => `https://github.com/omeryigitler/${repo
 const displayUrl = (url: string) =>
   url.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
 
+// Thum.io normally streams an animated render while a page boots. `noanimate`
+// returns the final PNG instead, so portfolio cards don't replay each site's
+// loader / intro animation on hover.
 const previewSnapshotUrl = (url: string) =>
-  `https://image.thum.io/get/width/1000/crop/800/maxAge/24/${url}`;
+  `https://image.thum.io/get/noanimate/width/1000/crop/800/maxAge/24/${url}`;
 
 export const ProjectsPage: React.FC = () => {
   const initialParams = new URLSearchParams(window.location.search);
