@@ -19,8 +19,13 @@ export const Hero: React.FC = () => {
     if (!heroRef.current || !metaRef.current || !supportRef.current || !actionsRef.current) return;
 
     const lines = lineRefs.current.filter(Boolean);
+    const masks = Array.from(heroRef.current.querySelectorAll<HTMLElement>('.hero-line-mask'));
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reducedMotion) return;
+
+    if (reducedMotion) {
+      gsap.set(masks, { overflow: 'visible' });
+      return;
+    }
 
     const ctx = gsap.context(() => {
       gsap.set(metaRef.current, { autoAlpha: 0, y: 10 });
@@ -32,6 +37,7 @@ export const Hero: React.FC = () => {
       intro.to(lines, { yPercent: 0, duration: 0.88, stagger: 0.065 }, 0.12);
       intro.to(supportRef.current, { autoAlpha: 1, y: 0, duration: 0.46 }, 0.54);
       intro.to(actionsRef.current, { autoAlpha: 1, y: 0, duration: 0.46 }, 0.62);
+      intro.set(masks, { overflow: 'visible' }, 1.12);
     }, heroRef);
 
     return () => ctx.revert();
@@ -59,7 +65,7 @@ export const Hero: React.FC = () => {
         <div className="flex flex-col justify-center py-10 md:py-14 lg:py-8">
           <h1 className="w-full select-none text-[clamp(54px,7.35vw,132px)] font-[560] leading-[0.87] tracking-[-0.062em] text-ink [font-feature-settings:'kern'_1,'liga'_1] [font-kerning:normal]">
             {TITLE_LINES.map((line, index) => (
-              <span key={line} className="block overflow-hidden pb-[0.08em]">
+              <span key={line} className="hero-line-mask mb-[-0.1em] block overflow-hidden pb-[0.18em]">
                 <span
                   ref={(element) => { lineRefs.current[index] = element; }}
                   className="block md:whitespace-nowrap"
@@ -68,7 +74,7 @@ export const Hero: React.FC = () => {
                 </span>
               </span>
             ))}
-            <span className="block overflow-hidden pb-[0.12em]">
+            <span className="hero-line-mask mb-[-0.1em] block overflow-hidden pb-[0.18em]">
               <span
                 ref={(element) => { lineRefs.current[3] = element; }}
                 className="block md:whitespace-nowrap"
