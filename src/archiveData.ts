@@ -24,7 +24,7 @@ export const ARCHIVE_PROJECTS: ArchiveProject[] = [
   { repo: 'atelier-couture-belgium', title: 'Atelier Couture Belgium', category: 'sites' },
   { repo: 'dawlstudio.com', title: 'Dawl Studio', category: 'sites' },
   { repo: 'builtwithseyhan.com', title: 'Built With Seyhan', category: 'sites' },
-  { repo: 'yasemin-ozgan', title: 'Yasemin Özgan', category: 'sites' },
+  { repo: 'yasemin-ozgan', title: 'Elena Moreau', category: 'sites' },
   { repo: 'verdant-nyc---four-seasons-landscapes', title: 'Verdant NYC — Four Seasons Landscapes', category: 'sites' },
   { repo: 'the-maltese-bean', title: 'The Maltese Bean', category: 'sites' },
   { repo: 'module-page-v1', title: 'Module Page V1', category: 'tools' },
