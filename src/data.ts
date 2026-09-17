@@ -17,9 +17,8 @@ export interface ProjectData {
   url: string;
 }
 
-// Real portfolio projects. The white editorial sheet stays consistent, while
-// the outer layer picks up a restrained tint from each project's visual world.
-// Selected Work renders the live homepage for every project and opens it fullscreen on click.
+// Main-page selected work. This list is intentionally curated for visual rhythm;
+// the complete project archive continues to live in archiveData.ts.
 export const PROJECTS: ProjectData[] = [
   {
     id: "japanese-bakery",
@@ -33,15 +32,15 @@ export const PROJECTS: ProjectData[] = [
     url: "https://japanese-bakery.vercel.app",
   },
   {
-    id: "architecture-3d",
+    id: "built-with-seyhan",
     number: "02",
-    title: "ARCHITECTURE 3D",
-    category: "3D / E-COMMERCE",
+    title: "BUILT WITH SEYHAN",
+    category: "FITNESS / PLATFORM",
     year: "2026",
     bgImage: DEFAULT_BG,
-    coverImage: "https://raw.githubusercontent.com/omeryigitler/Architecture-eCommerce-3D/main/public/new-gunduz-day%20%281%29.png",
-    ambientColor: "#DED8CB",
-    url: "https://architecture-e-commerce-3d.vercel.app",
+    coverImage: "/project-previews/builtwithseyhan-com.png",
+    ambientColor: "#D5D8CF",
+    url: "https://builtwithseyhan.com",
   },
   {
     id: "mybabyshire",
@@ -55,19 +54,30 @@ export const PROJECTS: ProjectData[] = [
     url: "https://mybabyshire-archive.vercel.app",
   },
   {
-    id: "reformer",
+    id: "architecture-3d",
     number: "04",
-    title: "REFORMER",
-    category: "WELLNESS / BOOKING",
+    title: "ARCHITECTURE 3D",
+    category: "3D / E-COMMERCE",
     year: "2026",
     bgImage: DEFAULT_BG,
-    coverImage: "https://raw.githubusercontent.com/omeryigitler/reformer/main/public/premium/studio_reveal_1788398858603.jpg",
-    ambientColor: "#D8E1D4",
-    url: "https://reformer-beta.vercel.app",
+    coverImage: "https://raw.githubusercontent.com/omeryigitler/Architecture-eCommerce-3D/main/public/new-gunduz-day%20%281%29.png",
+    ambientColor: "#D7DBCF",
+    url: "https://architecture-e-commerce-3d.vercel.app",
+  },
+  {
+    id: "elena-moreau",
+    number: "05",
+    title: "ELENA MOREAU",
+    category: "LUXURY / REAL ESTATE",
+    year: "2026",
+    bgImage: DEFAULT_BG,
+    coverImage: "/project-previews/yasemin-ozgan.png",
+    ambientColor: "#D8D2C6",
+    url: "https://elena-real-estate.vercel.app",
   },
   {
     id: "parfum",
-    number: "05",
+    number: "06",
     title: "PARFUM",
     category: "BEAUTY / COMMERCE",
     year: "2026",
@@ -77,28 +87,5 @@ export const PROJECTS: ProjectData[] = [
     coverFit: "contain",
     ambientColor: "#E4D6DC",
     url: "https://parfum-eta.vercel.app",
-  },
-  {
-    id: "nail-studio",
-    number: "06",
-    title: "NAIL STUDIO",
-    category: "BEAUTY / BRAND",
-    year: "2026",
-    bgImage: DEFAULT_BG,
-    coverImage: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=1200&q=82&auto=format&fit=crop",
-    coverFallback: "https://raw.githubusercontent.com/omeryigitler/nailstudio/main/src/assets/images/vertical_salon_1782782037818.jpg",
-    ambientColor: "#E1D5E4",
-    url: "https://nailstudio-gamma.vercel.app",
-  },
-  {
-    id: "xxl-cafe",
-    number: "07",
-    title: "XXL CAFE & CO.",
-    category: "HOSPITALITY / COMMERCE",
-    year: "2026",
-    bgImage: DEFAULT_BG,
-    coverImage: "https://raw.githubusercontent.com/omeryigitler/xxl-cafe-o-co./main/src/assets/images/omerly_iced_coffee_1784775254141.jpg",
-    ambientColor: "#E2D5C5",
-    url: "https://xxl-cafe-o-co.vercel.app",
   },
 ];
