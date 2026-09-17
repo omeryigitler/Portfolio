@@ -31,11 +31,12 @@ export const ARCHIVE_PROJECTS: ArchiveProject[] = [
   },
   {
     repo: 'bugunneyiyelim.com',
-    title: 'Bugün Ne Yiyelim',
+    title: 'What Eat Today',
     category: 'apps',
     kind: 'Food discovery app',
     stack: ['Web App', 'Responsive UI', 'Vercel'],
-    siteUrl: 'https://bugunneyiyelim.com',
+    siteUrl: 'https://www.todayweeat.com/',
+    siteLabel: 'TODAYWEEAT.COM',
   },
   {
     repo: 'mybabyshire.com',
