@@ -17,9 +17,6 @@ const githubFallback = (repo: string) => `https://github.com/omeryigitler/${repo
 const displayUrl = (url: string) =>
   url.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
 
-// Thum.io normally streams an animated render while a page boots. `noanimate`
-// returns the final PNG instead, so portfolio cards don't replay each site's
-// loader / intro animation on hover.
 const previewSnapshotUrl = (url: string) =>
   `https://image.thum.io/get/noanimate/width/1000/crop/800/maxAge/24/${url}`;
 
@@ -42,7 +39,9 @@ export const ProjectsPage: React.FC = () => {
         !normalized ||
         project.title.toLowerCase().includes(normalized) ||
         project.repo.toLowerCase().includes(normalized) ||
-        project.category.toLowerCase().includes(normalized);
+        project.category.toLowerCase().includes(normalized) ||
+        project.kind.toLowerCase().includes(normalized) ||
+        project.stack.some((item) => item.toLowerCase().includes(normalized));
 
       return matchesFilter && matchesQuery;
     });
@@ -169,7 +168,7 @@ export const ProjectsPage: React.FC = () => {
                   onMouseLeave={() => hasLiveSite && hidePreview(project.repo)}
                   onFocus={() => hasLiveSite && showPreview(project.repo)}
                   onBlur={() => hasLiveSite && hidePreview(project.repo)}
-                  className={`group relative flex min-h-[290px] overflow-hidden border-b border-r border-ink/10 p-5 md:min-h-[330px] md:p-6 ${
+                  className={`group relative flex min-h-[350px] overflow-hidden border-b border-r border-ink/10 p-5 md:min-h-[390px] md:p-6 ${
                     hasLiveSite ? 'bg-canvas' : 'transition-colors hover:bg-white'
                   }`}
                 >
@@ -210,18 +209,31 @@ export const ProjectsPage: React.FC = () => {
                       </span>
                     </div>
 
-                    <div className="mt-14 md:mt-20">
-                      <h2 className="max-w-[90%] text-[clamp(24px,2.4vw,40px)] font-[520] leading-[0.96] tracking-[-0.045em] text-ink">
+                    <div className="mt-12 md:mt-16">
+                      <h2 className="max-w-[92%] text-[clamp(24px,2.4vw,40px)] font-[520] leading-[0.96] tracking-[-0.045em] text-ink">
                         {project.title}
                       </h2>
-                      <p className="mt-4 break-all font-mono text-[8px] tracking-[0.04em] text-muted-gray md:text-[9px]">
-                        {hasLiveSite ? displayUrl(project.siteUrl!) : `github / omeryigitler / ${project.repo}`}
+                      <p className="mt-4 break-all font-mono text-[8px] uppercase tracking-[0.04em] text-muted-gray md:text-[9px]">
+                        {hasLiveSite
+                          ? project.siteLabel ?? displayUrl(project.siteUrl!)
+                          : `github / omeryigitler / ${project.repo}`}
                       </p>
+
+                      <div className="mt-7 space-y-2 border-t border-ink/10 pt-4 font-mono text-[8px] uppercase tracking-[0.055em] md:text-[9px]">
+                        <div className="grid grid-cols-[64px_1fr] gap-3">
+                          <span className="text-muted-gray">PROJECT</span>
+                          <span className="text-ink/82">{project.kind}</span>
+                        </div>
+                        <div className="grid grid-cols-[64px_1fr] gap-3">
+                          <span className="text-muted-gray">STACK</span>
+                          <span className="text-ink/82">{project.stack.join(' · ')}</span>
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="mt-auto flex items-end justify-between gap-6 pt-10 font-mono text-[8px] uppercase tracking-[0.06em] md:text-[9px]">
+                    <div className="mt-auto flex items-end justify-between gap-6 pt-8 font-mono text-[8px] uppercase tracking-[0.06em] md:text-[9px]">
                       <span className="text-muted-gray">
-                        {hasLiveSite ? (previewLoaded ? 'SITE PREVIEW' : 'LIVE PROJECT') : 'REPOSITORY'}
+                        {hasLiveSite ? 'LIVE PROJECT' : 'REPOSITORY'}
                       </span>
                       <span className="inline-flex items-center gap-2 text-ink">
                         {hasLiveSite ? 'LIVE SITE' : 'GITHUB'}
