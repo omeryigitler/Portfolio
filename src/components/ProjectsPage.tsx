@@ -189,14 +189,18 @@ export const ProjectsPage: React.FC = () => {
 
                   {hasLiveSite && (
                     <div
-                      className={`pointer-events-none absolute inset-0 z-10 bg-canvas transition-opacity duration-500 ${
-                        previewLoaded ? 'opacity-[0.44]' : 'opacity-100'
+                      className={`pointer-events-none absolute inset-0 z-10 bg-canvas transition-opacity duration-300 ${
+                        previewLoaded ? 'opacity-0' : 'opacity-100'
                       }`}
                       aria-hidden="true"
                     />
                   )}
 
-                  <div className="relative z-20 flex w-full flex-col">
+                  <div
+                    className={`relative z-20 flex w-full flex-col transition-[opacity,transform] duration-300 ease-out ${
+                      previewLoaded ? 'pointer-events-none scale-[0.985] opacity-0' : 'scale-100 opacity-100'
+                    }`}
+                  >
                     <div className="flex items-start justify-between gap-6">
                       <span className="font-mono text-[9px] tracking-[0.05em] text-muted-gray md:text-[10px]">
                         {String(index + 1).padStart(2, '0')}
