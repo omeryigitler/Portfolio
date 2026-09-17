@@ -12,6 +12,11 @@ type ArchiveFilter = 'all' | ArchiveCategory;
 const isArchiveFilter = (value: string | null): value is ArchiveFilter =>
   value === 'all' || ARCHIVE_FILTERS.some((filter) => filter.value === value);
 
+const githubFallback = (repo: string) => `https://github.com/omeryigitler/${repo}`;
+
+const displayUrl = (url: string) =>
+  url.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
+
 export const ProjectsPage: React.FC = () => {
   const initialParams = new URLSearchParams(window.location.search);
   const initialFilter = initialParams.get('filter');
@@ -59,7 +64,7 @@ export const ProjectsPage: React.FC = () => {
           <div className="flex items-center gap-4">
             <span className="text-ink">PROJECT ARCHIVE</span>
             <span className="h-px w-8 bg-soft-gray" aria-hidden="true" />
-            <span>{String(ARCHIVE_COUNT).padStart(2, '0')} GITHUB PROJECTS</span>
+            <span>{String(ARCHIVE_COUNT).padStart(2, '0')} PROJECTS INDEXED</span>
           </div>
 
           <a href="/" className="group inline-flex items-center gap-3 text-ink transition-opacity hover:opacity-55">
@@ -130,8 +135,18 @@ export const ProjectsPage: React.FC = () => {
         {results.length > 0 ? (
           <div className="grid grid-cols-1 border-l border-t border-ink/10 md:grid-cols-2 xl:grid-cols-3">
             {results.map((project, index) => {
-              const body = (
-                <>
+              const repositoryUrl = project.githubUrl ?? githubFallback(project.repo);
+              const targetUrl = project.siteUrl ?? repositoryUrl;
+              const hasLiveSite = Boolean(project.siteUrl);
+
+              return (
+                <a
+                  key={project.repo}
+                  href={targetUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group flex min-h-[290px] flex-col border-b border-r border-ink/10 p-5 transition-colors hover:bg-white md:min-h-[330px] md:p-6"
+                >
                   <div className="flex items-start justify-between gap-6">
                     <span className="font-mono text-[9px] tracking-[0.05em] text-muted-gray md:text-[10px]">
                       {String(index + 1).padStart(2, '0')}
@@ -146,41 +161,20 @@ export const ProjectsPage: React.FC = () => {
                       {project.title}
                     </h2>
                     <p className="mt-4 break-all font-mono text-[8px] tracking-[0.04em] text-muted-gray md:text-[9px]">
-                      github / omeryigitler / {project.repo}
+                      {hasLiveSite ? displayUrl(project.siteUrl!) : `github / omeryigitler / ${project.repo}`}
                     </p>
                   </div>
 
                   <div className="mt-auto flex items-end justify-between gap-6 pt-10 font-mono text-[8px] uppercase tracking-[0.06em] md:text-[9px]">
                     <span className="text-muted-gray">
-                      {project.githubUrl ? 'PUBLIC REPOSITORY' : 'ARCHIVE ENTRY'}
+                      {hasLiveSite ? 'LIVE PROJECT' : 'REPOSITORY'}
                     </span>
-                    {project.githubUrl && (
-                      <span className="inline-flex items-center gap-2 text-ink">
-                        GITHUB
-                        <ArrowUpRight size={13} strokeWidth={1.4} className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
-                      </span>
-                    )}
+                    <span className="inline-flex items-center gap-2 text-ink">
+                      {hasLiveSite ? 'LIVE SITE' : 'GITHUB'}
+                      <ArrowUpRight size={13} strokeWidth={1.4} className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+                    </span>
                   </div>
-                </>
-              );
-
-              return project.githubUrl ? (
-                <a
-                  key={project.repo}
-                  href={project.githubUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group flex min-h-[290px] flex-col border-b border-r border-ink/10 p-5 transition-colors hover:bg-white md:min-h-[330px] md:p-6"
-                >
-                  {body}
                 </a>
-              ) : (
-                <article
-                  key={project.repo}
-                  className="flex min-h-[290px] flex-col border-b border-r border-ink/10 p-5 md:min-h-[330px] md:p-6"
-                >
-                  {body}
-                </article>
               );
             })}
           </div>
@@ -206,7 +200,7 @@ export const ProjectsPage: React.FC = () => {
         )}
 
         <footer className="mt-8 flex flex-col gap-3 border-t border-ink/10 pt-5 font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray sm:flex-row sm:items-center sm:justify-between md:text-[9px]">
-          <span>{String(ARCHIVE_COUNT).padStart(2, '0')} PROJECTS INDEXED FROM GITHUB</span>
+          <span>{String(ARCHIVE_COUNT).padStart(2, '0')} PROJECTS / LIVE SITE FIRST / GITHUB FALLBACK</span>
           <span>DESIGN / DEVELOPMENT / COMMERCE / TOOLS / EXPERIMENTS</span>
         </footer>
       </div>
