@@ -7,6 +7,8 @@ on:
       - fix/interaction-runtime
     paths:
       - '.github/workflows/capture-project-previews.yml'
+      - 'scripts/capture-project-previews.mjs'
+      - 'src/archiveData.ts'
 
 permissions:
   contents: write
@@ -18,7 +20,7 @@ concurrency:
 jobs:
   capture:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 15
 
     steps:
       - name: Checkout branch
