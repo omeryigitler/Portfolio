@@ -6,7 +6,6 @@ const ARCHIVE_FILE = path.resolve('src/archiveData.ts');
 const OUTPUT_DIR = path.resolve('public/project-previews');
 const WORKERS = 4;
 const VIEWPORT = { width: 1200, height: 912 };
-const TARGET_RATIO = VIEWPORT.width / VIEWPORT.height;
 
 const EXTRA_DELAY = {
   'reformerpilatesmalta.com': 3000,
@@ -73,10 +72,6 @@ const settlePage = async (page, delay) => {
   await page.evaluate(async () => {
     document.documentElement.style.scrollBehavior = 'auto';
     document.body.style.scrollBehavior = 'auto';
-    document.documentElement.style.margin = '0';
-    document.documentElement.style.padding = '0';
-    document.body.style.margin = '0';
-    document.body.style.padding = '0';
 
     document
       .querySelectorAll('[data-vercel-toolbar], vercel-live-feedback, #vercel-live-feedback')
@@ -98,103 +93,6 @@ const settlePage = async (page, delay) => {
   });
 
   await page.waitForTimeout(300);
-};
-
-const normalizeClip = (clip, viewportWidth, viewportHeight) => {
-  let { x, y, width, height } = clip;
-  const ratio = width / height;
-
-  if (ratio > TARGET_RATIO) {
-    const nextHeight = width / TARGET_RATIO;
-    if (nextHeight > viewportHeight) {
-      return { x: 0, y: 0, width: viewportWidth, height: viewportHeight };
-    }
-    y = Math.max(0, Math.min(viewportHeight - nextHeight, y - (nextHeight - height) / 2));
-    height = nextHeight;
-  } else if (ratio < TARGET_RATIO) {
-    const nextWidth = height * TARGET_RATIO;
-    if (nextWidth > viewportWidth) {
-      return { x: 0, y: 0, width: viewportWidth, height: viewportHeight };
-    }
-    x = Math.max(0, Math.min(viewportWidth - nextWidth, x - (nextWidth - width) / 2));
-    width = nextWidth;
-  }
-
-  return {
-    x: Math.round(x),
-    y: Math.round(y),
-    width: Math.round(width),
-    height: Math.round(height),
-  };
-};
-
-const getCaptureClip = async (page) => {
-  return page.evaluate(({ targetRatio }) => {
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    const fallback = { x: 0, y: 0, width: viewportWidth, height: viewportHeight };
-    const queue = Array.from(document.body.children).map((element) => ({ element, depth: 0 }));
-
-    const normalize = (clip) => {
-      let { x, y, width, height } = clip;
-      const ratio = width / height;
-
-      if (ratio > targetRatio) {
-        const nextHeight = width / targetRatio;
-        if (nextHeight > viewportHeight) return fallback;
-        y = Math.max(0, Math.min(viewportHeight - nextHeight, y - (nextHeight - height) / 2));
-        height = nextHeight;
-      } else if (ratio < targetRatio) {
-        const nextWidth = height * targetRatio;
-        if (nextWidth > viewportWidth) return fallback;
-        x = Math.max(0, Math.min(viewportWidth - nextWidth, x - (nextWidth - width) / 2));
-        width = nextWidth;
-      }
-
-      return {
-        x: Math.round(x),
-        y: Math.round(y),
-        width: Math.round(width),
-        height: Math.round(height),
-      };
-    };
-
-    while (queue.length) {
-      const current = queue.shift();
-      if (!current) break;
-      const { element, depth } = current;
-      const style = window.getComputedStyle(element);
-
-      if (style.display !== 'none' && style.visibility !== 'hidden' && Number(style.opacity || 1) > 0) {
-        const rect = element.getBoundingClientRect();
-        const left = Math.max(0, rect.left);
-        const top = Math.max(0, rect.top);
-        const right = Math.max(0, viewportWidth - Math.min(viewportWidth, rect.right));
-        const bottom = Math.max(0, viewportHeight - Math.min(viewportHeight, rect.bottom));
-        const width = Math.min(viewportWidth - left, rect.width);
-        const height = Math.min(viewportHeight - top, rect.height);
-
-        const largeEnough = width >= viewportWidth * 0.68 && height >= viewportHeight * 0.56;
-        const nearViewport = left <= 220 && right <= 220 && top <= 180 && bottom <= 260;
-        const hasRealInset = [left, right, top, bottom].filter((value) => value >= 6).length >= 2;
-        const notFullViewport =
-          left >= 6 || right >= 6 || top >= 6 || bottom >= 6 ||
-          width <= viewportWidth * 0.985 || height <= viewportHeight * 0.985;
-
-        if (largeEnough && nearViewport && hasRealInset && notFullViewport) {
-          return normalize({ x: left, y: top, width, height });
-        }
-      }
-
-      if (depth < 8) {
-        for (const child of Array.from(element.children)) {
-          queue.push({ element: child, depth: depth + 1 });
-        }
-      }
-    }
-
-    return fallback;
-  }, { targetRatio: TARGET_RATIO });
 };
 
 const capture = async (browser, project) => {
@@ -224,20 +122,16 @@ const capture = async (browser, project) => {
       return false;
     }
 
-    const detected = await getCaptureClip(page);
-    const clip = normalizeClip(detected, VIEWPORT.width, VIEWPORT.height);
     const output = path.join(OUTPUT_DIR, `${safeName(project.repo)}.png`);
-
     await page.screenshot({
       path: output,
-      clip,
       animations: 'disabled',
       caret: 'hide',
       type: 'png',
     });
 
     console.log(
-      `  ${project.repo}: saved ${clip.width}x${clip.height} @ ${clip.x},${clip.y} ratio ${(clip.width / clip.height).toFixed(3)}`,
+      `  ${project.repo}: saved full viewport ${VIEWPORT.width}x${VIEWPORT.height} @ 0,0 ratio ${(VIEWPORT.width / VIEWPORT.height).toFixed(3)}`,
     );
     return true;
   } catch (error) {
