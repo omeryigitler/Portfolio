@@ -90,7 +90,7 @@ export const ARCHIVE_PROJECTS: ArchiveProject[] = [
   },
   {
     repo: 'muhasebe',
-    title: 'Muhasebe',
+    title: 'Accounting Studio',
     category: 'apps',
     kind: 'Accounting / calculator website',
     stack: ['React', 'Vite', 'GSAP', 'Tailwind'],
@@ -118,7 +118,7 @@ export const ARCHIVE_PROJECTS: ArchiveProject[] = [
   },
   {
     repo: 'parfum',
-    title: 'Parfum',
+    title: 'L\'Essence',
     category: 'commerce',
     kind: 'Fragrance e-commerce',
     stack: ['React', 'Commerce UI', 'Vercel'],
@@ -264,7 +264,7 @@ export const ARCHIVE_PROJECTS: ArchiveProject[] = [
   },
   {
     repo: 'kedi',
-    title: 'Kedi',
+    title: 'Cat',
     category: 'experiments',
     kind: 'Creative interaction experiment',
     stack: ['Interaction', 'Motion', 'Frontend'],
