@@ -15,42 +15,73 @@ const desktopLayouts = [
   'lg:col-start-4 lg:col-span-6 lg:row-start-5 lg:row-span-2',
 ];
 
-const ProjectCover: React.FC<{ project: ProjectData; priority?: boolean }> = ({ project, priority = false }) => {
-  const [src, setSrc] = useState(project.coverImage);
-  const [failed, setFailed] = useState(false);
+const HOMEPAGE_VIEWPORT_WIDTH = 1440;
+const HOMEPAGE_VIEWPORT_HEIGHT = 1000;
+
+const ProjectHomepagePreview: React.FC<{ project: ProjectData; priority?: boolean }> = ({ project, priority = false }) => {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const [loaded, setLoaded] = useState(false);
+  const [scale, setScale] = useState(0.24);
+
+  useEffect(() => setLoaded(false), [project.url]);
 
   useEffect(() => {
-    setSrc(project.coverImage);
-    setFailed(false);
-  }, [project.coverImage]);
+    const host = hostRef.current;
+    if (!host) return;
 
-  const onError = () => {
-    if (project.coverFallback && src !== project.coverFallback) {
-      setSrc(project.coverFallback);
-      return;
-    }
-    setFailed(true);
-  };
+    const updateScale = () => {
+      const bounds = host.getBoundingClientRect();
+      const nextScale = Math.min(
+        bounds.width / HOMEPAGE_VIEWPORT_WIDTH,
+        bounds.height / HOMEPAGE_VIEWPORT_HEIGHT,
+      );
+      if (Number.isFinite(nextScale) && nextScale > 0) setScale(nextScale);
+    };
 
-  if (failed) {
-    return (
-      <div className="absolute inset-0 grid place-items-center" style={{ backgroundColor: project.ambientColor }}>
-        <span className="max-w-[12ch] text-center text-[clamp(28px,4vw,68px)] font-[560] leading-[0.88] tracking-[-0.055em] text-black/20">
-          {project.title}
-        </span>
-      </div>
-    );
-  }
+    updateScale();
+    const observer = new ResizeObserver(updateScale);
+    observer.observe(host);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <img
-      src={src}
-      alt=""
-      loading={priority ? 'eager' : 'lazy'}
-      decoding="async"
-      onError={onError}
-      className={`h-full w-full transition-transform duration-700 ease-[0.16,1,0.3,1] group-hover:scale-[1.018] ${project.coverFit === 'contain' ? 'object-contain p-[8%]' : 'object-cover'}`}
-    />
+    <div
+      ref={hostRef}
+      className="absolute inset-0 overflow-hidden"
+      style={{ backgroundColor: project.ambientColor }}
+    >
+      <div
+        className={`pointer-events-none absolute inset-0 z-10 grid place-items-center transition-opacity duration-500 ${loaded ? 'opacity-0' : 'opacity-100'}`}
+        aria-hidden="true"
+      >
+        <div className="flex items-center gap-2 rounded-[3px] border border-black/8 bg-canvas/80 px-2.5 py-1.5 font-mono text-[8px] uppercase tracking-[0.07em] text-muted-gray backdrop-blur-md md:text-[9px]">
+          <span className="h-[4px] w-[4px] rounded-full bg-acid" />
+          <span>LOADING HOMEPAGE</span>
+        </div>
+      </div>
+
+      <div
+        className={`pointer-events-none absolute left-1/2 top-1/2 overflow-hidden bg-white shadow-[0_18px_50px_rgba(17,17,17,0.18)] transition-[opacity,filter] duration-500 ${loaded ? 'opacity-100' : 'opacity-0 blur-[2px]'}`}
+        style={{
+          width: HOMEPAGE_VIEWPORT_WIDTH,
+          height: HOMEPAGE_VIEWPORT_HEIGHT,
+          transform: `translate(-50%, -50%) scale(${scale})`,
+          transformOrigin: 'center center',
+        }}
+        aria-hidden="true"
+      >
+        <iframe
+          src={project.url}
+          title={`${project.title} homepage preview`}
+          loading={priority ? 'eager' : 'lazy'}
+          tabIndex={-1}
+          onLoad={() => setLoaded(true)}
+          className="pointer-events-none h-full w-full border-0 bg-white"
+        />
+      </div>
+
+      <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-black/[0.04]" />
+    </div>
   );
 };
 
@@ -199,7 +230,7 @@ export const SelectedWork: React.FC = () => {
               <span>{String(PROJECTS.length).padStart(2, '0')} REAL PROJECTS</span>
             </div>
             <div className="hidden text-right font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray md:block md:text-[9px]">
-              CLICK A COVER / OPEN FULLSCREEN
+              CLICK A PROJECT / OPEN FULLSCREEN
             </div>
           </header>
 
@@ -220,11 +251,9 @@ export const SelectedWork: React.FC = () => {
                 onClick={() => openProject(project)}
                 aria-label={`Open ${project.title} fullscreen project`}
               >
-                <div className="absolute inset-0" style={{ backgroundColor: project.ambientColor }}>
-                  <ProjectCover project={project} priority={index < 3} />
-                </div>
+                <ProjectHomepagePreview project={project} priority={index < 3} />
 
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/5 opacity-80 transition-opacity duration-300 group-hover:opacity-65" />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-black/[0.03] opacity-50 transition-opacity duration-300 group-hover:opacity-25" />
 
                 <div className="pointer-events-none absolute left-3 top-3 flex items-center gap-2 rounded-[3px] border border-white/35 bg-canvas/90 px-2 py-1 font-mono text-[8px] uppercase tracking-[0.06em] text-ink backdrop-blur-md md:text-[9px]">
                   <span>{project.number}</span>
@@ -247,7 +276,7 @@ export const SelectedWork: React.FC = () => {
           </div>
 
           <div className="mt-5 flex items-center justify-between border-t border-ink/8 pt-4 font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray md:text-[9px]">
-            <span>ALBUM VIEW / LIVE AFTER CLICK</span>
+            <span>HOMEPAGE PREVIEW / LIVE AFTER CLICK</span>
             <span>DESIGN · DEVELOPMENT · INTERACTION</span>
           </div>
         </div>
