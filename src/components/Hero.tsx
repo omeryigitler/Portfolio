@@ -85,7 +85,7 @@ export const Hero: React.FC = () => {
           </h1>
         </div>
 
-        <div className="grid gap-6 border-t border-ink/10 pt-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-10 md:pt-6">
+        <div className="mb-5 grid gap-6 border-t border-ink/10 pt-5 md:mb-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-10 md:pt-6 lg:mb-10">
           <p
             ref={supportRef}
             className="max-w-[680px] text-[14px] leading-[1.55] tracking-[-0.02em] text-ink/65 md:text-[16px]"
