@@ -72,6 +72,13 @@ const settlePage = async (page, delay) => {
     document.documentElement.style.scrollBehavior = 'auto';
     document.body.style.scrollBehavior = 'auto';
 
+    // The portfolio card already provides the framing. Remove browser-page gutters from
+    // the captured asset so the homepage itself can sit edge-to-edge in the card.
+    document.documentElement.style.margin = '0';
+    document.documentElement.style.padding = '0';
+    document.body.style.margin = '0';
+    document.body.style.padding = '0';
+
     document
       .querySelectorAll('[data-vercel-toolbar], vercel-live-feedback, #vercel-live-feedback')
       .forEach((element) => element.remove());
@@ -92,6 +99,36 @@ const settlePage = async (page, delay) => {
   });
 
   await page.waitForTimeout(300);
+};
+
+const getCaptureClip = async (page) => {
+  return page.evaluate(() => {
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const candidates = [
+      document.querySelector('#root'),
+      document.querySelector('#__next'),
+      document.querySelector('main'),
+      document.body.firstElementChild,
+    ].filter(Boolean);
+
+    for (const element of candidates) {
+      const rect = element.getBoundingClientRect();
+      if (rect.width < viewportWidth * 0.72 || rect.height < 280) continue;
+
+      const x = Math.max(0, rect.left);
+      const y = Math.max(0, rect.top);
+      const width = Math.min(viewportWidth - x, rect.width);
+      const height = Math.min(viewportHeight - y, Math.max(280, rect.height));
+
+      // Only crop genuine outer gutters. Large offsets are usually intentional layout.
+      if (x <= 80 && y <= 100 && width >= viewportWidth * 0.82) {
+        return { x, y, width, height };
+      }
+    }
+
+    return { x: 0, y: 0, width: viewportWidth, height: viewportHeight };
+  });
 };
 
 const capture = async (browser, project) => {
@@ -121,15 +158,16 @@ const capture = async (browser, project) => {
       return false;
     }
 
+    const clip = await getCaptureClip(page);
     const output = path.join(OUTPUT_DIR, `${safeName(project.repo)}.png`);
     await page.screenshot({
       path: output,
-      fullPage: false,
+      clip,
       animations: 'disabled',
       caret: 'hide',
       type: 'png',
     });
-    console.log(`  ${project.repo}: saved`);
+    console.log(`  ${project.repo}: saved ${Math.round(clip.width)}x${Math.round(clip.height)}`);
     return true;
   } catch (error) {
     console.warn(`  ${project.repo}: ${error instanceof Error ? error.message : String(error)}`);
