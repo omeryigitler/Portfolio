@@ -17,10 +17,13 @@ const githubFallback = (repo: string) => `https://github.com/omeryigitler/${repo
 const displayUrl = (url: string) =>
   url.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
 
-// Keep the captured viewport close to the desktop card ratio so the full homepage
-// remains visible without creating a second top/bottom letterbox inside the card.
-const previewSnapshotUrl = (url: string) =>
-  `https://image.thum.io/get/noanimate/wait/6/width/1200/crop/910/maxAge/168/${url}`;
+const previewSnapshotUrl = (repo: string) => {
+  const fileName = repo
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return `/project-previews/${fileName}.png`;
+};
 
 export const ProjectsPage: React.FC = () => {
   const initialParams = new URLSearchParams(window.location.search);
@@ -176,16 +179,16 @@ export const ProjectsPage: React.FC = () => {
                 >
                   {previewActive && project.siteUrl && (
                     <div
-                      className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden bg-[#e8e6df]"
+                      className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-canvas"
                       aria-hidden="true"
                     >
                       <img
-                        src={previewSnapshotUrl(project.siteUrl)}
+                        src={previewSnapshotUrl(project.repo)}
                         alt=""
                         onLoad={() => setLoadedPreview(project.repo)}
                         onError={() => setLoadedPreview(null)}
-                        className={`h-full w-full object-contain object-center transition-[opacity,transform] duration-500 ease-out ${
-                          previewLoaded ? 'scale-100 opacity-100' : 'scale-[0.99] opacity-0'
+                        className={`h-full w-full object-cover object-center transition-[opacity,transform] duration-500 ease-out ${
+                          previewLoaded ? 'scale-100 opacity-100' : 'scale-[0.995] opacity-0'
                         }`}
                       />
                     </div>
