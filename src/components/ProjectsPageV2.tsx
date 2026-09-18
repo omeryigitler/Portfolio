@@ -311,19 +311,6 @@ export const ProjectsPageV2: React.FC = () => {
                               Project preview
                             </span>
                           </div>
-                          <div
-                            className={`pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between border-t border-ink/10 bg-canvas/94 px-3 py-2.5 backdrop-blur-md transition-[opacity,transform] duration-300 ${
-                              mobilePreviewActive && imageLoaded
-                                ? 'translate-y-0 opacity-100'
-                                : 'translate-y-2 opacity-0'
-                            }`}
-                            aria-hidden="true"
-                          >
-                            <span className="font-mono text-[8px] uppercase tracking-[0.055em] text-ink">
-                              Live preview
-                            </span>
-                            <ArrowUpRight size={14} strokeWidth={1.2} className="text-ink" />
-                          </div>
                         </div>
                       )}
 
