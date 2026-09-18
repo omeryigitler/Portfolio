@@ -14,6 +14,7 @@ const CHAPTERS = [
 export const ChapterNav: React.FC = () => {
   const { isProjectOpen, isContactFormOpen } = useUI();
   const [isOpen, setIsOpen] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [footerVisible, setFooterVisible] = useState(false);
   const [activeId, setActiveId] = useState<(typeof CHAPTERS)[number]['id']>('home');
 
@@ -60,7 +61,10 @@ export const ChapterNav: React.FC = () => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         setFooterVisible(entry.isIntersecting);
-        if (entry.isIntersecting) setIsOpen(false);
+        if (entry.isIntersecting) {
+          setIsOpen(false);
+          setIsMobileOpen(false);
+        }
       },
       { threshold: 0.08 },
     );
@@ -71,7 +75,10 @@ export const ChapterNav: React.FC = () => {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setIsOpen(false);
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+        setIsMobileOpen(false);
+      }
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
@@ -80,8 +87,108 @@ export const ChapterNav: React.FC = () => {
   if (isProjectOpen || isContactFormOpen || footerVisible) return null;
 
   return (
-    <aside
-      className="fixed left-2 top-1/2 z-[140] -translate-y-1/2 pointer-events-auto md:left-4"
+    <>
+      <div
+        className="fixed left-4 right-4 top-4 z-[140] pointer-events-auto md:hidden"
+        aria-label="Section navigation"
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          {!isMobileOpen ? (
+            <motion.button
+              key="mobile-chapter-launcher"
+              type="button"
+              onClick={() => setIsMobileOpen(true)}
+              aria-label="Open section navigation"
+              aria-expanded="false"
+              initial={{ opacity: 0, y: -10, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.98 }}
+              transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+              className="grid h-12 w-full grid-cols-[auto_1fr_auto] items-center gap-3 rounded-[13px] border border-ink/10 bg-canvas/96 px-3 shadow-[0_12px_36px_rgba(17,17,17,0.11)] backdrop-blur-xl"
+            >
+              <span className="font-mono text-[9px] tracking-[0.055em] text-ink">
+                {CHAPTERS[activeIndex].number} / 06
+              </span>
+              <span className="truncate text-center font-sans text-[11px] font-[520] uppercase tracking-[-0.01em] text-ink">
+                {CHAPTERS[activeIndex].label}
+              </span>
+              <span
+                className="font-sans text-[14px] leading-none text-ink"
+                aria-hidden="true"
+              >
+                →
+              </span>
+            </motion.button>
+          ) : (
+            <motion.div
+              key="mobile-chapter-panel"
+              initial={{ opacity: 0, y: -10, clipPath: 'inset(0 0 100% 0 round 14px)' }}
+              animate={{ opacity: 1, y: 0, clipPath: 'inset(0 0 0% 0 round 14px)' }}
+              exit={{ opacity: 0, y: -8, clipPath: 'inset(0 0 100% 0 round 14px)' }}
+              transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
+              className="overflow-hidden rounded-[14px] border border-ink/10 bg-canvas/98 shadow-[0_20px_60px_rgba(17,17,17,0.14)] backdrop-blur-xl"
+            >
+              <button
+                type="button"
+                onClick={() => setIsMobileOpen(false)}
+                aria-label="Close section navigation"
+                aria-expanded="true"
+                className="grid h-12 w-full grid-cols-[auto_1fr_auto] items-center gap-3 px-3 focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-[-2px]"
+              >
+                <span className="font-mono text-[9px] tracking-[0.055em] text-ink">
+                  {CHAPTERS[activeIndex].number} / 06
+                </span>
+                <span className="truncate text-center font-sans text-[11px] font-[520] uppercase tracking-[-0.01em] text-ink">
+                  {CHAPTERS[activeIndex].label}
+                </span>
+                <span
+                  className="font-sans text-[14px] leading-none text-ink"
+                  aria-hidden="true"
+                >
+                  ↖
+                </span>
+              </button>
+
+              <nav className="border-t border-soft-gray/70 p-1.5" aria-label="Portfolio sections">
+                {CHAPTERS.map((chapter) => {
+                  const active = chapter.id === activeId;
+                  return (
+                    <a
+                      key={chapter.id}
+                      href={'#' + chapter.id}
+                      onClick={() => setIsMobileOpen(false)}
+                      className="group grid grid-cols-[34px_1fr_28px] items-center gap-2 rounded-[9px] px-3 py-3 transition-colors duration-200 active:bg-ink/[0.035] focus-visible:outline-2 focus-visible:outline-acid"
+                    >
+                      <span
+                        className={
+                          'font-mono text-[9px] tracking-[0.05em] ' +
+                          (active ? 'text-ink' : 'text-muted-gray')
+                        }
+                      >
+                        {chapter.number}
+                      </span>
+                      <span className="font-sans text-[13px] font-[520] uppercase tracking-[-0.015em] text-ink">
+                        {chapter.label}
+                      </span>
+                      <span className="flex items-center justify-end" aria-hidden="true">
+                        <span
+                          className={
+                            'h-[2px] bg-acid transition-all duration-300 ' +
+                            (active ? 'w-6' : 'w-0')
+                          }
+                        />
+                      </span>
+                    </a>
+                  );
+                })}
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      <aside
+      className="fixed left-2 top-1/2 z-[140] hidden -translate-y-1/2 pointer-events-auto md:left-4 md:block"
       aria-label="Section navigation"
     >
       <AnimatePresence mode="wait" initial={false}>
@@ -152,5 +259,6 @@ export const ChapterNav: React.FC = () => {
         )}
       </AnimatePresence>
     </aside>
+    </>
   );
 };
