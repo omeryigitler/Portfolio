@@ -289,7 +289,7 @@ export const ProjectsPageV2: React.FC = () => {
                       </p>
 
                       {hasLiveSite && !failedPreviews.has(project.repo) && (
-                        <div className="relative mt-6 aspect-[16/10] overflow-hidden border border-ink/10 bg-ink/[0.018] md:hidden">
+                        <div className="relative mt-6 aspect-[4/3] overflow-hidden border border-ink/10 bg-ink/[0.018] md:hidden">
                           <img
                             src={previewUrl(project.repo)}
                             alt=""
