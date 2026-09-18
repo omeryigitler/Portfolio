@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import { ArrowRight, ArrowUpLeft } from 'lucide-react';
 import { useUI } from '../context/UIContext';
 
 const CHAPTERS = [
@@ -112,12 +113,12 @@ export const ChapterNav: React.FC = () => {
               <span className="truncate text-center font-sans text-[11px] font-[520] uppercase tracking-[-0.01em] text-ink">
                 {CHAPTERS[activeIndex].label}
               </span>
-              <span
-                className="font-sans text-[14px] leading-none text-ink"
+              <ArrowRight
+                size={14}
+                strokeWidth={1.2}
+                className="text-ink"
                 aria-hidden="true"
-              >
-                →
-              </span>
+              />
             </motion.button>
           ) : (
             <motion.div
@@ -141,12 +142,12 @@ export const ChapterNav: React.FC = () => {
                 <span className="truncate text-center font-sans text-[11px] font-[520] uppercase tracking-[-0.01em] text-ink">
                   {CHAPTERS[activeIndex].label}
                 </span>
-                <span
-                  className="font-sans text-[14px] leading-none text-ink"
+                <ArrowUpLeft
+                  size={14}
+                  strokeWidth={1.2}
+                  className="text-ink"
                   aria-hidden="true"
-                >
-                  ↖
-                </span>
+                />
               </button>
 
               <nav className="border-t border-soft-gray/70 p-1.5" aria-label="Portfolio sections">

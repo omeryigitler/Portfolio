@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { X } from 'lucide-react';
+import { ArrowUpRight, X } from 'lucide-react';
 import { useUI } from '../context/UIContext';
 
 const PROCESS = [
@@ -213,7 +213,7 @@ export const Contact: React.FC = () => {
                       <span className="text-[clamp(56px,15vw,94px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
                         make it real<span className="text-acid">.</span>
                       </span>
-                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-ink/20 text-[22px] text-ink transition-transform duration-300 group-hover:translate-x-1.5 group-hover:-translate-y-1.5">↗</span>
+                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-ink/20 text-ink transition-transform duration-300 group-hover:translate-x-1.5 group-hover:-translate-y-1.5"><ArrowUpRight size={18} strokeWidth={1.2} aria-hidden="true" /></span>
                     </div>
                   </motion.button>
                 )}
