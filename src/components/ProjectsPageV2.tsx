@@ -220,8 +220,9 @@ export const ProjectsPageV2: React.FC = () => {
               const targetUrl = project.siteUrl ?? repositoryUrl;
               const hasLiveSite = Boolean(project.siteUrl);
               const mobilePreviewActive = hasLiveSite && mobilePreview === project.repo;
-              const previewActive = hasLiveSite && (activePreview === project.repo || mobilePreviewActive);
-              const previewLoaded = previewActive && loadedPreview === project.repo;
+              const desktopPreviewActive = hasLiveSite && activePreview === project.repo;
+              const imageLoaded = loadedPreview === project.repo;
+              const desktopPreviewLoaded = desktopPreviewActive && imageLoaded;
 
               return (
                 <a
@@ -242,15 +243,15 @@ export const ProjectsPageV2: React.FC = () => {
                     hasLiveSite ? 'bg-canvas' : 'transition-colors hover:bg-white'
                   }`}
                 >
-                  {previewActive && !failedPreviews.has(project.repo) && (
-                    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
+                  {desktopPreviewActive && !failedPreviews.has(project.repo) && (
+                    <div className="pointer-events-none absolute inset-0 z-0 hidden overflow-hidden md:block" aria-hidden="true">
                       <img
                         src={previewUrl(project.repo)}
                         alt=""
                         onLoad={() => setLoadedPreview(project.repo)}
                         onError={() => markFailed(project.repo)}
-                        className={`absolute inset-0 h-full w-full object-cover object-top transition-[opacity,transform] duration-500 ease-out md:object-center ${
-                          previewLoaded ? 'scale-100 opacity-100' : 'scale-[1.035] opacity-0'
+                        className={`absolute inset-0 h-full w-full object-cover object-center transition-[opacity,transform] duration-450 ease-out ${
+                          desktopPreviewLoaded ? 'scale-100 opacity-100' : 'scale-[1.01] opacity-0'
                         }`}
                       />
                     </div>
@@ -258,37 +259,12 @@ export const ProjectsPageV2: React.FC = () => {
 
                   {hasLiveSite && (
                     <div
-                      className={`pointer-events-none absolute inset-0 z-10 bg-canvas transition-opacity duration-250 ${previewLoaded ? 'opacity-0' : 'opacity-100'}`}
+                      className={`pointer-events-none absolute inset-0 z-10 hidden bg-canvas transition-opacity duration-250 md:block ${desktopPreviewLoaded ? 'opacity-0' : 'opacity-100'}`}
                       aria-hidden="true"
                     />
                   )}
 
-                  {mobilePreviewActive && previewLoaded && (
-                    <div className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-between p-4 md:hidden" aria-hidden="true">
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="bg-canvas/94 px-2 py-1.5 font-mono text-[8px] tracking-[0.05em] text-ink backdrop-blur-md">
-                          {String(index + 1).padStart(2, '0')}
-                        </span>
-                        <span className="bg-canvas/94 px-2 py-1.5 font-mono text-[8px] uppercase tracking-[0.06em] text-ink backdrop-blur-md">
-                          {project.category}
-                        </span>
-                      </div>
-
-                      <div className="flex items-end justify-between gap-5 bg-canvas/94 p-3.5 backdrop-blur-md">
-                        <div className="min-w-0">
-                          <p className="truncate text-[18px] font-[520] leading-[0.98] tracking-[-0.035em] text-ink">
-                            {project.title}
-                          </p>
-                          <p className="mt-2 font-mono text-[8px] uppercase tracking-[0.055em] text-muted-gray">
-                            TAP TO OPEN LIVE PROJECT
-                          </p>
-                        </div>
-                        <ArrowUpRight size={16} strokeWidth={1.2} className="shrink-0 text-ink" />
-                      </div>
-                    </div>
-                  )}
-
-                  <div className={`relative z-20 flex w-full flex-col transition-[opacity,transform] duration-250 ease-out ${previewLoaded ? 'pointer-events-none scale-[0.985] opacity-0' : 'scale-100 opacity-100'}`}>
+                  <div className={`relative z-20 flex w-full flex-col transition-[opacity,transform] duration-250 ease-out ${desktopPreviewLoaded ? 'md:pointer-events-none md:scale-[0.985] md:opacity-0' : 'scale-100 opacity-100'}`}>
                     <div className="flex items-start justify-between gap-6">
                       <span className="font-mono text-[9px] tracking-[0.05em] text-muted-gray md:text-[10px]">
                         {String(index + 1).padStart(2, '0')}
@@ -305,6 +281,45 @@ export const ProjectsPageV2: React.FC = () => {
                       <p className="mt-4 break-all font-mono text-[8px] uppercase tracking-[0.04em] text-muted-gray md:text-[9px]">
                         {hasLiveSite ? project.siteLabel ?? displayUrl(project.siteUrl!) : `github / omeryigitler / ${project.repo}`}
                       </p>
+
+                      {hasLiveSite && !failedPreviews.has(project.repo) && (
+                        <div className="relative mt-6 aspect-[16/10] overflow-hidden border border-ink/10 bg-ink/[0.018] md:hidden">
+                          <img
+                            src={previewUrl(project.repo)}
+                            alt=""
+                            onLoad={() => setLoadedPreview(project.repo)}
+                            onError={() => markFailed(project.repo)}
+                            className={`absolute inset-0 h-full w-full object-cover object-top transition-[opacity,transform,filter] duration-500 ease-[0.16,1,0.3,1] ${
+                              mobilePreviewActive && imageLoaded
+                                ? 'scale-100 opacity-100'
+                                : 'scale-[1.025] opacity-0'
+                            }`}
+                          />
+                          <div
+                            className={`absolute inset-0 grid place-items-center transition-opacity duration-300 ${
+                              mobilePreviewActive && imageLoaded ? 'opacity-0' : 'opacity-100'
+                            }`}
+                            aria-hidden="true"
+                          >
+                            <span className="font-mono text-[8px] uppercase tracking-[0.065em] text-muted-gray">
+                              Project preview
+                            </span>
+                          </div>
+                          <div
+                            className={`pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between border-t border-ink/10 bg-canvas/94 px-3 py-2.5 backdrop-blur-md transition-[opacity,transform] duration-300 ${
+                              mobilePreviewActive && imageLoaded
+                                ? 'translate-y-0 opacity-100'
+                                : 'translate-y-2 opacity-0'
+                            }`}
+                            aria-hidden="true"
+                          >
+                            <span className="font-mono text-[8px] uppercase tracking-[0.055em] text-ink">
+                              Live preview
+                            </span>
+                            <ArrowUpRight size={14} strokeWidth={1.2} className="text-ink" />
+                          </div>
+                        </div>
+                      )}
 
                       <div className="mt-7 space-y-2 border-t border-ink/10 pt-4 font-mono text-[8px] uppercase tracking-[0.055em] md:text-[9px]">
                         <div className="grid grid-cols-[64px_1fr] gap-3">
