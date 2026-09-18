@@ -35,7 +35,7 @@ export const ProjectsPageV2: React.FC = () => {
   const [activePreview, setActivePreview] = useState<string | null>(null);
   const [mobilePreview, setMobilePreview] = useState<string | null>(null);
   const cardRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
-  const [loadedPreview, setLoadedPreview] = useState<string | null>(null);
+  const [loadedPreviews, setLoadedPreviews] = useState<Set<string>>(() => new Set());
   const [failedPreviews, setFailedPreviews] = useState<Set<string>>(() => new Set());
 
   const results = useMemo(() => {
@@ -56,7 +56,7 @@ export const ProjectsPageV2: React.FC = () => {
   }, [filter, query]);
 
   useEffect(() => {
-    const media = window.matchMedia('(max-width: 767px) and (pointer: coarse)');
+    const media = window.matchMedia('(max-width: 767px)');
     let observer: IntersectionObserver | null = null;
 
     const observeCards = () => {
@@ -121,13 +121,20 @@ export const ProjectsPageV2: React.FC = () => {
 
   const showPreview = (repo: string) => {
     if (failedPreviews.has(repo)) return;
-    setLoadedPreview(null);
     setActivePreview(repo);
   };
 
   const hidePreview = (repo: string) => {
     setActivePreview((current) => (current === repo ? null : current));
-    setLoadedPreview((current) => (current === repo ? null : current));
+  };
+
+  const markLoaded = (repo: string) => {
+    setLoadedPreviews((current) => {
+      if (current.has(repo)) return current;
+      const next = new Set(current);
+      next.add(repo);
+      return next;
+    });
   };
 
   const markFailed = (repo: string) => {
@@ -136,7 +143,6 @@ export const ProjectsPageV2: React.FC = () => {
       next.add(repo);
       return next;
     });
-    setLoadedPreview(null);
   };
 
   return (
@@ -221,7 +227,7 @@ export const ProjectsPageV2: React.FC = () => {
               const hasLiveSite = Boolean(project.siteUrl);
               const mobilePreviewActive = hasLiveSite && mobilePreview === project.repo;
               const desktopPreviewActive = hasLiveSite && activePreview === project.repo;
-              const imageLoaded = loadedPreview === project.repo;
+              const imageLoaded = loadedPreviews.has(project.repo);
               const desktopPreviewLoaded = desktopPreviewActive && imageLoaded;
 
               return (
@@ -248,7 +254,7 @@ export const ProjectsPageV2: React.FC = () => {
                       <img
                         src={previewUrl(project.repo)}
                         alt=""
-                        onLoad={() => setLoadedPreview(project.repo)}
+                        onLoad={() => markLoaded(project.repo)}
                         onError={() => markFailed(project.repo)}
                         className={`absolute inset-0 h-full w-full object-cover object-center transition-[opacity,transform] duration-450 ease-out ${
                           desktopPreviewLoaded ? 'scale-100 opacity-100' : 'scale-[1.01] opacity-0'
@@ -287,7 +293,7 @@ export const ProjectsPageV2: React.FC = () => {
                           <img
                             src={previewUrl(project.repo)}
                             alt=""
-                            onLoad={() => setLoadedPreview(project.repo)}
+                            onLoad={() => markLoaded(project.repo)}
                             onError={() => markFailed(project.repo)}
                             className={`absolute inset-0 h-full w-full object-cover object-top transition-[opacity,transform,filter] duration-500 ease-[0.16,1,0.3,1] ${
                               mobilePreviewActive && imageLoaded
