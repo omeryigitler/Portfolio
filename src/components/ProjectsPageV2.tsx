@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, ArrowUpRight, Search, X } from 'lucide-react';
 import {
   ARCHIVE_COUNT,
@@ -33,6 +33,8 @@ export const ProjectsPageV2: React.FC = () => {
     isArchiveFilter(initialFilter) ? initialFilter : 'all',
   );
   const [activePreview, setActivePreview] = useState<string | null>(null);
+  const [mobilePreview, setMobilePreview] = useState<string | null>(null);
+  const cardRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
   const [loadedPreview, setLoadedPreview] = useState<string | null>(null);
   const [failedPreviews, setFailedPreviews] = useState<Set<string>>(() => new Set());
 
@@ -52,6 +54,53 @@ export const ProjectsPageV2: React.FC = () => {
       return matchesFilter && matchesQuery;
     });
   }, [filter, query]);
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 767px) and (pointer: coarse)');
+    let observer: IntersectionObserver | null = null;
+
+    const observeCards = () => {
+      observer?.disconnect();
+
+      if (!media.matches) {
+        setMobilePreview(null);
+        return;
+      }
+
+      observer = new IntersectionObserver(
+        (entries) => {
+          const entering = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((a, b) => {
+              const viewportCenter = window.innerHeight / 2;
+              const aCenter = a.boundingClientRect.top + a.boundingClientRect.height / 2;
+              const bCenter = b.boundingClientRect.top + b.boundingClientRect.height / 2;
+              return Math.abs(aCenter - viewportCenter) - Math.abs(bCenter - viewportCenter);
+            });
+
+          const next = entering[0]?.target as HTMLElement | undefined;
+          if (next?.dataset.repo) setMobilePreview(next.dataset.repo);
+        },
+        {
+          root: null,
+          rootMargin: '-28% 0px -28% 0px',
+          threshold: 0.01,
+        },
+      );
+
+      cardRefs.current.forEach((card) => observer?.observe(card));
+    };
+
+    const handleMediaChange = () => observeCards();
+
+    observeCards();
+    media.addEventListener('change', handleMediaChange);
+
+    return () => {
+      observer?.disconnect();
+      media.removeEventListener('change', handleMediaChange);
+    };
+  }, [results]);
 
   const syncUrl = (nextFilter: ArchiveFilter, nextQuery: string) => {
     const params = new URLSearchParams();
@@ -170,12 +219,18 @@ export const ProjectsPageV2: React.FC = () => {
               const repositoryUrl = project.githubUrl ?? githubFallback(project.repo);
               const targetUrl = project.siteUrl ?? repositoryUrl;
               const hasLiveSite = Boolean(project.siteUrl);
-              const previewActive = hasLiveSite && activePreview === project.repo;
+              const mobilePreviewActive = hasLiveSite && mobilePreview === project.repo;
+              const previewActive = hasLiveSite && (activePreview === project.repo || mobilePreviewActive);
               const previewLoaded = previewActive && loadedPreview === project.repo;
 
               return (
                 <a
                   key={project.repo}
+                  ref={(node) => {
+                    if (node) cardRefs.current.set(project.repo, node);
+                    else cardRefs.current.delete(project.repo);
+                  }}
+                  data-repo={project.repo}
                   href={targetUrl}
                   target="_blank"
                   rel="noreferrer"
@@ -183,7 +238,7 @@ export const ProjectsPageV2: React.FC = () => {
                   onMouseLeave={() => hasLiveSite && hidePreview(project.repo)}
                   onFocus={() => hasLiveSite && showPreview(project.repo)}
                   onBlur={() => hasLiveSite && hidePreview(project.repo)}
-                  className={`group relative flex min-h-[350px] overflow-hidden border-b border-r border-ink/10 p-5 md:min-h-[390px] md:p-6 ${
+                  className={`group relative flex min-h-[420px] overflow-hidden border-b border-r border-ink/10 p-5 md:min-h-[390px] md:p-6 ${
                     hasLiveSite ? 'bg-canvas' : 'transition-colors hover:bg-white'
                   }`}
                 >
@@ -194,8 +249,8 @@ export const ProjectsPageV2: React.FC = () => {
                         alt=""
                         onLoad={() => setLoadedPreview(project.repo)}
                         onError={() => markFailed(project.repo)}
-                        className={`absolute inset-0 h-full w-full object-cover object-center transition-[opacity,transform] duration-450 ease-out ${
-                          previewLoaded ? 'scale-100 opacity-100' : 'scale-[1.01] opacity-0'
+                        className={`absolute inset-0 h-full w-full object-cover object-top transition-[opacity,transform] duration-500 ease-out md:object-center ${
+                          previewLoaded ? 'scale-100 opacity-100' : 'scale-[1.035] opacity-0'
                         }`}
                       />
                     </div>
@@ -206,6 +261,31 @@ export const ProjectsPageV2: React.FC = () => {
                       className={`pointer-events-none absolute inset-0 z-10 bg-canvas transition-opacity duration-250 ${previewLoaded ? 'opacity-0' : 'opacity-100'}`}
                       aria-hidden="true"
                     />
+                  )}
+
+                  {mobilePreviewActive && previewLoaded && (
+                    <div className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-between p-4 md:hidden" aria-hidden="true">
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="bg-canvas/94 px-2 py-1.5 font-mono text-[8px] tracking-[0.05em] text-ink backdrop-blur-md">
+                          {String(index + 1).padStart(2, '0')}
+                        </span>
+                        <span className="bg-canvas/94 px-2 py-1.5 font-mono text-[8px] uppercase tracking-[0.06em] text-ink backdrop-blur-md">
+                          {project.category}
+                        </span>
+                      </div>
+
+                      <div className="flex items-end justify-between gap-5 bg-canvas/94 p-3.5 backdrop-blur-md">
+                        <div className="min-w-0">
+                          <p className="truncate text-[18px] font-[520] leading-[0.98] tracking-[-0.035em] text-ink">
+                            {project.title}
+                          </p>
+                          <p className="mt-2 font-mono text-[8px] uppercase tracking-[0.055em] text-muted-gray">
+                            TAP TO OPEN LIVE PROJECT
+                          </p>
+                        </div>
+                        <ArrowUpRight size={16} strokeWidth={1.2} className="shrink-0 text-ink" />
+                      </div>
+                    </div>
                   )}
 
                   <div className={`relative z-20 flex w-full flex-col transition-[opacity,transform] duration-250 ease-out ${previewLoaded ? 'pointer-events-none scale-[0.985] opacity-0' : 'scale-100 opacity-100'}`}>
