@@ -293,6 +293,8 @@ export const ProjectsPageV2: React.FC = () => {
                           <img
                             src={previewUrl(project.repo)}
                             alt=""
+                            loading="lazy"
+                            decoding="async"
                             onLoad={() => markLoaded(project.repo)}
                             onError={() => markFailed(project.repo)}
                             className={`absolute inset-0 h-full w-full object-cover object-top transition-[opacity,transform,filter] duration-500 ease-[0.16,1,0.3,1] ${
