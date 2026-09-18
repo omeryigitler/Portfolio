@@ -143,7 +143,7 @@ export const ProjectsPageV2: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-3 grid grid-cols-3 gap-2 md:flex md:overflow-x-auto md:pb-1">
+          <div className="mt-3 hidden gap-2 overflow-x-auto pb-1 md:flex">
             {ARCHIVE_FILTERS.map((item) => {
               const active = item.value === filter;
               return (
@@ -151,7 +151,7 @@ export const ProjectsPageV2: React.FC = () => {
                   key={item.value}
                   type="button"
                   onClick={() => updateFilter(item.value)}
-                  className={`w-full border px-2 py-2 font-mono text-[8px] uppercase tracking-[0.04em] transition-colors md:w-auto md:shrink-0 md:px-4 md:text-[9px] md:tracking-[0.06em] ${
+                  className={`shrink-0 border px-3 py-2 font-mono text-[8px] uppercase tracking-[0.06em] transition-colors md:px-4 md:text-[9px] ${
                     active
                       ? 'border-ink bg-ink text-canvas'
                       : 'border-ink/12 text-muted-gray hover:border-ink/35 hover:text-ink'

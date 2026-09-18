@@ -133,13 +133,13 @@ export const ProjectArchiveLauncher: React.FC = () => {
             </button>
           </form>
 
-          <div className="mt-4 grid grid-cols-3 gap-2 md:flex md:items-center md:overflow-x-auto md:pb-1">
+          <div className="mt-4 hidden items-center gap-2 overflow-x-auto pb-1 md:flex">
             {ARCHIVE_FILTERS.map((filter) => (
               <button
                 key={filter.value}
                 type="button"
                 onClick={() => openArchive(filter.value, '')}
-                className={`w-full cursor-none border px-2 py-2 font-mono text-[8px] uppercase tracking-[0.04em] transition-colors md:w-auto md:shrink-0 md:px-4 md:text-[9px] md:tracking-[0.06em] ${
+                className={`shrink-0 cursor-none border px-3 py-2 font-mono text-[8px] uppercase tracking-[0.06em] transition-colors md:px-4 md:text-[9px] ${
                   filter.value === 'all'
                     ? 'border-ink bg-ink text-canvas'
                     : 'border-ink/12 text-muted-gray hover:border-ink/35 hover:text-ink'
