@@ -141,7 +141,7 @@ export const Contact: React.FC = () => {
                       Bring the idea, the problem or even the rough sketch. I can take it from direction to a working digital experience.
                     </p>
                     <span className="font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">
-                      HOVER TO START ↗
+                      HOVER TO START <span className="text-acid">↗</span>
                     </span>
                   </div>
                 </motion.button>
@@ -179,7 +179,7 @@ export const Contact: React.FC = () => {
                       Tell me what you want to make, what it should do and when it needs to exist.
                     </p>
                     <span className="font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">
-                      OPEN PROJECT FORM ↗
+                      OPEN PROJECT FORM <span className="text-acid">↗</span>
                     </span>
                   </div>
                 </motion.button>
