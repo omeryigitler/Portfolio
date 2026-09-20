@@ -129,14 +129,14 @@ export const Contact: React.FC = () => {
                     HAVE AN IDEA?
                   </p>
 
-                  <div className="absolute left-1/2 top-1/2 flex w-full -translate-x-1/2 -translate-y-1/2 items-center justify-center gap-7">
-                    <h2 className="text-[clamp(72px,7.1vw,132px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
+                  <div className="absolute left-1/2 top-1/2 grid w-full -translate-x-1/2 -translate-y-1/2 grid-cols-[minmax(0,1fr)_80px] items-center gap-8">
+                    <h2 className="text-left text-[clamp(72px,7.1vw,132px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
                       have an
                       <br />
                       idea<span className="text-acid">?</span>
                     </h2>
                     <span
-                      className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-ink/20 text-[28px] text-acid transition-[transform,border-color] duration-300 ease-[0.16,1,0.3,1] group-hover:translate-x-2 group-hover:-translate-y-2 group-hover:border-ink/45 md:h-20 md:w-20 md:text-[34px]"
+                      className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border border-ink/20 text-[34px] text-acid transition-[transform,border-color] duration-300 ease-[0.16,1,0.3,1] group-hover:translate-x-2 group-hover:-translate-y-2 group-hover:border-ink/45"
                       aria-hidden="true"
                     >
                       ↗
@@ -167,12 +167,12 @@ export const Contact: React.FC = () => {
                     READY WHEN YOU ARE
                   </p>
 
-                  <div className="absolute left-1/2 top-1/2 flex w-full -translate-x-1/2 -translate-y-1/2 items-center justify-center gap-7">
-                    <span className="text-[clamp(72px,7.1vw,132px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
+                  <div className="absolute left-1/2 top-1/2 grid w-full -translate-x-1/2 -translate-y-1/2 grid-cols-[minmax(0,1fr)_80px] items-center gap-8">
+                    <span className="text-left text-[clamp(72px,7.1vw,132px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
                       make it real<span className="text-acid">.</span>
                     </span>
                     <span
-                      className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-ink/20 text-[28px] text-acid transition-[transform,border-color] duration-300 ease-[0.16,1,0.3,1] group-hover:translate-x-2 group-hover:-translate-y-2 group-hover:border-ink/45 md:h-20 md:w-20 md:text-[34px]"
+                      className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border border-ink/20 text-[34px] text-acid transition-[transform,border-color] duration-300 ease-[0.16,1,0.3,1] group-hover:translate-x-2 group-hover:-translate-y-2 group-hover:border-ink/45"
                       aria-hidden="true"
                     >
                       ↗
@@ -202,8 +202,8 @@ export const Contact: React.FC = () => {
                     className="group relative min-h-[300px] w-full text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
                   >
                     <p className="absolute left-0 top-0 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">HAVE AN IDEA?</p>
-                    <div className="absolute left-1/2 top-1/2 flex w-full -translate-x-1/2 -translate-y-1/2 items-center justify-center gap-4">
-                      <h2 className="text-[clamp(56px,15vw,94px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
+                    <div className="absolute left-1/2 top-1/2 grid w-full -translate-x-1/2 -translate-y-1/2 grid-cols-[minmax(0,1fr)_48px] items-center gap-4">
+                      <h2 className="text-left text-[clamp(56px,15vw,94px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
                         have an idea<span className="text-acid">?</span>
                       </h2>
                       <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-ink/20 text-acid transition-transform duration-300 group-hover:translate-x-1.5 group-hover:-translate-y-1.5">
@@ -221,8 +221,8 @@ export const Contact: React.FC = () => {
                     className="group relative min-h-[300px] w-full text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
                   >
                     <p className="absolute left-0 top-0 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">READY WHEN YOU ARE</p>
-                    <div className="absolute left-1/2 top-1/2 flex w-full -translate-x-1/2 -translate-y-1/2 items-center justify-center gap-4">
-                      <span className="text-[clamp(56px,15vw,94px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
+                    <div className="absolute left-1/2 top-1/2 grid w-full -translate-x-1/2 -translate-y-1/2 grid-cols-[minmax(0,1fr)_48px] items-center gap-4">
+                      <span className="text-left text-[clamp(56px,15vw,94px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
                         make it real<span className="text-acid">.</span>
                       </span>
                       <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-ink/20 text-acid transition-transform duration-300 group-hover:translate-x-1.5 group-hover:-translate-y-1.5"><ArrowUpRight size={18} strokeWidth={1.2} aria-hidden="true" /></span>
