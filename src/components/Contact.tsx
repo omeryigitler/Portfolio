@@ -125,18 +125,17 @@ export const Contact: React.FC = () => {
                   style={{ pointerEvents: ctaActive ? 'none' : 'auto' }}
                   aria-label="Reveal start project action"
                 >
-                  <div>
-                    <p className="mb-6 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
-                      HAVE AN IDEA?
-                    </p>
-                    <h2 className="mx-auto max-w-[720px] text-center text-[clamp(72px,7.1vw,132px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
-                      have an
-                      <br />
-                      idea<span className="text-acid">?</span>
-                    </h2>
-                  </div>
+                  <p className="absolute left-0 top-0 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
+                    HAVE AN IDEA?
+                  </p>
 
-                  <div className="grid gap-5 border-t border-ink/10 pt-5 md:grid-cols-[minmax(0,430px)_auto] md:items-end md:justify-between">
+                  <h2 className="absolute left-1/2 top-1/2 w-full max-w-[720px] -translate-x-1/2 -translate-y-1/2 text-center text-[clamp(72px,7.1vw,132px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
+                    have an
+                    <br />
+                    idea<span className="text-acid">?</span>
+                  </h2>
+
+                  <div className="absolute bottom-0 left-0 right-0 grid gap-5 border-t border-ink/10 pt-5 md:grid-cols-[minmax(0,430px)_auto] md:items-end md:justify-between">
                     <p className="max-w-[430px] text-[14px] leading-[1.55] tracking-[-0.02em] text-ink/65 md:text-[16px]">
                       Bring the idea, the problem or even the rough sketch. I can take it from direction to a working digital experience.
                     </p>
@@ -156,25 +155,23 @@ export const Contact: React.FC = () => {
                   style={{ pointerEvents: ctaActive ? 'auto' : 'none' }}
                   aria-label="Open project request form"
                 >
-                  <div>
-                    <p className="mb-6 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
-                      READY WHEN YOU ARE
-                    </p>
+                  <p className="absolute left-0 top-0 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
+                    READY WHEN YOU ARE
+                  </p>
 
-                    <div className="flex items-center justify-center gap-7">
-                      <span className="text-[clamp(72px,7.1vw,132px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
-                        make it real<span className="text-acid">.</span>
-                      </span>
-                      <span
-                        className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-ink/20 text-[28px] text-acid transition-[transform,border-color] duration-300 ease-[0.16,1,0.3,1] group-hover:translate-x-2 group-hover:-translate-y-2 group-hover:border-ink/45 md:h-20 md:w-20 md:text-[34px]"
-                        aria-hidden="true"
-                      >
-                        ↗
-                      </span>
-                    </div>
+                  <div className="absolute left-1/2 top-1/2 flex w-full -translate-x-1/2 -translate-y-1/2 items-center justify-center gap-7">
+                    <span className="text-[clamp(72px,7.1vw,132px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
+                      make it real<span className="text-acid">.</span>
+                    </span>
+                    <span
+                      className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-ink/20 text-[28px] text-acid transition-[transform,border-color] duration-300 ease-[0.16,1,0.3,1] group-hover:translate-x-2 group-hover:-translate-y-2 group-hover:border-ink/45 md:h-20 md:w-20 md:text-[34px]"
+                      aria-hidden="true"
+                    >
+                      ↗
+                    </span>
                   </div>
 
-                  <div className="grid gap-5 border-t border-ink/10 pt-5 md:grid-cols-[minmax(0,430px)_auto] md:items-end md:justify-between">
+                  <div className="absolute bottom-0 left-0 right-0 grid gap-5 border-t border-ink/10 pt-5 md:grid-cols-[minmax(0,430px)_auto] md:items-end md:justify-between">
                     <p className="max-w-[430px] text-[14px] leading-[1.55] tracking-[-0.02em] text-ink/65 md:text-[16px]">
                       Tell me what you want to make, what it should do and when it needs to exist.
                     </p>
@@ -194,7 +191,7 @@ export const Contact: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setCtaActive(true)}
-                    className="text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
+                    className="flex min-h-[300px] w-full flex-col justify-center text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
                   >
                     <p className="mb-5 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">HAVE AN IDEA?</p>
                     <h2 className="w-full text-center text-[clamp(58px,16vw,104px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
@@ -208,7 +205,7 @@ export const Contact: React.FC = () => {
                     initial={{ opacity: 0, x: 22 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                    className="group text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
+                    className="group flex min-h-[300px] w-full flex-col justify-center text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
                   >
                     <p className="mb-4 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">READY WHEN YOU ARE</p>
                     <div className="flex items-center justify-center gap-4">
