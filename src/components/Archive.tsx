@@ -50,7 +50,7 @@ export const SystemMap: React.FC = () => {
     >
       <div className="mx-auto flex min-h-[calc(100svh-88px)] w-full max-w-[1580px] flex-col md:min-h-[calc(100svh-128px)]">
         <div className="flex items-center justify-between gap-8 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
-          <span>05 / CAPABILITIES</span>
+          <span>04 / WHAT I DO</span>
           <span className="hidden md:block">CLICK A DISCIPLINE TO OPEN</span>
         </div>
 
@@ -168,7 +168,7 @@ export const SystemMap: React.FC = () => {
 
         <div className="flex items-end justify-between gap-8 border-t border-ink/8 pt-5 font-mono text-[8px] uppercase tracking-[0.06em] text-muted-gray md:text-[9px]">
           <span>DESIGN / DEVELOPMENT / INTERACTION</span>
-          <span className="hidden md:block">CAPABILITY → REAL PROJECT</span>
+          <span className="hidden md:block">WHAT I DO → REAL PROJECT</span>
         </div>
       </div>
     </section>

@@ -90,7 +90,7 @@ export const Contact: React.FC = () => {
       >
         <div className="mx-auto grid min-h-[calc(100svh-56px)] w-full max-w-[1580px] grid-rows-[auto_1fr_auto] md:min-h-[calc(100svh-80px)]">
           <div className="flex items-center justify-between gap-8 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
-            <span>06 / CONTACT</span>
+            <span>05 / CONTACT</span>
             <span className="hidden md:block">FROM IDEA TO LIVE EXPERIENCE</span>
           </div>
 
@@ -119,7 +119,7 @@ export const Contact: React.FC = () => {
                   onMouseEnter={() => setCtaActive(true)}
                   onFocus={() => setCtaActive(true)}
                   onClick={() => setCtaActive(true)}
-                  animate={{ opacity: ctaActive ? 0 : 1, x: ctaActive ? -18 : 0, scale: ctaActive ? 0.985 : 1 }}
+                  animate={{ opacity: ctaActive ? 0 : 1 }}
                   transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
                   className="absolute inset-0 flex flex-col justify-between text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
                   style={{ pointerEvents: ctaActive ? 'none' : 'auto' }}
@@ -150,29 +150,31 @@ export const Contact: React.FC = () => {
                   type="button"
                   onClick={openForm}
                   initial={false}
-                  animate={{ opacity: ctaActive ? 1 : 0, x: ctaActive ? 0 : 34, scale: ctaActive ? 1 : 0.975 }}
+                  animate={{ opacity: ctaActive ? 1 : 0 }}
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="group absolute inset-0 flex flex-col justify-center text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
+                  className="group absolute inset-0 flex flex-col justify-between text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
                   style={{ pointerEvents: ctaActive ? 'auto' : 'none' }}
                   aria-label="Open project request form"
                 >
-                  <p className="mb-6 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
-                    READY WHEN YOU ARE
-                  </p>
+                  <div>
+                    <p className="mb-6 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
+                      READY WHEN YOU ARE
+                    </p>
 
-                  <div className="inline-flex items-center gap-7">
-                    <span className="text-[clamp(74px,7.6vw,140px)] font-[500] lowercase leading-[0.84] tracking-[-0.06em] text-ink">
-                      make it real<span className="text-acid">.</span>
-                    </span>
-                    <span
-                      className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-ink/20 text-[28px] text-ink transition-[transform,border-color] duration-300 ease-[0.16,1,0.3,1] group-hover:translate-x-2 group-hover:-translate-y-2 group-hover:border-ink/45 md:h-20 md:w-20 md:text-[34px]"
-                      aria-hidden="true"
-                    >
-                      ↗
-                    </span>
+                    <div className="inline-flex items-center gap-7">
+                      <span className="text-[clamp(72px,7.1vw,132px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
+                        make it real<span className="text-acid">.</span>
+                      </span>
+                      <span
+                        className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-ink/20 text-[28px] text-ink transition-[transform,border-color] duration-300 ease-[0.16,1,0.3,1] group-hover:translate-x-2 group-hover:-translate-y-2 group-hover:border-ink/45 md:h-20 md:w-20 md:text-[34px]"
+                        aria-hidden="true"
+                      >
+                        ↗
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="mt-10 grid gap-5 border-t border-ink/10 pt-5 md:grid-cols-[minmax(0,430px)_auto] md:items-end md:justify-between">
+                  <div className="grid gap-5 border-t border-ink/10 pt-5 md:grid-cols-[minmax(0,430px)_auto] md:items-end md:justify-between">
                     <p className="max-w-[430px] text-[14px] leading-[1.55] tracking-[-0.02em] text-ink/65 md:text-[16px]">
                       Tell me what you want to make, what it should do and when it needs to exist.
                     </p>
@@ -251,7 +253,7 @@ export const Contact: React.FC = () => {
             >
               <div className="flex items-start justify-between border-b border-soft-gray/60 pb-5">
                 <div className="font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
-                  <p className="text-ink">PROJECT REQUEST / 06</p>
+                  <p className="text-ink">PROJECT REQUEST / 05</p>
                   <p className="mt-1">A FEW DETAILS TO START</p>
                 </div>
 

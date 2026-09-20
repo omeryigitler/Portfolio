@@ -110,7 +110,7 @@ export const MaskedWindow: React.FC = () => {
           className="absolute inset-x-[4%] top-[7%] flex h-[80%] flex-col overflow-hidden rounded-[8px] border border-ink/10 bg-canvas px-6 py-7 md:inset-x-[5%] md:h-[82%] md:px-10 md:py-9"
         >
           <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
-            <span>03 / TRANSITION</span>
+            <span>INTERLUDE</span>
             <span>SURFACE → SYSTEM</span>
           </div>
 
@@ -217,7 +217,7 @@ export const MaskedWindow: React.FC = () => {
 
           <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
             <span>VISIBLE LAYER → WORKING SYSTEM</span>
-            <span>ABOUT / CAPABILITIES ↓</span>
+            <span>ABOUT / WHAT I DO ↓</span>
           </div>
         </div>
       </div>

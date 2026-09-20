@@ -47,7 +47,7 @@ export const About: React.FC = () => {
       className="pointer-events-auto flex min-h-[calc(100svh-24px)] w-full scroll-mt-3 flex-col justify-center rounded-[10px] bg-canvas px-5 py-24 shadow-[0_20px_70px_rgba(17,17,17,0.07)] md:min-h-[calc(100svh-48px)] md:scroll-mt-6 md:px-12 md:py-32"
     >
       <div className="mb-16 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:mb-20 md:text-[10px]">
-        04 / ABOUT
+        03 / ABOUT
       </div>
 
       <div className="w-full overflow-hidden text-[clamp(32px,5vw,76px)] font-medium leading-[0.94] tracking-[-0.05em] text-ink md:max-w-[78%]">

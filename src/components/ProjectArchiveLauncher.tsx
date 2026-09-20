@@ -97,8 +97,9 @@ export const ProjectArchiveLauncher: React.FC = () => {
         <div className="mx-auto w-full max-w-[1540px]">
           <div className="mb-5 flex items-center justify-between gap-6 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
             <span>
+              02 / PROJECTS <span className="mx-2 text-ink/20">—</span>
               THINGS I’VE DESIGNED AND BUILT <span className="mx-2 text-ink/20">—</span>
-              {String(ARCHIVE_COUNT).padStart(2, '0')} GITHUB PROJECTS
+              {String(ARCHIVE_COUNT).padStart(2, '0')} PROJECTS
             </span>
             <a
               href="/projects"

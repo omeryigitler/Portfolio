@@ -55,7 +55,7 @@ export const Hero: React.FC = () => {
           className="flex items-center justify-between gap-6 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]"
         >
           <div className="flex min-w-0 items-center gap-4">
-            <span className="shrink-0 text-ink">01 / INTRO</span>
+            <span className="shrink-0 text-ink">01 / HOME</span>
             <span className="h-px w-8 shrink-0 bg-soft-gray" aria-hidden="true" />
             <span className="truncate">ÖMER YİĞİTLER / DESIGN + DEVELOPMENT</span>
           </div>
