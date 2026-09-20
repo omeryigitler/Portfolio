@@ -3,9 +3,9 @@ import { ArrowDownRight, ArrowUpRight } from 'lucide-react';
 import { gsap } from 'gsap';
 
 const TITLE_LINES = [
-  'Designing digital',
-  'experiences',
-  'with character, precision',
+  'Digital experiences',
+  'built from idea',
+  'to interface',
 ] as const;
 
 export const Hero: React.FC = () => {
@@ -35,9 +35,9 @@ export const Hero: React.FC = () => {
       const intro = gsap.timeline({ defaults: { ease: 'power4.out' } });
       intro.to(metaRef.current, { autoAlpha: 1, y: 0, duration: 0.4 }, 0.04);
       intro.to(lines, { yPercent: 0, duration: 0.88, stagger: 0.065 }, 0.12);
-      intro.to(supportRef.current, { autoAlpha: 1, y: 0, duration: 0.46 }, 0.54);
-      intro.to(actionsRef.current, { autoAlpha: 1, y: 0, duration: 0.46 }, 0.62);
-      intro.set(masks, { overflow: 'visible' }, 1.12);
+      intro.to(supportRef.current, { autoAlpha: 1, y: 0, duration: 0.46 }, 0.5);
+      intro.to(actionsRef.current, { autoAlpha: 1, y: 0, duration: 0.46 }, 0.58);
+      intro.set(masks, { overflow: 'visible' }, 1.08);
     }, heroRef);
 
     return () => ctx.revert();
@@ -62,55 +62,47 @@ export const Hero: React.FC = () => {
           <span className="hidden shrink-0 md:block">MALTA / 2026</span>
         </div>
 
-        <div className="flex flex-col justify-center py-10 md:py-14 lg:py-8">
-          <h1 className="w-full select-none text-[clamp(54px,7.35vw,132px)] font-[560] leading-[0.87] tracking-[-0.062em] text-ink [font-feature-settings:'kern'_1,'liga'_1] [font-kerning:normal]">
+        <div className="flex flex-col justify-center py-12 md:py-14 lg:py-9">
+          <h1 className="w-full select-none text-[clamp(49px,7.65vw,136px)] font-[560] leading-[0.86] tracking-[-0.064em] text-ink [font-feature-settings:'kern'_1,'liga'_1] [font-kerning:normal]">
             {TITLE_LINES.map((line, index) => (
               <span key={line} className="hero-line-mask mb-[-0.1em] block overflow-hidden pb-[0.18em]">
                 <span
                   ref={(element) => { lineRefs.current[index] = element; }}
                   className="block md:whitespace-nowrap"
                 >
-                  {line}
+                  {line}{index === TITLE_LINES.length - 1 && <span className="text-acid">.</span>}
                 </span>
               </span>
             ))}
-            <span className="hero-line-mask mb-[-0.1em] block overflow-hidden pb-[0.18em]">
-              <span
-                ref={(element) => { lineRefs.current[3] = element; }}
-                className="block md:whitespace-nowrap"
-              >
-                and code<span className="text-acid">.</span>
-              </span>
-            </span>
           </h1>
         </div>
 
-        <div className="mb-5 grid gap-6 border-t border-ink/10 pt-5 md:mb-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-10 md:pt-6 lg:mb-10">
+        <div className="mb-4 grid gap-6 border-t border-ink/10 pt-5 md:mb-7 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-10 md:pt-6">
           <p
             ref={supportRef}
-            className="max-w-[680px] text-[14px] leading-[1.55] tracking-[-0.02em] text-ink/65 md:text-[16px]"
+            className="max-w-[720px] text-[15px] leading-[1.55] tracking-[-0.025em] text-ink/70 md:text-[18px]"
           >
-            Independent designer &amp; developer creating considered websites and interactive systems — from art direction to production code.
+            Websites, online stores and interactive products — designed and developed by Ömer Yiğitler.
           </p>
 
           <div
             ref={actionsRef}
-            className="flex flex-col gap-4 font-mono text-[9px] uppercase tracking-[0.04em] text-ink sm:flex-row sm:items-center sm:gap-0 md:text-[10px]"
+            className="flex flex-col gap-2 sm:flex-row sm:items-center"
           >
             <a
               href="#work"
-              className="group inline-flex min-h-10 items-center justify-between gap-8 border-t border-ink/10 pt-3 transition-opacity hover:opacity-60 focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4 sm:min-h-0 sm:border-l sm:border-t-0 sm:px-7 sm:pt-0"
+              className="group inline-flex min-h-12 items-center justify-between gap-8 bg-ink px-5 font-mono text-[10px] uppercase tracking-[0.055em] text-canvas transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-3"
             >
-              <span>VIEW SELECTED WORK</span>
-              <ArrowDownRight size={14} strokeWidth={1.45} className="shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:translate-y-1" />
+              <span className="inline-flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-acid" />VIEW PROJECTS</span>
+              <ArrowDownRight size={15} strokeWidth={1.45} className="shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:translate-y-1" />
             </a>
 
             <a
               href="#contact"
-              className="group inline-flex min-h-10 items-center justify-between gap-8 border-t border-ink/10 pt-3 transition-opacity hover:opacity-60 focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-4 sm:min-h-0 sm:border-l sm:border-t-0 sm:pl-7 sm:pt-0"
+              className="group inline-flex min-h-12 items-center justify-between gap-8 border border-ink/14 px-5 font-mono text-[10px] uppercase tracking-[0.055em] text-ink transition-colors duration-300 hover:border-ink/35 focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-3"
             >
-              <span>START A PROJECT</span>
-              <ArrowUpRight size={14} strokeWidth={1.45} className="shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+              <span>CONTACT ME</span>
+              <ArrowUpRight size={15} strokeWidth={1.45} className="shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
             </a>
           </div>
         </div>
