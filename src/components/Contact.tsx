@@ -129,7 +129,7 @@ export const Contact: React.FC = () => {
                     <p className="mb-6 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray md:text-[10px]">
                       HAVE AN IDEA?
                     </p>
-                    <h2 className="max-w-[720px] text-[clamp(72px,7.1vw,132px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
+                    <h2 className="mx-auto max-w-[720px] text-center text-[clamp(72px,7.1vw,132px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
                       have an
                       <br />
                       idea<span className="text-acid">?</span>
@@ -161,12 +161,12 @@ export const Contact: React.FC = () => {
                       READY WHEN YOU ARE
                     </p>
 
-                    <div className="inline-flex items-center gap-7">
+                    <div className="flex items-center justify-center gap-7">
                       <span className="text-[clamp(72px,7.1vw,132px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
                         make it real<span className="text-acid">.</span>
                       </span>
                       <span
-                        className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-ink/20 text-[28px] text-ink transition-[transform,border-color] duration-300 ease-[0.16,1,0.3,1] group-hover:translate-x-2 group-hover:-translate-y-2 group-hover:border-ink/45 md:h-20 md:w-20 md:text-[34px]"
+                        className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-ink/20 text-[28px] text-acid transition-[transform,border-color] duration-300 ease-[0.16,1,0.3,1] group-hover:translate-x-2 group-hover:-translate-y-2 group-hover:border-ink/45 md:h-20 md:w-20 md:text-[34px]"
                         aria-hidden="true"
                       >
                         ↗
@@ -197,7 +197,7 @@ export const Contact: React.FC = () => {
                     className="text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
                   >
                     <p className="mb-5 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">HAVE AN IDEA?</p>
-                    <h2 className="text-[clamp(58px,16vw,104px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
+                    <h2 className="w-full text-center text-[clamp(58px,16vw,104px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
                       have an idea<span className="text-acid">?</span>
                     </h2>
                   </button>
@@ -211,11 +211,11 @@ export const Contact: React.FC = () => {
                     className="group text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
                   >
                     <p className="mb-4 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">READY WHEN YOU ARE</p>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center justify-center gap-4">
                       <span className="text-[clamp(56px,15vw,94px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
                         make it real<span className="text-acid">.</span>
                       </span>
-                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-ink/20 text-ink transition-transform duration-300 group-hover:translate-x-1.5 group-hover:-translate-y-1.5"><ArrowUpRight size={18} strokeWidth={1.2} aria-hidden="true" /></span>
+                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-ink/20 text-acid transition-transform duration-300 group-hover:translate-x-1.5 group-hover:-translate-y-1.5"><ArrowUpRight size={18} strokeWidth={1.2} aria-hidden="true" /></span>
                     </div>
                   </motion.button>
                 )}
