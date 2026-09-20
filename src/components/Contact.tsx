@@ -191,10 +191,10 @@ export const Contact: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setCtaActive(true)}
-                    className="flex min-h-[300px] w-full flex-col justify-center text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
+                    className="relative min-h-[300px] w-full text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
                   >
-                    <p className="mb-5 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">HAVE AN IDEA?</p>
-                    <h2 className="w-full text-center text-[clamp(58px,16vw,104px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
+                    <p className="absolute left-0 top-0 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">HAVE AN IDEA?</p>
+                    <h2 className="absolute left-1/2 top-1/2 w-full -translate-x-1/2 -translate-y-1/2 text-center text-[clamp(58px,16vw,104px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
                       have an idea<span className="text-acid">?</span>
                     </h2>
                   </button>
@@ -202,13 +202,13 @@ export const Contact: React.FC = () => {
                   <motion.button
                     type="button"
                     onClick={openForm}
-                    initial={{ opacity: 0, x: 22 }}
-                    animate={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
                     transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                    className="group flex min-h-[300px] w-full flex-col justify-center text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
+                    className="group relative min-h-[300px] w-full text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
                   >
-                    <p className="mb-4 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">READY WHEN YOU ARE</p>
-                    <div className="flex items-center justify-center gap-4">
+                    <p className="absolute left-0 top-0 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">READY WHEN YOU ARE</p>
+                    <div className="absolute left-1/2 top-1/2 flex w-full -translate-x-1/2 -translate-y-1/2 items-center justify-center gap-4">
                       <span className="text-[clamp(56px,15vw,94px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
                         make it real<span className="text-acid">.</span>
                       </span>
