@@ -121,7 +121,7 @@ export const Contact: React.FC = () => {
                   onClick={() => setCtaActive(true)}
                   animate={{ opacity: ctaActive ? 0 : 1 }}
                   transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
-                  className="absolute inset-0 flex flex-col justify-between text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
+                  className="group absolute inset-0 flex flex-col justify-between text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
                   style={{ pointerEvents: ctaActive ? 'none' : 'auto' }}
                   aria-label="Reveal start project action"
                 >
@@ -129,11 +129,19 @@ export const Contact: React.FC = () => {
                     HAVE AN IDEA?
                   </p>
 
-                  <h2 className="absolute left-1/2 top-1/2 w-full max-w-[720px] -translate-x-1/2 -translate-y-1/2 text-center text-[clamp(72px,7.1vw,132px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
-                    have an
-                    <br />
-                    idea<span className="text-acid">?</span>
-                  </h2>
+                  <div className="absolute left-1/2 top-1/2 flex w-full -translate-x-1/2 -translate-y-1/2 items-center justify-center gap-7">
+                    <h2 className="text-[clamp(72px,7.1vw,132px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
+                      have an
+                      <br />
+                      idea<span className="text-acid">?</span>
+                    </h2>
+                    <span
+                      className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-ink/20 text-[28px] text-acid transition-[transform,border-color] duration-300 ease-[0.16,1,0.3,1] group-hover:translate-x-2 group-hover:-translate-y-2 group-hover:border-ink/45 md:h-20 md:w-20 md:text-[34px]"
+                      aria-hidden="true"
+                    >
+                      ↗
+                    </span>
+                  </div>
 
                   <div className="absolute bottom-0 left-0 right-0 grid gap-5 border-t border-ink/10 pt-5 md:grid-cols-[minmax(0,430px)_auto] md:items-end md:justify-between">
                     <p className="max-w-[430px] text-[14px] leading-[1.55] tracking-[-0.02em] text-ink/65 md:text-[16px]">
@@ -191,12 +199,17 @@ export const Contact: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setCtaActive(true)}
-                    className="relative min-h-[300px] w-full text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
+                    className="group relative min-h-[300px] w-full text-left focus-visible:outline-2 focus-visible:outline-acid focus-visible:outline-offset-6"
                   >
                     <p className="absolute left-0 top-0 font-mono text-[9px] uppercase tracking-[0.06em] text-muted-gray">HAVE AN IDEA?</p>
-                    <h2 className="absolute left-1/2 top-1/2 w-full -translate-x-1/2 -translate-y-1/2 text-center text-[clamp(58px,16vw,104px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
-                      have an idea<span className="text-acid">?</span>
-                    </h2>
+                    <div className="absolute left-1/2 top-1/2 flex w-full -translate-x-1/2 -translate-y-1/2 items-center justify-center gap-4">
+                      <h2 className="text-[clamp(56px,15vw,94px)] font-[500] lowercase leading-[0.86] tracking-[-0.055em] text-ink">
+                        have an idea<span className="text-acid">?</span>
+                      </h2>
+                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-ink/20 text-acid transition-transform duration-300 group-hover:translate-x-1.5 group-hover:-translate-y-1.5">
+                        <ArrowUpRight size={18} strokeWidth={1.2} aria-hidden="true" />
+                      </span>
+                    </div>
                   </button>
                 ) : (
                   <motion.button
